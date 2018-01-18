@@ -1,0 +1,14 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 18/01/18
+ * Time: 15.09
+ */
+
+const SITE_NAME = "Tirocini ITIS";
+const SITE_SUBTITLE = "Interfaccia per gestione tirocini dell'Istituto Tecnico Industriale Statale \"Leonardo da Vinci\".<br>Studenti, docenti ed aziende";
+
+const BASE_DIR  = "/DB_Tirocini/htdocs/";
+
+session_start();

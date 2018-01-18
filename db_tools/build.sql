@@ -9,5 +9,3 @@ CREATE TABLE Indirizzi
 
   PRIMARY KEY (id)
 );
-
-

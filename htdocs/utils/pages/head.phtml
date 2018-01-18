@@ -1,0 +1,27 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 18/01/18
+ * Time: 15.18
+ */
+?>
+<!-- config -->
+<base href="<?php echo BASE_DIR ?>" >
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>
+    <?php
+        echo SITE_NAME;
+
+        if(isset($page))
+            echo " - {$page}";
+    ?>
+</title>
+
+<!-- CSS -->
+<link rel="stylesheet" href="css/bulma.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!-- JavaScript -->
