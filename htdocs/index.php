@@ -9,17 +9,27 @@ require_once "utils/lib.hphp";
 require_once "utils/auth.hphp";
 
 \auth\check_and_redirect(\auth\LEVEL_GUEST);
+
+require_once "../vendor/autoload.php";
+
+$google_client = new Google_Client();
+$google_client->setAuthConfig("../client_secret_142180740412-f5mtm2geteu9jn5jgi5b9l9uhva5b40b.apps.googleusercontent.com.json");
+$google_client->setRedirectUri("http://localhost:63342/DB_Tirocini/test.php");
+$google_client->addScope("https://www.googleapis.com/auth/userinfo.email");
+$google_client->addScope("https://www.googleapis.com/auth/userinfo.profile");
+
+$login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
 ?>
 
 <html>
 <head>
     <?php include "utils/pages/head.phtml"; ?>
+
     <style>
         header {
             background: url("asset/school.jpg") center center;
             background-size: cover;
         }
-
     </style>
 </head>
 <body>
@@ -43,13 +53,17 @@ require_once "utils/auth.hphp";
                     <h1 class="title">Accesso utenti sotto dominio</h1>
                     <h2 class="subtitle">Solo gli utenti autorizzati e sotto dominio <code>itispisa.gov.it</code>
                         potranno effettuare l'accesso</h2>
-                    <a class="button is-info is-fullwidth is-large" onclick="alert('Guten tag!');">
-                    <span class="icon">
-                        <i class="fa fa-google" aria-hidden="true"></i>
-                    </span>
-                        <span>
-                        Accedi con Google
-                    </span>
+                    <a
+                            class="button is-info is-fullwidth is-large"
+                            id="login_google"
+                            href="<?= $login_url ?>"
+                    >
+                        <span class="icon">
+                            <i class="fa fa-google" aria-hidden="true"></i>
+                        </span>
+                            <span>
+                            Accedi con Google
+                        </span>
                     </a>
                 </div>
                 <div class="column ">
@@ -85,5 +99,7 @@ require_once "utils/auth.hphp";
         </div>
     </section>
 </section>
+
+<script src="index_handlers.js"></script>
 </body>
 </html>

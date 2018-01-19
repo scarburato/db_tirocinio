@@ -9,8 +9,9 @@
 namespace auth
 {
     const LEVEL_GUEST = 0;
-    const LEVEL_GOOGLE = 1;
-    const LEVEL_FACTORY = 2;
+    const LEVEL_GOOGLE_STUDENT = 1;
+    const LEVEL_GOOGLE_TEACHER = 2;
+    const LEVEL_FACTORY = 3;
 
     /**
      * Controlla i permessi
@@ -34,8 +35,8 @@ namespace auth
             default:
                 header("Location: " . $basepath . "index.php");
                 break;
-            case LEVEL_GOOGLE:
-                header("Location: " . $basepath . "cliente/index.php");
+            case LEVEL_GOOGLE_STUDENT:
+                header("Location: " . $basepath . "docs/studente/index.php");
                 break;
             case LEVEL_FACTORY:
                 header("Location: " . $basepath . "gestore/index.php");
