@@ -6,9 +6,27 @@
  * Time: 15.09
  */
 
-const SITE_NAME = "Tirocini ITIS";
-const SITE_SUBTITLE = "Interfaccia per gestione tirocini dell'Istituto Tecnico Industriale Statale \"Leonardo da Vinci\".<br>Studenti, docenti ed aziende";
-
-const BASE_DIR  = "/DB_Tirocini/htdocs/";
+require_once dirname(__FILE__) . "/const.hphp";
+require_once dirname(__FILE__) . "/../../vendor/autoload.php";
 
 session_start();
+
+$google_client = new Google_Client();
+try
+{
+    $google_client->setAuthConfig(dirname(__FILE__) . "/../../client_secret_142180740412-f5mtm2geteu9jn5jgi5b9l9uhva5b40b.apps.googleusercontent.com.json");
+}
+catch (Google_Exception $e)
+{
+    $errore = array(
+        "name" => $e->getMessage(),
+        "code" => $e->getCode(),
+        "what" => $e->getTraceAsString()
+    );
+
+    header("Location: " . dirname(__FILE__) . "/../error.php?error=" . json_encode($errore));
+}
+
+$google_client->setRedirectUri("http://localhost:63342/DB_Tirocini/test.php");
+$google_client->addScope("https://www.googleapis.com/auth/userinfo.email");
+$google_client->addScope("https://www.googleapis.com/auth/userinfo.profile");

@@ -23,7 +23,8 @@ namespace auth
         if (!isset($_SESSION["user"]))
             $_SESSION["user"] = array(
                 "id"=>0,
-                "type"=>LEVEL_GUEST
+                "type"=>LEVEL_GUEST,
+                "token"=>NULL
             );
 
         if($auth_level === $_SESSION["user"]["type"])
@@ -36,7 +37,7 @@ namespace auth
                 header("Location: " . $basepath . "index.php");
                 break;
             case LEVEL_GOOGLE_STUDENT:
-                header("Location: " . $basepath . "docs/studente/index.php");
+                header("Location: " . $basepath . "pages/studente/index.php");
                 break;
             case LEVEL_FACTORY:
                 header("Location: " . $basepath . "gestore/index.php");
@@ -45,5 +46,16 @@ namespace auth
 
         echo "Si è verificato un'imprevisto. Contattare un amministratore!";
         die;
+    }
+
+    function log_out()
+    {
+        $_SESSION["user"] = array(
+            "id"=>0,
+            "type"=>LEVEL_GUEST,
+            "token"=>NULL
+        );
+
+        session_destroy();
     }
 }

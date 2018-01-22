@@ -10,21 +10,14 @@ require_once "utils/auth.hphp";
 
 \auth\check_and_redirect(\auth\LEVEL_GUEST);
 
-require_once "../vendor/autoload.php";
-
-$google_client = new Google_Client();
-$google_client->setAuthConfig("../client_secret_142180740412-f5mtm2geteu9jn5jgi5b9l9uhva5b40b.apps.googleusercontent.com.json");
-$google_client->setRedirectUri("http://localhost:63342/DB_Tirocini/test.php");
-$google_client->addScope("https://www.googleapis.com/auth/userinfo.email");
-$google_client->addScope("https://www.googleapis.com/auth/userinfo.profile");
-
 $login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
 ?>
 
-<html>
+<html lang="it">
 <head>
     <?php include "utils/pages/head.phtml"; ?>
 
+    <script src="https://authedmine.com/lib/captcha.min.js" async></script>
     <style>
         header {
             background: url("asset/school.jpg") center center;
@@ -50,7 +43,7 @@ $login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
         <div class="container">
             <div class="columns">
                 <div class="column">
-                    <h1 class="title">Accesso utenti sotto dominio</h1>
+                    <h1 class="title">Accesso utenze sotto dominio</h1>
                     <h2 class="subtitle">Solo gli utenti autorizzati e sotto dominio <code>itispisa.gov.it</code>
                         potranno effettuare l'accesso</h2>
                     <a
@@ -65,6 +58,22 @@ $login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
                             Accedi con Google
                         </span>
                     </a>
+                    <?php
+                    if(isset($_GET["wrong_domain"]))
+                    {
+                        ?>
+                        <p class="help is-danger">
+                            Sta scritto "<em>Solo gli utenti autorizzati e sotto dominio <code>itispisa.gov.it</code>
+                                potranno effettuare l'accesso</em>" ma invece avete provato ugualmente.<br>
+                            L'utenza è stata disconessa.<br>
+                            <em>
+                                «[...]del frutto dell'albero che sta in mezzo al giardino Dio ha detto:
+                                Non ne dovete mangiare e non lo dovete toccare, altrimenti morirete».
+                            </em>
+                        </p>
+                        <?php
+                    }
+                    ?>
                 </div>
                 <div class="column ">
                     <h1 class="title">Accesso utenze aziendali</h1>
@@ -85,6 +94,20 @@ $login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
                                 <input class="input" type="password" placeholder="Parola d'ordine">
                             </div>
                         </div>
+
+                        <div class="field">
+                            <label class="label">
+                                Sono umano?<!--Il mio portafogli no-->
+                            </label>
+                            <div class="coinhive-captcha" data-hashes="1024" data-key="SITE_KEY">
+                                <em>
+                                    Caricando il "Captcha"...<br>
+                                    Se non carica considerare di disattivare AdBlock ovvero concedere il dominio <samp><strong>https://authedmine.com/</strong></samp>.<br>
+                                    Questo è necessario per impedire attacchi automatizzati.
+                                </em>
+                            </div>
+                        </div>
+
                         <button class="button is-info is-pulled-right" type="submit">
                             <span>
                                 Accedere
@@ -100,6 +123,5 @@ $login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
     </section>
 </section>
 
-<script src="index_handlers.js"></script>
 </body>
 </html>
