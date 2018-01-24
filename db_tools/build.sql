@@ -1,11 +1,170 @@
-/*CREATE DATABASE tirocini;
+DROP DATABASE IF EXISTS Tirocini;
+CREATE DATABASE IF NOT EXISTS Tirocini;
+USE Tirocini;
 
-USE tirocini;*/
+CREATE TABLE IF NOT EXISTS UtenteGoogle (
+Internal_ID	SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+SUB_GOOGLE	VARCHAR(64) UNIQUE,
+Nome		VARCHAR(32) NOT NULL,
+SecondoNome	VARCHAR(128),
+Cognome		VARCHAR(48) NOT NULL,
+Email		VARCHAR(64) NOT NULL
+); 
 
-CREATE TABLE Indirizzi
-(
-  id                              INT UNSIGNED AUTO_INCREMENT,
-  nome                            VARCHAR(255),
+CREATE TABLE IF NOT EXISTS Indirizzo (
+Indirizzo	VARCHAR(20) PRIMARY KEY
+); 
 
-  PRIMARY KEY (id)
+CREATE TABLE IF NOT EXISTS Studente (
+Utente		SMALLINT UNSIGNED PRIMARY KEY,
+Indirizzo	VARCHAR(20) NOT NULL,
+Matricola	VARCHAR(10) UNIQUE NOT NULL,
+
+FOREIGN KEY (Utente)
+	REFERENCES UtenteGoogle(Internal_ID), 
+FOREIGN KEY (Indirizzo)
+	REFERENCES Indirizzo(Indirizzo)
+); 
+
+CREATE TABLE IF NOT EXISTS Docente (
+Utente		SMALLINT UNSIGNED PRIMARY KEY,
+FOREIGN KEY (Utente)
+	REFERENCES UtenteGoogle(Internal_ID)
+); 
+
+CREATE TABLE IF NOT EXISTS Privilegio (
+Nome		VARCHAR(10) PRIMARY KEY, 
+Descrizione	TINYTEXT NOT NULL
+); 
+
+CREATE TABLE IF NOT EXISTS PrivilegiApplicati (
+Utente		SMALLINT UNSIGNED, 
+Privilegio	VARCHAR(10),
+
+PRIMARY KEY (Utente, Privilegio),
+FOREIGN KEY (Utente)
+	REFERENCES Docente(Utente), 
+FOREIGN KEY (Privilegio)
+	REFERENCES Privilegio(Nome)
+); 
+
+CREATE TABLE IF NOT EXISTS Classificazioni (
+ID			SMALLINT UNSIGNED PRIMARY KEY, 
+Descrizione	TINYTEXT NOT NULL
+); 
+
+CREATE TABLE IF NOT EXISTS CodiceAteco (
+Cod2007		VARCHAR(8) PRIMARY KEY, 
+Cod2004		VARCHAR(8) UNIQUE, 
+Descrizione	TINYTEXT
+); 
+
+CREATE TABLE IF NOT EXISTS Azienda (
+ID			INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
+Iva			CHAR(11) UNIQUE NOT NULL,
+CodFiscale	CHAR(16) UNIQUE,
+Nominativo	VARCHAR(40) NOT NULL,
+Password	CHAR(128) NOT NULL,
+Classificazione		SMALLINT UNSIGNED NOT NULL,
+Ateco		VARCHAR(8) NOT NULL,
+Dimensione  ENUM('0-9','10-49','50-99','100-199','200-499','500+'),
+Gestione	ENUM('pubblica','privata','mista'),
+
+FOREIGN KEY (Classificazione)
+	REFERENCES Classificazioni(ID),
+FOREIGN KEY (Ateco)
+	REFERENCES CodiceAteco(Cod2007)
+); 
+
+CREATE TABLE IF NOT EXISTS Sede (
+ID			TINYINT UNSIGNED, 
+Azienda		INT UNSIGNED,
+NomeSede	VARCHAR(128) NOT NULL,
+Indirizzo	VARCHAR(128),
+NumCivico	SMALLINT(3) UNSIGNED,
+Comune		VARCHAR(60),
+Provincia	VARCHAR(30),
+Stato		VARCHAR(30),
+CAP			SMALLINT(5) UNSIGNED,
+
+PRIMARY KEY(ID, Azienda),
+FOREIGN KEY (Azienda)
+	REFERENCES Azienda(ID)
+); 
+
+CREATE TABLE IF NOT EXISTS IndirizziAzienda (
+Indirizzo	VARCHAR(20),
+Azienda		INT UNSIGNED,
+Motivazioni	TEXT NOT NULL,
+
+PRIMARY KEY (Indirizzo, Azienda),
+FOREIGN KEY (Indirizzo)
+	REFERENCES Indirizzo(Indirizzo),
+FOREIGN KEY (Azienda)
+	REFERENCES Azienda(ID)
+);
+
+CREATE TABLE IF NOT EXISTS Contatto (
+ID			INT(8) UNSIGNED PRIMARY KEY, 
+Azienda		INT UNSIGNED,
+Nome		VARCHAR(32) NOT NULL,
+SecondoNome	VARCHAR(128),
+Cognome		VARCHAR(48) NOT NULL,
+Email		VARCHAR(64),
+Telefono	CHAR(13),
+FAX			CHAR(13),
+Qualifica	VARCHAR(60),
+RuoloAziendale	TINYTEXT NOT NULL,
+
+FOREIGN KEY (Azienda)
+	REFERENCES Azienda(ID)
+); 
+
+CREATE TABLE IF NOT EXISTS EntratoInContatto (
+Contatto	INT(8) UNSIGNED, 
+Docente		SMALLINT UNSIGNED,
+Inizio		DATE NOT NULL,
+Fine		DATE,
+
+PRIMARY KEY(Contatto, Docente),
+FOREIGN KEY (Contatto)
+	REFERENCES Contatto(ID),
+FOREIGN KEY (Docente)
+	REFERENCES Docente(Utente)
+); 
+
+CREATE TABLE IF NOT EXISTS Tirocinio (
+Auto_ID		INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+Studente	SMALLINT UNSIGNED NOT NULL,
+Azienda		INT UNSIGNED NOT NULL,
+DocenteTutore	SMALLINT UNSIGNED NOT NULL,
+TutoreAziendale	INT(8) UNSIGNED NOT NULL,
+DataInizio	DATE NOT NULL,
+DataTermine	DATE,
+
+Giudizio	TINYINT UNSIGNED,
+Descrizione TINYTEXT,
+
+UNIQUE (Studente, Azienda, DataInizio),
+FOREIGN KEY (Studente)
+	REFERENCES Studente(Utente),
+FOREIGN KEY (Azienda)
+	REFERENCES Azienda(ID),
+FOREIGN KEY (DocenteTutore)
+	REFERENCES Docente(Utente),
+FOREIGN KEY (TutoreAziendale)
+	REFERENCES Contatto(ID)
+); 
+
+CREATE TABLE IF NOT EXISTS Commento (
+Tirocinio	INT(8) UNSIGNED,
+Autore		SMALLINT UNSIGNED,
+Testo		TEXT NOT NULL,
+Data		TIMESTAMP NOT NULL,
+
+PRIMARY KEY (Tirocinio, Autore),
+FOREIGN KEY (Tirocinio)
+	REFERENCES Tirocinio(Auto_ID),
+FOREIGN KEY (Autore)
+	REFERENCES UtenteGoogle(Internal_ID)
 );
