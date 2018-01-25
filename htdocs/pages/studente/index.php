@@ -15,6 +15,9 @@ $google_client->setAccessToken($_SESSION["user"]["token"]);
 
 $oauth2 = new \Google_Service_Oauth2($google_client);
 $user = $oauth2->userinfo->get();
+
+// Variabili pagina
+$page = "In corso";
 ?>
 <html lang="it">
 <head>
@@ -64,39 +67,32 @@ $user = $oauth2->userinfo->get();
         </aside>
         <div class="column">
             <?php
-            for($i = 0; $i < 5; $i++):
+            for($i = 0; $i < 5; $i++)
+                include "tirocinio.php";
             ?>
-                <article class="card">
-                    <header class="card-header">
-                        <h1 class="card-header-title">
-                            Stage a Black Mesa corp.
-                        </h1>
-                    </header>
-                    <div class="card-content">
-                        <div class="content">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
-                            <a href="#">@bulmaio</a>. <a href="#">#css</a> <a href="#">#responsive</a>
-                            <br>
-                            <time datetime="2016-01-01">11:09 PM - 1 Jan 2016</time>
-                        </div>
-                    </div>
-                    <footer class="card-footer">
-                        <a href="#" class="card-footer-item">
-                            <span class="icon">
-                                <i class="fa fa-pencil-square" aria-hidden="true"></i>
-                            </span>
-                            <span>
-                                Scrivi un resoconto
-                            </span>
-                        </a>
-                    </footer>
-                </article>
-            <br>
-            <?php
-            endfor;
-            ?>
+            <div id="loading_go_on" data-nextid="0">
+                <div class="content has-text-centered">
+                    <span class="icon">
+                        <i class="fa fa-circle-o-notch fa-pulse" aria-hidden="true"></i>
+                    </span>
+                    <span class="is-fullheight">
+                        Caricamento di altri tirocini...
+                    </span>
+                </div>
+            </div>
+            <div id="loading_stop" hidden="hidden">
+                <div class="content has-text-centered">
+                    <span class="icon">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                    </span>
+                    <span class="is-fullheight">
+                        Non c'è più nulla da mostrare.
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 </section>
+<?php include "../../utils/pages/footer.phtml"; ?>
 </body>
 </html>

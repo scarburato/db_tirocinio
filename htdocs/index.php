@@ -122,6 +122,6 @@ $login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
         </div>
     </section>
 </section>
-
+<?php include "utils/pages/footer.phtml"; ?>
 </body>
 </html>

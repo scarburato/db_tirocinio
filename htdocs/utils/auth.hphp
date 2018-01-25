@@ -8,6 +8,7 @@
 
 namespace auth
 {
+    const LEVEL_ALL = -1;
     const LEVEL_GUEST = 0;
     const LEVEL_GOOGLE_STUDENT = 1;
     const LEVEL_GOOGLE_TEACHER = 2;
@@ -18,7 +19,7 @@ namespace auth
      * @param $auth_level
      * @param string $basepath
      */
-    function check_and_redirect($auth_level, $basepath = "")
+    function check_and_redirect($auth_level, $basepath = "", $google = NULL)
     {
         if (!isset($_SESSION["user"]))
             $_SESSION["user"] = array(
@@ -27,8 +28,10 @@ namespace auth
                 "token"=>NULL
             );
 
-        if($auth_level === $_SESSION["user"]["type"])
+        if($auth_level === LEVEL_ALL || $auth_level === $_SESSION["user"]["type"])
             return;
+
+        // TODO Se "loggato" con Google controllare validità del token
 
         switch ($_SESSION["user"]["type"])
         {
@@ -39,6 +42,9 @@ namespace auth
             case LEVEL_GOOGLE_STUDENT:
                 header("Location: " . $basepath . "pages/studente/index.php");
                 break;
+            case LEVEL_GOOGLE_TEACHER:
+                header("Location: " . $basepath . "pages/docente/index.php");
+                break;
             case LEVEL_FACTORY:
                 header("Location: " . $basepath . "gestore/index.php");
                 break;
@@ -48,6 +54,9 @@ namespace auth
         die;
     }
 
+    /**
+     * Fa il logout
+     */
     function log_out()
     {
         $_SESSION["user"] = array(
