@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS Azienda (
 );
 
 CREATE TABLE IF NOT EXISTS Sede (
-  id        TINYINT UNSIGNED,
+  id        TINYINT UNSIGNED AUTO_INCREMENT,
   azienda   INT UNSIGNED,
   nomeSede  VARCHAR(128) NOT NULL,
   indirizzo VARCHAR(128),
@@ -111,8 +111,8 @@ CREATE TABLE IF NOT EXISTS Contatto (
   secondoNome    VARCHAR(128),
   cognome        VARCHAR(48) NOT NULL,
   email          VARCHAR(64),
-  telefono       CHAR(13),
-  FAX            CHAR(13),
+  telefono       CHAR(35), /* In conformità a ISO 20022 */
+  FAX            CHAR(35),
   qualifica      VARCHAR(60),
   ruoloAziendale TINYTEXT    NOT NULL,
 
@@ -144,6 +144,7 @@ CREATE TABLE IF NOT EXISTS Tirocinio (
 
   giudizio        TINYINT UNSIGNED,
   descrizione     TINYTEXT,
+  visibilita      ENUM('studente', 'docente', 'azienda') NOT NULL DEFAULT 'studente',
 
   UNIQUE (Studente, Azienda, DataInizio),
   FOREIGN KEY (Studente)
@@ -160,7 +161,7 @@ CREATE TABLE IF NOT EXISTS Commento (
   tirocinio INT(8) UNSIGNED,
   autore    SMALLINT UNSIGNED,
   testo     TEXT      NOT NULL,
-  quando    TIMESTAMP NOT NULL,
+  quando    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
 
   PRIMARY KEY (Tirocinio, Autore),
   FOREIGN KEY (Tirocinio)
