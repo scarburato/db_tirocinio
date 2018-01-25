@@ -37,6 +37,17 @@ CREATE TABLE IF NOT EXISTS Privilegio (
   descrizione TINYTEXT NOT NULL
 );
 
+INSERT INTO Privilegio(nome, descrizione) VALUES
+  ('control.google.users', 'Consente la gestione delle utenze che accedono al programma.'),
+  ('control.business.users', 'Consente la gestione delle utenze aziendali.'),
+  ('control.network.list', 'Consente di visualizzare gli indirizzi di rete dei tentativi d\'accesso.'),
+  ('control.network.forgive', 'Consente di "perdonare" gli indirizzi di rete che hanno effettuato eccessi tentativi di autenticazione senza successo.'),
+  ('control.google.permissions', 'Consente di modificare i permessi degli utenti Google.'),
+  ('user.root', 'Non si applicano restrizioni di alcun tipo, può essere assegnata solo da un\'altro utente root ovvero da chi può accedere in maniera diretta alla base di dati.')
+  ;
+
+/* TODO Aggiungere altri permessi per i commenti*/
+
 CREATE TABLE IF NOT EXISTS PrivilegiApplicati (
   utente     SMALLINT UNSIGNED,
   privilegio VARCHAR(10),
