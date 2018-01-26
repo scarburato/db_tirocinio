@@ -10,11 +10,7 @@ require_once "../../utils/lib.hphp";
 require_once "../../utils/auth.hphp";
 
 \auth\check_and_redirect(\auth\LEVEL_GOOGLE_STUDENT, "./../../");
-
-$google_client->setAccessToken($_SESSION["user"]["token"]);
-
-$oauth2 = new \Google_Service_Oauth2($google_client);
-$user = $oauth2->userinfo->get();
+$user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], $oauth2);
 
 // Variabili pagina
 $page = "In corso";
@@ -66,10 +62,12 @@ $page = "In corso";
             </ul>
         </aside>
         <div class="column">
-            <?php
-            for($i = 0; $i < 5; $i++)
-                include "tirocinio.php";
-            ?>
+            <div id="tirocinis">
+                <?php
+                for($i = 0; $i < 5; $i++)
+                    include "tirocinio.php";
+                ?>
+            </div>
             <div id="loading_go_on" data-nextid="0">
                 <div class="content has-text-centered">
                     <span class="icon">
@@ -94,5 +92,7 @@ $page = "In corso";
     </div>
 </section>
 <?php include "../../utils/pages/footer.phtml"; ?>
+
+<script src="js/tirocini_builder.js"></script>
 </body>
 </html>

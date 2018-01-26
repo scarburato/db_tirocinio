@@ -10,11 +10,7 @@ require_once "../../utils/lib.hphp";
 require_once "../../utils/auth.hphp";
 
 \auth\check_and_redirect(\auth\LEVEL_GOOGLE_STUDENT, "./../../");
-
-$google_client->setAccessToken($_SESSION["user"]["token"]);
-
-$oauth2 = new \Google_Service_Oauth2($google_client);
-$user = $oauth2->userinfo->get();
+$user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], $oauth2);
 
 // Variabili pagina
 $page = "Cruscotto";

@@ -67,4 +67,42 @@ namespace auth
 
         session_destroy();
     }
+
+    /**
+     * Permette di provare se il token utente è ancora valido.
+     * @param $google \Google_Client
+     * @param $token string
+     * @return mixed
+     */
+    function connect_token_google(&$google, $token, &$oauth2 = null)
+    {
+        $google->setAccessToken($token);
+        $oauth2 = new \Google_Service_Oauth2($google);
+
+        try
+        {
+            $userinfo = $oauth2->userinfo->get();
+        }
+        catch(\Google_Service_Exception $e)
+        {
+            if($e->getCode() == 401)
+            {
+                log_out();
+                header("Location: " . dirname(__FILE__) . "/../index.php?session_expire=" . $e->getMessage());
+                die("Sessione scaduta. <br>" . $e->getTraceAsString());
+            }
+            else
+            {
+                $errore = array(
+                    "name" => $e->getMessage(),
+                    "code" => $e->getCode(),
+                    "what" => $e->getTraceAsString()
+                );
+
+                header("Location: " . dirname(__FILE__) . "/../error.php?error=" . json_encode($errore));
+            }
+        }
+
+        return $userinfo;
+    }
 }

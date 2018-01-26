@@ -107,7 +107,7 @@
 </p>
 <ul class="menu-list">
     <li>
-        <a href="pages/docente/control_panel.php" class="<?= ($index_menu !== 8 ?: "is-active")?>">
+        <a href="pages/docente/control_panel/" class="<?= ($index_menu !== 8 ?: "is-active")?>">
             <span class="icon">
             <i class="fa fa-wrench" aria-hidden="true"></i>
             </span>

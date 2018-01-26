@@ -26,6 +26,27 @@ $login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
     </style>
 </head>
 <body>
+<div class="modal is-active" id="no_js">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <div class="message is-danger">
+            <div class="message-header">
+                <p>
+                    <span class="icon">
+                        <i class="fa fa-code" aria-hidden="true"></i>
+                    </span>
+                    <span>
+                        Attivare JavaScript
+                    </span>
+                </p>
+            </div>
+            <div class="message-body">
+                È necessario abilatare <strong>JavaScript</strong> per continuare.<br>
+                Se il proprio browser non supporta <strong>JavaScript</strong> aggiornare ad una versione.
+            </div>
+        </div>
+    </div>
+</div>
 <header class="hero is-primary is-medium">
     <div class="hero-body">
         <div class="container">
@@ -123,5 +144,9 @@ $login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
     </section>
 </section>
 <?php include "utils/pages/footer.phtml"; ?>
+
+<script>
+	$("#no_js").removeClass("is-active");
+</script>
 </body>
 </html>
