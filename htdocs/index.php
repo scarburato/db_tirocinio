@@ -59,6 +59,39 @@ $login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
         </div>
     </div>
 </header>
+<?php
+if(isset($_GET["google_expired"]))
+{
+    ?>
+    <section class="container" id="google_is_dead">
+        <br>
+        <article class="message is-warning">
+            <div class="message-header">
+                <p>
+                <span class="icon">
+                    <i class="fa fa-key" aria-hidden="true"></i>
+                </span>
+                    <span>
+                    Accesso scaduto
+                </span>
+                </p>
+                <button class="delete" aria-label="delete" id="delete_google_is_dead"></button>
+            </div>
+            <div class="message-body">
+                L'accesso di Google non risulta essere più valido.<br>
+                Provare a rieffettuare l'accesso.
+            </div>
+        </article>
+        <script>
+			$("#delete_google_is_dead").on("click", function ()
+			{
+				$("#google_is_dead").remove();
+			});
+        </script>
+    </section>
+    <?php
+}
+?>
 <section>
     <section class="section">
         <div class="container">

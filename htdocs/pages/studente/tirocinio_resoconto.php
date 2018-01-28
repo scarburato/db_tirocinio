@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: dario
- * Date: 19/01/18
- * Time: 20.06
+ * Date: 28/01/18
+ * Time: 17.02
  */
 
 require_once "../../utils/lib.hphp";
@@ -12,12 +12,25 @@ require_once "../../utils/auth.hphp";
 \auth\check_and_redirect(\auth\LEVEL_GOOGLE_STUDENT, "./../../");
 $user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../", $oauth2);
 
+if(!isset($_GET["tirocinio"]))
+{
+    header("Location: index.php");
+    die("");
+}
+
+// TODO Interrogazione
+$tirocinio_azienda = "NULL";
+
 // Variabili pagina
-$page = "In corso";
+$page = "Scrivi Resosconto - " . $tirocinio_azienda;
+
 ?>
+
 <html lang="it">
 <head>
     <?php include "../../utils/pages/head.phtml"; ?>
+    <script src="https://unpkg.com/lite-editor@1.4.0/js/lite-editor.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lite-editor@1.4.0/css/lite-editor.css">
 </head>
 <body>
 <?php include "../common/google_navbar.php"; ?>
@@ -30,7 +43,7 @@ $page = "In corso";
             </p>
             <ul class="menu-list">
                 <li>
-                    <a class="is-active">
+                    <a href="pages/studente/index.php?time=now">
                         <span class="icon">
                             <i class="fa fa-play" aria-hidden="true"></i>
                         </span>
@@ -40,7 +53,7 @@ $page = "In corso";
                     </a>
                 </li>
                 <li>
-                    <a>
+                    <a href="pages/studente/index.php?time=future">
                         <span class="icon">
                             <i class="fa fa-fast-forward" aria-hidden="true"></i>
                         </span>
@@ -50,7 +63,7 @@ $page = "In corso";
                     </a>
                 </li>
                 <li>
-                    <a>
+                    <a href="pages/studente/index.php?time=past">
                         <span class="icon">
                             <i class="fa fa-stop" aria-hidden="true"></i>
                         </span>
@@ -61,34 +74,12 @@ $page = "In corso";
                 </li>
             </ul>
         </aside>
-        <div class="column">
-            <div id="tirocinis">
-            </div>
-            <div id="loading_go_on" data-nextid="0">
-                <div class="content has-text-centered">
-                    <span class="icon">
-                        <i class="fa fa-circle-o-notch fa-pulse" aria-hidden="true"></i>
-                    </span>
-                    <span class="is-fullheight">
-                        Caricamento di altri tirocini...
-                    </span>
-                </div>
-            </div>
-            <div id="loading_stop" hidden="hidden">
-                <div class="content has-text-centered">
-                    <span class="icon">
-                        <i class="fa fa-check" aria-hidden="true"></i>
-                    </span>
-                    <span class="is-fullheight">
-                        Non c'è più nulla da mostrare.
-                    </span>
-                </div>
+        <div>
+            <div id="summernote">
+                cds
             </div>
         </div>
     </div>
 </section>
-<?php include "../../utils/pages/footer.phtml"; ?>
-
-<script src="js/tirocini_builder.js"></script>
 </body>
 </html>

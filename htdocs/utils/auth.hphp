@@ -37,16 +37,16 @@ namespace auth
         {
             case LEVEL_GUEST:
             default:
-                header("Location: " . $basepath . "index.php");
+                header("Location: {$basepath}index.php");
                 break;
             case LEVEL_GOOGLE_STUDENT:
-                header("Location: " . $basepath . "pages/studente/index.php");
+                header("Location: {$basepath}pages/studente/index.php");
                 break;
             case LEVEL_GOOGLE_TEACHER:
-                header("Location: " . $basepath . "pages/docente/index.php");
+                header("Location: {$basepath}pages/docente/index.php");
                 break;
             case LEVEL_FACTORY:
-                header("Location: " . $basepath . "gestore/index.php");
+                header("Location: {$basepath}gestore/index.php");
                 break;
         }
 
@@ -71,10 +71,11 @@ namespace auth
     /**
      * Permette di provare se il token utente è ancora valido.
      * @param $google \Google_Client
+     * @param $basepath string
      * @param $token string
      * @return mixed
      */
-    function connect_token_google(&$google, $token, &$oauth2 = null)
+    function connect_token_google(&$google, $token, $basepath = "", &$oauth2 = null)
     {
         $google->setAccessToken($token);
         $oauth2 = new \Google_Service_Oauth2($google);
@@ -85,11 +86,10 @@ namespace auth
         }
         catch(\Google_Service_Exception $e)
         {
+            log_out();
             if($e->getCode() == 401)
             {
-                log_out();
-                header("Location: " . dirname(__FILE__) . "/../index.php?session_expire=" . $e->getMessage());
-                die("Sessione scaduta. <br>" . $e->getTraceAsString());
+                header("Location: {$basepath}index.php?google_expired=" . urlencode($e->getMessage()));
             }
             else
             {
@@ -99,8 +99,10 @@ namespace auth
                     "what" => $e->getTraceAsString()
                 );
 
-                header("Location: " . dirname(__FILE__) . "/../error.php?error=" . json_encode($errore));
+                header("Location: {$basepath}error.php?error=" . json_encode($errore));
             }
+
+            die("Sessione scaduta. <br>" . $e->getTraceAsString());
         }
 
         return $userinfo;

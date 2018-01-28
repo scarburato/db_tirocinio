@@ -5,12 +5,34 @@ $.fn.isOnScreen = function()
 	return bounds.top < window.innerHeight && bounds.bottom > 0;
 };
 
+index = 0;
+semaforo = false;
 window.setInterval(function ()
 {
-	// TODO Controllo se arrivato alla fine
+	if(semaforo)
+		return;
 
+	// Notare che quando il div diventerà HIDDEN la condizione sarà sempre false!
 	if($("#loading_go_on").isOnScreen())
 	{
-		// TODO Post 'n' write
+		semaforo = true;
+		$.get(
+			"pages/studente/tirocinio.php",
+			{
+				index: index++,
+			}
+		).done(function (data)
+		{
+			if(data.length === 0)
+			{
+				$("#loading_go_on").hide();
+				$("#loading_stop").show();
+			}
+			else
+				$("#tirocinis").append(data);
+		}).always(function ()
+		{
+			semaforo = false;
+		});
 	}
-},400);
+},100);

@@ -6,10 +6,24 @@
  * Time: 19.48
  */
 
+require_once "../../utils/lib.hphp";
+require_once "../../utils/auth.hphp";
+
+\auth\check_and_redirect(\auth\LEVEL_GOOGLE_STUDENT, "./../../");
+
+$index = (isset($_GET["index"]) ? $_GET["index"] : 0);
+
 // TODO Controllare GET
+if($index > 1)
+    return;
+
+if($index < 1)
+    $next = $index + 1;
+else
+    $next = NULL;
 ?>
 
-<article class="card">
+<article class="card tirocinio" id="tirocinio_<?= $index ?>" data-nextid="<?= (string)($next) ?>">
     <header class="card-header">
         <h1 class="card-header-title">
             Stage a Black Mesa corp.
@@ -24,7 +38,7 @@
         </div>
     </div>
     <footer class="card-footer">
-        <a href="#" class="card-footer-item">
+        <a href="pages/studente/tirocinio_resoconto.php?tirocinio=<?=$index?>" class="card-footer-item">
             <span class="icon">
                 <i class="fa fa-pencil-square" aria-hidden="true"></i>
             </span>
