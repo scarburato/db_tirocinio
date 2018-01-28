@@ -17,7 +17,7 @@ $page = "Accessi";
 
 $server = new mysqli(DBMS_SERVER, DBMS_USER, DBMS_PASS, DBMS_DB_NAME);
 $indirizzi  = $server->prepare(
-        "SELECT indirizzo_rete, ultimo_accesso, tentativi_falliti, ultimo_tentativo FROM AziendeTentativiAccesso;"
+        "SELECT indirizzo_rete, ultimo_accesso, tentativi_falliti, ultimo_tentativo FROM AziendeTentativiAccesso ORDER BY ultimo_tentativo DESC "
 );
 $indirizzi->execute();
 $indirizzi->bind_result(
