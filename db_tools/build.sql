@@ -183,8 +183,8 @@ CREATE TABLE IF NOT EXISTS Commento (
 );
 
 CREATE TABLE IF NOT EXISTS AziendeTentativiAccesso (
-  indirizzo_rete    BINARY(16)   NOT NULL PRIMARY KEY,
+  indirizzo_rete    VARBINARY(16)   NOT NULL PRIMARY KEY,
   ultimo_accesso    TIMESTAMP    NULL     DEFAULT NULL,
   tentativi_falliti INT UNSIGNED NOT NULL DEFAULT 0,
-  ultimo_tentativo  TIMESTAMP    NOT NULL
+  ultimo_tentativo  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP()
 );

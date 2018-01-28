@@ -20,4 +20,4 @@ const TRUSTED_DOMAIN = "itispisa.gov.it";
 const DBMS_SERVER = null;
 const DBMS_USER = "root";
 const DBMS_PASS = "";
-const DBMS_DB_NAME = null;
+const DBMS_DB_NAME = "Tirocini";

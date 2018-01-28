@@ -131,7 +131,7 @@ if(isset($_GET["google_expired"]))
                 </div>
                 <div class="column ">
                     <h1 class="title">Accesso utenze aziendali</h1>
-                    <form>
+                    <form action="aziende_ingresso.php" method="POST">
                         <div class="field">
                             <label class="label">
                                 Identificativo univoco numerico
