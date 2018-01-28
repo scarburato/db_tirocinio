@@ -37,6 +37,18 @@ CREATE TABLE IF NOT EXISTS Privilegio (
   descrizione TINYTEXT NOT NULL
 );
 
+INSERT INTO Privilegio (nome, descrizione) VALUES
+  ('control.google.users', 'Consente la gestione delle utenze che accedono al programma.'),
+  ('control.business.users', 'Consente la gestione delle utenze aziendali.'),
+  ('control.network.list', 'Consente di visualizzare gli indirizzi di rete dei tentativi d\'accesso.'),
+  ('control.network.forgive',
+   'Consente di "perdonare" gli indirizzi di rete che hanno effettuato eccessi tentativi di autenticazione senza successo.'),
+  ('control.google.permissions', 'Consente di modificare i permessi degli utenti Google.'),
+  ('user.root',
+   'Non si applicano restrizioni di alcun tipo, può essere assegnata solo da un\'altro utente root ovvero da chi può accedere in maniera diretta alla base di dati.');
+
+/* TODO Aggiungere altri permessi per i commenti*/
+
 CREATE TABLE IF NOT EXISTS PrivilegiApplicati (
   utente     SMALLINT UNSIGNED,
   privilegio VARCHAR(10),
@@ -134,17 +146,17 @@ CREATE TABLE IF NOT EXISTS EntratoInContatto (
 );
 
 CREATE TABLE IF NOT EXISTS Tirocinio (
-  id              INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  studente        SMALLINT UNSIGNED NOT NULL,
-  azienda         INT UNSIGNED      NOT NULL,
-  docenteTutore   SMALLINT UNSIGNED NOT NULL,
-  tutoreAziendale INT(8) UNSIGNED   NOT NULL,
-  dataInizio      DATE              NOT NULL,
+  id              INT(8) UNSIGNED                                  AUTO_INCREMENT PRIMARY KEY,
+  studente        SMALLINT UNSIGNED                       NOT NULL,
+  azienda         INT UNSIGNED                            NOT NULL,
+  docenteTutore   SMALLINT UNSIGNED                       NOT NULL,
+  tutoreAziendale INT(8) UNSIGNED                         NOT NULL,
+  dataInizio      DATE                                    NOT NULL,
   dataTermine     DATE,
 
   giudizio        TINYINT UNSIGNED,
   descrizione     TINYTEXT,
-  visibilita      ENUM('studente', 'docente', 'azienda') NOT NULL DEFAULT 'studente',
+  visibilita      ENUM ('studente', 'docente', 'azienda') NOT NULL DEFAULT 'studente',
 
   UNIQUE (Studente, Azienda, DataInizio),
   FOREIGN KEY (Studente)
@@ -168,4 +180,11 @@ CREATE TABLE IF NOT EXISTS Commento (
   REFERENCES Tirocinio (id),
   FOREIGN KEY (Autore)
   REFERENCES UtenteGoogle (id)
+);
+
+CREATE TABLE IF NOT EXISTS AziendeTentativiAccesso (
+  indirizzo_rete    BINARY(16)   NOT NULL PRIMARY KEY,
+  ultimo_accesso    TIMESTAMP    NULL     DEFAULT NULL,
+  tentativi_falliti INT UNSIGNED NOT NULL DEFAULT 0,
+  ultimo_tentativo  TIMESTAMP    NOT NULL
 );
