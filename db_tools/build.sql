@@ -1,5 +1,9 @@
 DROP DATABASE IF EXISTS Tirocini;
-CREATE DATABASE IF NOT EXISTS Tirocini;
+
+CREATE DATABASE IF NOT EXISTS Tirocini
+  DEFAULT CHARACTER SET utf8
+  DEFAULT COLLATE utf8_general_ci;
+
 USE Tirocini;
 
 CREATE TABLE IF NOT EXISTS UtenteGoogle (
@@ -33,7 +37,7 @@ CREATE TABLE IF NOT EXISTS Docente (
 );
 
 CREATE TABLE IF NOT EXISTS Privilegio (
-  nome        VARCHAR(10) PRIMARY KEY,
+  nome        VARCHAR(126) PRIMARY KEY,
   descrizione TINYTEXT NOT NULL
 );
 
@@ -67,7 +71,6 @@ CREATE TABLE IF NOT EXISTS Classificazioni (
 
 CREATE TABLE IF NOT EXISTS CodiceAteco (
   cod2007     VARCHAR(8) PRIMARY KEY,
-  cod2004     VARCHAR(8) UNIQUE,
   descrizione TINYTEXT
 );
 

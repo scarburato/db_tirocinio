@@ -1,0 +1,5 @@
+LOAD DATA LOCAL INFILE '/home/dario/Documenti/DB_Tirocini/db_tools/ateco2007.csv'
+    INTO TABLE CodiceAteco
+FIELDS TERMINATED BY ',' ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES
