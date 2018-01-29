@@ -9,15 +9,18 @@ require_once "utils/lib.hphp";
 require_once "utils/auth.hphp";
 
 \auth\check_and_redirect(\auth\LEVEL_GOOGLE_BOTH);
+$user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "/", $oauth2);
 
-if(isset($_GET["type"]))
+if(isset($_GET["tipo"]))
 {
-    if($_GET["type"] == 0)
+    if($_GET["tipo"] == 0)
         $_SESSION["user"]["type"] = \auth\LEVEL_GOOGLE_STUDENT;
-    elseif($_GET["type"] == 1)
+    elseif($_GET["tipo"] == 1)
         $_SESSION["user"]["type"] = \auth\LEVEL_GOOGLE_TEACHER;
 
-    header("Location index.php");
+    header("Location: index.php");
+    //var_dump($_SESSION);
+    die("Finito!");
 }
 ?>
 
@@ -39,13 +42,13 @@ if(isset($_GET["type"]))
                         </p>
                         <br>
                         <div>
-                            <a class="button is-link is-outlined is-large is-fullwidth" href="ambiguita.php?type=0">
+                            <a class="button is-link is-outlined is-large is-fullwidth" href="ambiguita.php?tipo=0">
                                 Studente
                             </a>
                         </div>
                         <br>
                         <div>
-                            <a class="button is-link is-outlined is-large is-fullwidth" href="ambiguita.php?type=1">
+                            <a class="button is-link is-outlined is-large is-fullwidth" href="ambiguita.php?tipo=1">
                                 Docente
                             </a>
                         </div>

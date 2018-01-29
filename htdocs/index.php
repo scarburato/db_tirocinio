@@ -51,10 +51,10 @@ $login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
     <div class="hero-body">
         <div class="container">
             <h1 class="title">
-                <?php echo SITE_NAME ?>
+                <?= SITE_NAME ?>
             </h1>
             <h2>
-                <?php echo SITE_SUBTITLE ?>
+                <?= SITE_SUBTITLE ?>
             </h2>
         </div>
     </div>

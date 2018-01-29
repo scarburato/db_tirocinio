@@ -20,7 +20,7 @@ namespace auth
      * @param $auth_level
      * @param string $basepath
      */
-    function check_and_redirect($auth_level, $basepath = "", $google = NULL)
+    function check_and_redirect($auth_level, $basepath = "/", $google = NULL)
     {
         if (!isset($_SESSION["user"]))
             $_SESSION["user"] = array(
