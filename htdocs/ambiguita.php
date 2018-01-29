@@ -1,0 +1,58 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 29/01/18
+ * Time: 11.21
+ */
+require_once "utils/lib.hphp";
+require_once "utils/auth.hphp";
+
+\auth\check_and_redirect(\auth\LEVEL_GOOGLE_BOTH);
+
+if(isset($_GET["type"]))
+{
+    if($_GET["type"] == 0)
+        $_SESSION["user"]["type"] = \auth\LEVEL_GOOGLE_STUDENT;
+    elseif($_GET["type"] == 1)
+        $_SESSION["user"]["type"] = \auth\LEVEL_GOOGLE_TEACHER;
+
+    header("Location index.php");
+}
+?>
+
+<html lang="it">
+<head>
+    <?php include "utils/pages/head.phtml"; ?>
+</head>
+<body>
+    <section class="section">
+        <div class="container has-text-centered">
+            <div class="columns">
+                <div class="column is-4 is-offset-4">
+                    <div class="box">
+                        <h1 class="title">Ambiguità</h1>
+                        <p class="has-text-justified">
+                            <?php var_dump($_GET) ?>
+                            L'utente risulta essere in ambedue i gruppi: studente e docente.<br>
+                            Per continuare selezionare il tipo d'utenza
+                        </p>
+                        <br>
+                        <div>
+                            <a class="button is-link is-outlined is-large is-fullwidth" href="ambiguita.php?type=0">
+                                Studente
+                            </a>
+                        </div>
+                        <br>
+                        <div>
+                            <a class="button is-link is-outlined is-large is-fullwidth" href="ambiguita.php?type=1">
+                                Docente
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

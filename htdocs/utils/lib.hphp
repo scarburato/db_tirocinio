@@ -30,3 +30,14 @@ catch (Google_Exception $e)
 $google_client->setRedirectUri(GOOGLE_REDIRECT_URI);
 $google_client->addScope("https://www.googleapis.com/auth/userinfo.email");
 $google_client->addScope("https://www.googleapis.com/auth/userinfo.profile");
+
+// Funzioni
+/**
+ * @param $tries int
+ * @return int
+ */
+function compute_hashes($tries)
+{
+    // (int) non è un cast .-. Perché PHP ?
+    return ((int)($tries/3) + 1)*1024;
+}

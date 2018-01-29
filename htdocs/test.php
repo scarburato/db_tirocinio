@@ -26,8 +26,8 @@ if($user["hd"] !== "itispisa.gov.it")
 }
 
 // TODO Controllare tipo d'utenza nel db
-$_SESSION["user"]["type"] = \auth\LEVEL_GOOGLE_STUDENT;
+$_SESSION["user"]["type"] = \auth\LEVEL_GOOGLE_BOTH;
 $_SESSION["user"]["id"] = "No db";
 $_SESSION["user"]["token"] = $token;
 
-header("Location: index.php");
+header("Location: ambiguita.php");

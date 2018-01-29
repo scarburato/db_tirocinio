@@ -9,7 +9,7 @@
 require_once "../../../utils/lib.hphp";
 require_once "../../../utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_STUDENT, "./../../../");
+\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER, "./../../../");
 $user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../../", $oauth2);
 
 // Variabili pagina
@@ -52,7 +52,7 @@ $indirizzi->bind_result(
                         <th>Ultimo accesso</th>
                         <th>Ultimo tentativo</th>
                         <th>Tentativi falliti</th>
-                        <th>Hash richieste</th>
+                        <th>Difficoltà captcha</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -75,14 +75,14 @@ $indirizzi->bind_result(
                                 <?= $tentativi_falliti ?>
                             </td>
                             <td>
-                                <?= (($tentativi_falliti%3) + 1)*1024 ?>
+                                <?= compute_hashes($tentativi_falliti) ?>
                             </td>
                             <td>
                                 <?php
                                 if($tentativi_falliti > 0)
                                 {
                                     ?>
-                                    <a class="button">
+                                    <a class="button" href="pages/docente/control_panel/traffico_cristo.php?indirizzo=<?= inet_ntop($indirizzo_ip) ?>">
                                         <span>Perdona</span>
                                         <span class="icon">
                                             <i class="fa fa-handshake-o" aria-hidden="true"></i>
