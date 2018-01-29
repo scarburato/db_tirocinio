@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS Classificazioni (
 CREATE TABLE IF NOT EXISTS CodiceAteco (
   id          SMALLINT UNSIGNED PRIMARY KEY,
   cod2007     CHAR(8) UNIQUE ,
-  descrizione TINYTEXT
+  descrizione TEXT
 );
 
 CREATE TABLE IF NOT EXISTS Azienda (
