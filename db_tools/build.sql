@@ -82,6 +82,8 @@ CREATE TABLE IF NOT EXISTS Azienda (
   dimensione      ENUM ('0-9', '10-49', '50-99', '100-199', '200-499', '500+'),
   gestione        ENUM ('pubblica', 'privata', 'mista'),
 
+  no_accessi      BOOLEAN           NOT NULL DEFAULT TRUE,
+
   FOREIGN KEY (Classificazione)
   REFERENCES Classificazioni (ID),
   FOREIGN KEY (Ateco)

@@ -59,7 +59,7 @@ $page = "Cassetta degli strumenti";
                 <div class="media-content">
                     <div class="content">
                         <h1>Gestione Aziende</h1>
-                        <a class="button is-link is-pulled-right" href="pages/docente/control_panel/aziende.php">
+                        <a class="button is-link is-pulled-right" href="pages/docente/control_panel/aziende">
                             Configura
                         </a>
                     </div>
@@ -74,7 +74,7 @@ $page = "Cassetta degli strumenti";
                 <div class="media-content">
                     <div class="content">
                         <h1>Controllo degli accessi</h1>
-                        <a class="button is-link is-pulled-right" href="pages/docente/control_panel/traffico.php">
+                        <a class="button is-link is-pulled-right" href="pages/docente/control_panel/traffico">
                             Configura
                         </a>
                     </div>

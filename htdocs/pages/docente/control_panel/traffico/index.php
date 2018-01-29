@@ -6,11 +6,11 @@
  * Time: 17.52
  */
 
-require_once "../../../utils/lib.hphp";
-require_once "../../../utils/auth.hphp";
+require_once "../../../../utils/lib.hphp";
+require_once "../../../../utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER, "./../../../");
-$user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../../", $oauth2);
+\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER, "./../../../../");
+$user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../../../", $oauth2);
 
 // Variabili pagina
 $page = "Accessi";
@@ -30,17 +30,17 @@ $indirizzi->bind_result(
 ?>
 <html lang="it">
 <head>
-    <?php include "../../../utils/pages/head.phtml"; ?>
+    <?php include "../../../../utils/pages/head.phtml"; ?>
 </head>
 <body>
-<?php include "../../common/google_navbar.php"; ?>
+<?php include "../../../common/google_navbar.php"; ?>
 <br>
 <section class="container">
     <div class="columns">
         <aside class="column is-3 is-fullheight">
             <?php
             $index_menu = 8;
-            include "../menu.php";
+            include "../../menu.php";
             ?>
         </aside>
         <div class="column">
@@ -82,7 +82,7 @@ $indirizzi->bind_result(
                                 if($tentativi_falliti > 0)
                                 {
                                     ?>
-                                    <a class="button" href="pages/docente/control_panel/traffico_cristo.php?indirizzo=<?= inet_ntop($indirizzo_ip) ?>">
+                                    <a class="button" href="pages/docente/control_panel/traffico/traffico_cristo.php?indirizzo=<?= inet_ntop($indirizzo_ip) ?>">
                                         <span>Perdona</span>
                                         <span class="icon">
                                             <i class="fa fa-handshake-o" aria-hidden="true"></i>
