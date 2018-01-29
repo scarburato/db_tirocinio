@@ -27,6 +27,6 @@ catch (Google_Exception $e)
     header("Location: " . dirname(__FILE__) . "/../error.php?error=" . json_encode($errore));
 }
 
-$google_client->setRedirectUri("http://localhost:63342/DB_Tirocini/test.php");
+$google_client->setRedirectUri(GOOGLE_REDIRECT_URI);
 $google_client->addScope("https://www.googleapis.com/auth/userinfo.email");
 $google_client->addScope("https://www.googleapis.com/auth/userinfo.profile");
