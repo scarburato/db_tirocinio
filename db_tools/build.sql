@@ -70,7 +70,8 @@ CREATE TABLE IF NOT EXISTS Classificazioni (
 );
 
 CREATE TABLE IF NOT EXISTS CodiceAteco (
-  cod2007     VARCHAR(8) PRIMARY KEY,
+  id          SMALLINT UNSIGNED PRIMARY KEY,
+  cod2007     CHAR(8) UNIQUE ,
   descrizione TINYTEXT
 );
 
@@ -81,7 +82,7 @@ CREATE TABLE IF NOT EXISTS Azienda (
   nominativo      VARCHAR(40)       NOT NULL,
   parolaOrdine    CHAR(128)         NOT NULL,
   classificazione SMALLINT UNSIGNED NOT NULL,
-  ateco           VARCHAR(8)        NOT NULL,
+  ateco           SMALLINT UNSIGNED NOT NULL,
   dimensione      ENUM ('0-9', '10-49', '50-99', '100-199', '200-499', '500+'),
   gestione        ENUM ('pubblica', 'privata', 'mista'),
 
@@ -90,7 +91,7 @@ CREATE TABLE IF NOT EXISTS Azienda (
   FOREIGN KEY (Classificazione)
   REFERENCES Classificazioni (ID),
   FOREIGN KEY (Ateco)
-  REFERENCES CodiceAteco (Cod2007)
+  REFERENCES CodiceAteco (id)
 );
 
 CREATE TABLE IF NOT EXISTS Sede (
