@@ -88,5 +88,6 @@ $page = "Gestione Aziende";
         </div>
     </div>
 </section>
+<?php include "../../../../utils/pages/footer.phtml"; ?>
 </body>
 </html>
