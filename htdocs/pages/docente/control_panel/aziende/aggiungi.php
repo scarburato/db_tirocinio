@@ -61,6 +61,30 @@ $page = "Gestione Aziende - Aggiungi";
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
                         <label class="label">
+                            Sedi
+                        </label>
+                    </div>
+                    <div class="field-body" >
+                        <div class="field box is-fullwidth" style="height: 30vh; overflow-y: auto">
+                            <a class="button is-small is-link is-pulled-right" id="aggiungi_sede_trigger">
+                                <span class="icon">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                </span>
+                                <span>
+                                    Aggiungi
+                                </span>
+                            </a>
+                            <table class="table is-fullwidth" >
+                                <tbody id="sedi_memoria">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">
                             Tipo gestione
                         </label>
                     </div>
@@ -195,6 +219,72 @@ $page = "Gestione Aziende - Aggiungi";
     </div>
 </section>
 <?php include "../../../../utils/pages/footer.phtml"; ?>
-<script src="pages/docente/control_panel/aziende/aggiungi.js"></script>
+
+<!--- FINESTREE -->
+<div class="modal" id="aggiungi_sede">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Aggiungi Sede</p>
+        </header>
+        <section class="modal-card-body" style="overflow-y: auto">
+            <form id="aggiungi_sede_form">
+                <div class="field">
+                    <label class="label">
+                        Nome sede
+                    </label>
+                    <div class="control">
+                        <input class="input" type="text" maxlength="128" required name="nominativo" placeholder="Nome della sede">
+                    </div>
+                    <p class="help">
+                        Questo campo è obbligatorio
+                    </p>
+                </div>
+                <div class="field">
+                    <label class="label">
+                        Locazione
+                    </label>
+                    <div class="control">
+                        <input class="input" type="text" maxlength="128" name="indirizzo" placeholder="Indirizzo sede">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="text" maxlength="15" name="civico" placeholder="Numero civico">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="text" maxlength="128" name="comune" placeholder="Comune">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="text" maxlength="128" name="provincia" placeholder="Provincia">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="number" maxlength="5" name="cap" placeholder="Codice d'avviamento postale">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="text" maxlength="128" name="stato" placeholder="Stato" value="Italia">
+                    </div>
+                </div>
+
+            </form>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-success" id="aggiungi_sede_aggiungi">Aggiungi</button>
+            <button class="button" id="aggiungi_sede_scarta">Scarta</button>
+        </footer>
+    </div>
+</div>
+
+
+<script src="js/togglePanel.js"></script>
+<script src="js/docente_control_aziende.js"></script>
 </body>
 </html>
