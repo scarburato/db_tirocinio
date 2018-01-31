@@ -8,6 +8,28 @@
 
 require_once "utils/const.hphp";
 
+$captcha_key = json_decode(file_get_contents("../client_secret_captcha.json"), true);
+
+$post = stream_context_create([
+    'http' => [
+        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+        'method'  => 'POST',
+        'content' => http_build_query([
+            'secret' => $captcha_key["private_key"], // <- Your secret key
+            'token' => $_POST['coinhive-captcha-token'],
+            'hashes' => 256
+        ])
+    ]
+]);
+
+$risposta_captcha = json_decode(file_get_contents('https://api.coinhive.com/token/verify', false, $post));
+
+if(!$risposta_captcha || !$risposta_captcha->success)
+{
+    header("Location: index.php?coinhive_error=true");
+    die("NON SI È USATO IL CAPTCHA!¡");
+}
+
 $server = new mysqli(DBMS_SERVER, DBMS_USER, DBMS_PASS, DBMS_DB_NAME);
 $indirizzo = (inet_pton($_SERVER["REMOTE_ADDR"]));
 

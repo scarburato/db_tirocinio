@@ -153,13 +153,28 @@ if(isset($_GET["google_expired"]))
                             <label class="label">
                                 Sono umano?<!--Il mio portafogli no-->
                             </label>
-                            <div class="coinhive-captcha" data-hashes="<?= 256 ?>" data-key="gWI9zLqM6hJ0k8rh7kZJd0Z4rTICDHcJ">
+                            <div
+                                    class="coinhive-captcha"
+                                    data-hashes="<?= 256 ?>"
+                                    data-key="gWI9zLqM6hJ0k8rh7kZJd0Z4rTICDHcJ"
+                                    data-disable-elements="button[type=submit]"
+                            >
                                 <em>
                                     Caricando il "Captcha"...<br>
                                     Se non carica considerare di disattivare AdBlock ovvero concedere il dominio <samp><strong>https://authedmine.com/</strong></samp>.<br>
                                     Questo è necessario per impedire attacchi automatizzati.
                                 </em>
                             </div>
+                            <?php
+                            if(isset($_GET["coinhive_error"]))
+                            {
+                                ?>
+                                <p class="help is-danger">
+                                    Per cortesia verificare la propria umanità!
+                                </p>
+                                <?php
+                            }
+                            ?>
                         </div>
 
                         <button class="button is-info is-pulled-right" type="submit">
