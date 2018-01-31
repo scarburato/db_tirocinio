@@ -12,6 +12,9 @@ require_once "../../../../utils/auth.hphp";
 \auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER, "./../../../../");
 $user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../../../", $oauth2);
 
+$server = new mysqli(DBMS_SERVER, DBMS_USER, DBMS_PASS, DBMS_DB_NAME);
+$server->set_charset("utf8");
+
 // Variabili pagina
 $page = "Gestione Aziende - Aggiungi";
 ?>
@@ -31,7 +34,7 @@ $page = "Gestione Aziende - Aggiungi";
             ?>
         </aside>
         <div class="column">
-            <form method="post">
+            <form id="main_form" method="post" action="pages/docente/control_panel/aziende/aggiungi_db.php">
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
                         <label class="label">
@@ -40,7 +43,7 @@ $page = "Gestione Aziende - Aggiungi";
                     </div>
                     <div class="field-body">
                         <div class="field">
-                            <input class="input" type="text" required maxlength="100" placeholder="Nominativo ">
+                            <input class="input" type="text" required maxlength="100" name="nominativo" placeholder="Nominativo ">
                             <p class="help">
                                 Campo obbligatorio
                             </p>
@@ -51,10 +54,10 @@ $page = "Gestione Aziende - Aggiungi";
                     <div class="field-label is-normal"></div>
                     <div class="field-body">
                         <div class="field">
-                            <input class="input" type="text" maxlength="16" placeholder="Codice Fiscale">
+                            <input class="input" type="text" maxlength="16" name="codice_fiscale" placeholder="Codice Fiscale">
                         </div>
                         <div class="field">
-                            <input class="input" type="text" maxlength="10" placeholder="Partita I.V.A.">
+                            <input class="input" type="text" maxlength="10" name="iva" placeholder="Partita I.V.A.">
                         </div>
                     </div>
                 </div>
@@ -65,7 +68,7 @@ $page = "Gestione Aziende - Aggiungi";
                         </label>
                     </div>
                     <div class="field-body" >
-                        <div class="field box is-fullwidth" style="height: 30vh; overflow-y: auto">
+                        <div class="field box is-fullwidth" style="height: 10rem; overflow-y: auto">
                             <a class="button is-small is-link is-pulled-right" id="aggiungi_sede_trigger">
                                 <span class="icon">
                                     <i class="fa fa-plus" aria-hidden="true"></i>
@@ -130,7 +133,7 @@ $page = "Gestione Aziende - Aggiungi";
                         <div class="field is-normal">
                             <div class="control">
                                 <div class="select is-fullwidth">
-                                    <select title="dimensione">
+                                    <select title="dimensione" name="dimensione">
                                         <option>no db</option>
                                     </select>
                                 </div>
@@ -150,13 +153,13 @@ $page = "Gestione Aziende - Aggiungi";
                     <div class="field-body">
                         <div class="field has-addons is-normal">
                             <div class="control is-expanded">
-                                <input class="input" type="text" maxlength="8" required readonly placeholder="Premere seleziona">
+                                <input class="input" type="text" maxlength="8" required readonly name="ateco" placeholder="Premere seleziona">
                                 <p class="help">
                                     Campo obbligatorio
                                 </p>
                             </div>
                             <div class="control">
-                                <a class="button is-info">
+                                <a class="button is-info" id="seleziona_ateco_trigger">
                                     <span class="icon">
                                         <i class="fa fa-list-alt" aria-hidden="true"></i>
                                     </span>
@@ -177,9 +180,9 @@ $page = "Gestione Aziende - Aggiungi";
                     <div class="field-body">
                         <div class="field has-addons is-normal">
                             <div class="control is-expanded">
-                                <input class="input" type="text" minlength="8" required placeholder="Parola d'ordine" id="parolaordine">
+                                <input class="input" type="text" minlength="8" required placeholder="Parola d'ordine" name="parolaordine" id="parolaordine">
                                 <p class="help">
-                                    Campo obbligatorio. La parola d'ordine dovrà essere cambiata al primo accesso
+                                    Campo obbligatorio. La parola d'ordine deve essere almeno otto caratteri. La parola d'ordine dovrà essere cambiata al primo accesso
                                 </p>
                             </div>
                             <div class="control">
@@ -214,13 +217,14 @@ $page = "Gestione Aziende - Aggiungi";
 
                     </div>
                 </div>
+                <input type="hidden" name="sedi" hidden id="sedi_silent_out">
             </form>
         </div>
     </div>
 </section>
 <?php include "../../../../utils/pages/footer.phtml"; ?>
 
-<!--- FINESTREE -->
+<!--- PopOut: Aggiunta sede -->
 <div class="modal" id="aggiungi_sede">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -283,6 +287,63 @@ $page = "Gestione Aziende - Aggiungi";
     </div>
 </div>
 
+<!--- PopOut: Seleziona ATECO -->
+<div class="modal" id="seleziona_ateco">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Aggiungi Sede</p>
+        </header>
+        <section class="modal-card-body" style="height: 100%; max-height: 100%">
+            <div class="field has-addons">
+                    <p class="control">
+                        <input class="input" type="text" placeholder="Cerca ATECO">
+                    </p>
+                    <p class="control">
+                        <a class="button">
+                            Cerca
+                        </a>
+                    </p>
+            </div>
+            <div class="is-fullwidth" style="overflow-y: auto">
+                <table class="table is-fullwidth is-narrow is-hoverable">
+                    <thead>
+                    <tr>
+                        <th>Codice</th>
+                        <th>Descrizione</th>
+                    </tr>
+                    </thead>
+                    <tbody id="ateco_tbody">
+                    <?php
+                    $ateco = $server->prepare("SELECT id, cod2007, descrizione FROM CodiceAteco");
+                    $ateco->execute();
+                    $ateco->bind_result(
+                            $id,
+                            $codice,
+                            $descrizione
+                    );
+
+                    while($ateco->fetch())
+                    {
+                        ?>
+                        <tr style="cursor: pointer">
+
+                            <td class="codice_ateco_value"><?= $codice?></td>
+                            <td><?= $descrizione?></td>
+                        </tr>
+                        <?php
+                    }
+                    ?>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-success" id="seleziona_ateco_aggiungi">Seleziona</button>
+            <button class="button" id="seleziona_ateco_scarta">Scarta</button>
+        </footer>
+    </div>
+</div>
 
 <script src="js/togglePanel.js"></script>
 <script src="js/docente_control_aziende.js"></script>
