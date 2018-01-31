@@ -12,8 +12,7 @@ require_once "../../../../utils/auth.hphp";
 \auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER, "./../../../../");
 $user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../../../", $oauth2);
 
-$server = new mysqli(DBMS_SERVER, DBMS_USER, DBMS_PASS, DBMS_DB_NAME);
-$server->set_charset("utf8");
+$server = new MySqliWrapper();
 
 // Variabili pagina
 $page = "Gestione Aziende - Aggiungi";
@@ -316,7 +315,7 @@ $page = "Gestione Aziende - Aggiungi";
                     <tbody id="ateco_tbody">
                     <?php
                     $ateco = $server->prepare("SELECT id, cod2007, descrizione FROM CodiceAteco");
-                    $ateco->execute();
+                    $ateco->execute(true);
                     $ateco->bind_result(
                             $id,
                             $codice,

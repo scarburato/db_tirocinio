@@ -9,7 +9,7 @@ require_once "utils/const.hphp";
 $page = "Pagina d'errore";
 
 if(isset($_GET["error"]))
-    $errore = json_decode($_GET["error"]);
+    $errore = json_decode(urldecode($_GET["error"]),true);
 else
     $errore = array(
         "name" => "Problema generico",

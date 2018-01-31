@@ -1,0 +1,79 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 31/01/18
+ * Time: 15.19
+ */
+
+class MySqliWrapper extends mysqli
+{
+    private $db = DBMS_DB_NAME;
+    private $server_name = DBMS_SERVER;
+    private $user = DBMS_USER;
+    private $password = DBMS_PASS;
+
+    /**
+     * MySqliWrapper constructor.
+     * @param string $db
+     * @param string $server
+     * @param string $user
+     * @param string $password
+     */
+    public function __construct(string $db = NULL,string $server = NULL,string $user = NULL,string $password = NULL)
+    {
+        if($db !== NULL)
+            $this->db = $db;
+
+        if($server !== NULL)
+            $this->server_name = $server;
+
+        if($user !== NULL)
+            $this->user = $user;
+
+        if($password !== NULL)
+            $this->password = $password;
+
+        parent::__construct($this->server_name, $this->user, $this->password, $this->db);
+        parent::set_charset("utf8");
+    }
+
+    public function prepare($query): MySqliStmWrapper
+    {
+        return new MySqliStmWrapper($this, $query);
+    }
+}
+
+class MySqliStmWrapper extends mysqli_stmt
+{
+    /**
+     * MySqliStmWrapper constructor.
+     * @param mysqli $link
+     * @param string $query
+     */
+    public function __construct(mysqli $link, string $query)
+    {
+        parent::__construct($link, $query);
+    }
+
+    public function execute($redirect_on_error = false)
+    {
+        $success = parent::execute();
+
+        if(!$success && $redirect_on_error)
+        {
+            $errore = [
+                "name" => "Errore interrogazione DB",
+                "code" => $this->errno,
+                "what" => json_encode($this->error_list, JSON_PRETTY_PRINT)
+            ];
+
+            header("Location: http://".$_SERVER['HTTP_HOST']. "/error.php?error=".urlencode(json_encode($errore)));
+            //die("Errore fatale");
+        }
+
+        return $success;
+    }
+
+
+}
