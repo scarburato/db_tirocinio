@@ -40,5 +40,5 @@ $google_client->addScope("https://www.googleapis.com/auth/userinfo.profile");
 function compute_hashes($tries)
 {
     // (int) non è un cast .-. Perché PHP ?
-    return ((int)($tries/3) + 1)*1024;
+    return ((int)($tries/2) + 1)*2048;
 }

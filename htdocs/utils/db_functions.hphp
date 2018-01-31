@@ -42,13 +42,34 @@ class MySqliWrapper extends mysqli
     {
         return new MySqliStmWrapper($this, $query);
     }
+
+    /**
+     * This function returns all possible values of an enum into an array
+     * @author https://stackoverflow.com/a/11429272
+     * @param string $table
+     * @param string $field
+     * @return array
+     * @throws mysqli_sql_exception
+     */
+    public function enum_values(string $table, string $field): array
+    {
+        $result = $this->query( "SHOW COLUMNS FROM {$table} WHERE Field = '{$field}'" );
+        if($result === FALSE)
+            throw new mysqli_sql_exception($this->error_list);
+
+        $type = $result->fetch_assoc()["Type"];
+
+        preg_match("/^enum\(\'(.*)\'\)$/", $type, $matches);
+        $enum = explode("','", $matches[1]);
+        return $enum;
+    }
 }
 
 class MySqliStmWrapper extends mysqli_stmt
 {
     /**
      * MySqliStmWrapper constructor.
-     * @param mysqli $link
+     * @param MySqliWrapper $link
      * @param string $query
      */
     public function __construct(mysqli $link, string $query)
@@ -56,7 +77,11 @@ class MySqliStmWrapper extends mysqli_stmt
         parent::__construct($link, $query);
     }
 
-    public function execute($redirect_on_error = false)
+    /**
+     * @param bool $redirect_on_error
+     * @return bool
+     */
+    public function execute(bool $redirect_on_error = false)
     {
         $success = parent::execute();
 
@@ -68,7 +93,8 @@ class MySqliStmWrapper extends mysqli_stmt
                 "what" => json_encode($this->error_list, JSON_PRETTY_PRINT)
             ];
 
-            header("Location: http://".$_SERVER['HTTP_HOST']. "/error.php?error=".urlencode(json_encode($errore)));
+            // TODO Non funzionerà in HTTPS. Risolvere
+            header("Location: http://".$_SERVER['HTTP_HOST']. BASE_DIR . "/error.php?error=".urlencode(json_encode($errore)));
             //die("Errore fatale");
         }
 

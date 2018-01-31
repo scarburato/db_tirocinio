@@ -94,9 +94,19 @@ $page = "Gestione Aziende - Aggiungi";
                         <div class="field is-normal">
                             <div class="control">
                                 <div class="select is-fullwidth">
-                                    <select title="tipo gestione">
+                                    <select title="tipo_gestione" name="tipo_gestione">
                                         <option>Lascia vuoto</option>
-                                        <option>a</option>
+                                        <?php
+                                        $opzioni = $server->enum_values("Azienda", "gestione");
+                                        foreach ($opzioni as $opzione)
+                                        {
+                                            ?>
+                                            <option value="<?= $opzione ?>">
+                                                <?= $opzione ?>
+                                            </option>
+                                            <?php
+                                        }
+                                        ?>
                                     </select>
                                 </div>
                             </div>
@@ -113,9 +123,19 @@ $page = "Gestione Aziende - Aggiungi";
                         <div class="field is-normal">
                             <div class="control">
                                 <div class="select is-fullwidth">
-                                    <select title="dimensione">
-                                        <option>Lascia vuoto</option>
-                                        <option>0-10</option>
+                                    <select title="dimensione" name="dimensione">
+                                        <option value="">Lascia vuoto</option>
+                                        <?php
+                                        $opzioni = $server->enum_values("Azienda", "dimensione");
+                                        foreach ($opzioni as $opzione)
+                                        {
+                                            ?>
+                                            <option value="<?= $opzione ?>">
+                                                <?= $opzione ?>
+                                            </option>
+                                            <?php
+                                        }
+                                        ?>
                                     </select>
                                 </div>
                             </div>
@@ -132,8 +152,21 @@ $page = "Gestione Aziende - Aggiungi";
                         <div class="field is-normal">
                             <div class="control">
                                 <div class="select is-fullwidth">
-                                    <select title="dimensione" name="dimensione">
-                                        <option>no db</option>
+                                    <select title="classificazione" name="classificazione">
+                                        <?php
+                                        $classificazioni = $server->prepare("SELECT id, descrizione FROM Classificazioni");
+                                        $classificazioni->execute(true);
+
+                                        $classificazioni->bind_result($id, $descrizione);
+                                        while($classificazioni->fetch())
+                                        {
+                                            ?>
+                                                <option value="<?= $id ?>">
+                                                    <?= $descrizione ?>
+                                                </option>
+                                            <?php
+                                        }
+                                        ?>
                                     </select>
                                 </div>
                                 <p class="help">
@@ -273,9 +306,23 @@ $page = "Gestione Aziende - Aggiungi";
                 </div>
                 <div class="field">
                     <div class="control">
-                        <input class="input" type="text" maxlength="128" name="stato" placeholder="Stato" value="Italia">
+                        <input class="input" type="text" maxlength="128" name="stato" placeholder="Stato" value="Italia" list="stati">
                     </div>
                 </div>
+
+                <datalist id="stati">
+                    <?php
+                    $stati = $server->prepare("SELECT DISTINCT stato FROM Sede");
+                    $stati->execute();
+                    $stati->bind_result($stato);
+                    while ($stati->fetch())
+                    {
+                        ?>
+                        <option value="<?= $stato ?>">
+                        <?php
+                    }
+                    ?>
+                </datalist>
 
             </form>
         </section>
@@ -315,7 +362,8 @@ $page = "Gestione Aziende - Aggiungi";
                     <tbody id="ateco_tbody">
                     <?php
                     $ateco = $server->prepare("SELECT id, cod2007, descrizione FROM CodiceAteco");
-                    $ateco->execute(true);
+                    $ateco->execute();
+                    echo "ciao";
                     $ateco->bind_result(
                             $id,
                             $codice,
