@@ -33,6 +33,37 @@ $page = "Gestione Aziende - Aggiungi";
             ?>
         </aside>
         <div class="column">
+            <?php
+            if(isset($_GET["errors"]))
+            {
+                $errori = urldecode($_GET["errors"]);
+                ?>
+                <article class="message is-danger" id="errore_db">
+                    <div class="message-header">
+                        <p>
+                            <span class="icon">
+                                <i class="fa fa-database"></i>
+                            </span>
+                            <span>
+                                Errore di processo
+                            </span>
+                        </p>
+                        <button class="delete" aria-label="delete" id="errore_db_delete"></button>
+                    </div>
+                    <div class="message-body">
+                        <p>Si sono verificati dei problemi durante il processo dei dati!</p>
+                        <pre><?= $errori ?></pre>
+                    </div>
+                    <script>
+                        $("#errore_db_delete").on("click", function ()
+						{
+                           $("#errore_db").remove();
+						});
+                    </script>
+                </article>
+                <?php
+            }
+            ?>
             <form id="main_form" method="post" action="pages/docente/control_panel/aziende/aggiungi_db.php">
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
@@ -53,10 +84,10 @@ $page = "Gestione Aziende - Aggiungi";
                     <div class="field-label is-normal"></div>
                     <div class="field-body">
                         <div class="field">
-                            <input class="input" type="text" maxlength="16" name="codice_fiscale" placeholder="Codice Fiscale">
+                            <input class="input" type="text" minlength="16" maxlength="16" name="codice_fiscale" placeholder="Codice Fiscale">
                         </div>
                         <div class="field">
-                            <input class="input" type="text" maxlength="10" name="iva" placeholder="Partita I.V.A.">
+                            <input class="input" type="text" maxlength="11" name="iva" placeholder="Partita I.V.A.">
                         </div>
                     </div>
                 </div>
@@ -94,7 +125,7 @@ $page = "Gestione Aziende - Aggiungi";
                         <div class="field is-normal">
                             <div class="control">
                                 <div class="select is-fullwidth">
-                                    <select title="tipo_gestione" name="tipo_gestione">
+                                    <select title="tipo_gestione" name="gestione">
                                         <option>Lascia vuoto</option>
                                         <?php
                                         $opzioni = $server->enum_values("Azienda", "gestione");
@@ -124,7 +155,7 @@ $page = "Gestione Aziende - Aggiungi";
                             <div class="control">
                                 <div class="select is-fullwidth">
                                     <select title="dimensione" name="dimensione">
-                                        <option value="">Lascia vuoto</option>
+                                        <option>Lascia vuoto</option>
                                         <?php
                                         $opzioni = $server->enum_values("Azienda", "dimensione");
                                         foreach ($opzioni as $opzione)
@@ -185,7 +216,8 @@ $page = "Gestione Aziende - Aggiungi";
                     <div class="field-body">
                         <div class="field has-addons is-normal">
                             <div class="control is-expanded">
-                                <input class="input" type="text" maxlength="8" required readonly name="ateco" placeholder="Premere seleziona">
+                                <input class="input" type="text" maxlength="8" name="ateco_unique" required readonly placeholder="Premere seleziona">
+                                <input hidden type="text" name="ateco" title="ateco">
                                 <p class="help">
                                     Campo obbligatorio
                                 </p>
@@ -375,7 +407,7 @@ $page = "Gestione Aziende - Aggiungi";
                         ?>
                         <tr style="cursor: pointer">
 
-                            <td class="codice_ateco_value"><?= $codice?></td>
+                            <td class="codice_ateco_value" data-dbid="<?= $id ?>"><?= $codice?></td>
                             <td><?= $descrizione?></td>
                         </tr>
                         <?php

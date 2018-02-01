@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS CodiceAteco (
 
 CREATE TABLE IF NOT EXISTS Azienda (
   id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  IVA             CHAR(11) UNIQUE   NOT NULL,
+  IVA             CHAR(11) UNIQUE,
   codiceFiscale   CHAR(16) UNIQUE,
   nominativo      VARCHAR(100)      NOT NULL,
   parolaOrdine    CHAR(128)         NOT NULL,
