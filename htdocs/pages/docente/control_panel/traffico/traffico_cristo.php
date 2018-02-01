@@ -12,7 +12,7 @@ require_once "../../../../utils/auth.hphp";
 \auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER, "./../../../../");
 \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../../../");
 
-$server = new mysqli(DBMS_SERVER, DBMS_USER, DBMS_PASS, DBMS_DB_NAME);
+$server = new \mysqli_wrapper\mysqli();
 
 $perdono = $server->prepare(
     "UPDATE AziendeTentativiAccesso

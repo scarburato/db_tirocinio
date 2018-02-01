@@ -15,7 +15,7 @@ $user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "
 // Variabili pagina
 $page = "Accessi";
 
-$server = new MySqliWrapper();
+$server = new \mysqli_wrapper\mysqli();
 $indirizzi  = $server->prepare(
         "SELECT indirizzo_rete, ultimo_accesso, tentativi_falliti, ultimo_tentativo FROM AziendeTentativiAccesso ORDER BY ultimo_tentativo DESC "
 );

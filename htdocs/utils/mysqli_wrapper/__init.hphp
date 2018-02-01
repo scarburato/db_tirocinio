@@ -1,0 +1,10 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 01/02/18
+ * Time: 18.07
+ */
+
+require_once dirname(__FILE__) . "/mysqli.hphp";
+require_once dirname(__FILE__) . "/mysqli_stmt.hphp";

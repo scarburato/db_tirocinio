@@ -1,0 +1,51 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 01/02/18
+ * Time: 18.07
+ */
+
+namespace mysqli_wrapper;
+
+use mysqli;
+
+class mysqli_stmt extends \mysqli_stmt
+{
+    /**
+     * MySqliStmWrapper constructor.
+     * @param mysqli $link
+     * @param string $query
+     */
+    public function __construct(mysqli $link, string $query)
+    {
+
+        parent::__construct($link, $query);
+    }
+
+    /**
+     * @param bool $redirect_on_error
+     * @return bool
+     */
+    public function execute(bool $redirect_on_error = false)
+    {
+        $success = parent::execute();
+
+        if(!$success && $redirect_on_error)
+        {
+            $errore = [
+                "name" => "Errore interrogazione DB",
+                "code" => $this->errno,
+                "what" => json_encode($this->error_list, JSON_PRETTY_PRINT)
+            ];
+
+            // TODO Non funzionerà in HTTPS. Risolvere
+            header("Location: http://".$_SERVER['HTTP_HOST']. BASE_DIR . "/error.php?error=".urlencode(json_encode($errore)));
+            //die("Errore fatale");
+        }
+
+        return $success;
+    }
+
+
+}

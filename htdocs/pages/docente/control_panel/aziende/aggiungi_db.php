@@ -61,7 +61,7 @@ if(sizeof($errori) > 0)
 }
 
 // Controlli 0k, procedere all'inserimento!
-$server = new MySqliWrapper();
+$server = new \mysqli_wrapper\mysqli();
 
 $inserimento = $server->prepare("INSERT INTO Azienda(IVA, codiceFiscale, nominativo, parolaOrdine, classificazione, ateco, dimensione, gestione) VALUES
                                       (?, ?, ?, ?, ?, ?, ?, ?);");

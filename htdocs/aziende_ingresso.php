@@ -30,7 +30,7 @@ if(!$risposta_captcha || !$risposta_captcha->success)
     die("NON SI È USATO IL CAPTCHA!¡");
 }
 
-$server = new mysqli(DBMS_SERVER, DBMS_USER, DBMS_PASS, DBMS_DB_NAME);
+$server = new \mysqli_wrapper\mysqli();
 $indirizzo = (inet_pton($_SERVER["REMOTE_ADDR"]));
 
 $controllo_indirizzo = $server->prepare("SELECT indirizzo_rete FROM AziendeTentativiAccesso WHERE indirizzo_rete = ?");
