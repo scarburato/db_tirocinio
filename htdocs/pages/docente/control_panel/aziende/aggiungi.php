@@ -17,7 +17,7 @@ $server = new \mysqli_wrapper\mysqli();
 // Variabili pagina
 $page = "Gestione Aziende - Aggiungi";
 ?>
-<html lang="it">
+<html lang="it" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
     <?php include "../../../../utils/pages/head.phtml"; ?>
 </head>
@@ -373,16 +373,18 @@ $page = "Gestione Aziende - Aggiungi";
             <p class="modal-card-title">Aggiungi Sede</p>
         </header>
         <section class="modal-card-body" style="height: 100%; max-height: 100%">
-            <div class="field has-addons">
+            <form id="ateco_filtro">
+                <div class="field has-addons">
                     <p class="control">
-                        <input class="input" type="text" placeholder="Cerca ATECO">
+                        <input class="input" name="query" type="text" placeholder="Cerca ATECO">
                     </p>
                     <p class="control">
-                        <a class="button">
+                        <button type="submit" class="button">
                             Cerca
-                        </a>
+                        </button>
                     </p>
-            </div>
+                </div>
+            </form>
             <div class="is-fullwidth" style="overflow-y: auto">
                 <table class="table is-fullwidth is-narrow is-hoverable">
                     <thead>
@@ -395,7 +397,6 @@ $page = "Gestione Aziende - Aggiungi";
                     <?php
                     $ateco = $server->prepare("SELECT id, cod2007, descrizione FROM CodiceAteco");
                     $ateco->execute();
-                    echo "ciao";
                     $ateco->bind_result(
                             $id,
                             $codice,
@@ -426,5 +427,6 @@ $page = "Gestione Aziende - Aggiungi";
 
 <script src="js/togglePanel.js"></script>
 <script src="js/docente_control_aziende.js"></script>
+<script src="js/docente_control_aziende_filtroateco.js"></script>
 </body>
 </html>
