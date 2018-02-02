@@ -6,8 +6,8 @@
  * Time: 12.02
  */
 
-require_once "../../../../utils/lib.hphp";
-require_once "../../../../utils/auth.hphp";
+require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
+require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
 \auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER, "./../../../../");
 // Controllo validità campi

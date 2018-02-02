@@ -6,8 +6,8 @@
  * Time: 15.42
  */
 
-require_once "../../../../utils/lib.hphp";
-require_once "../../../../utils/auth.hphp";
+require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
+require_once ($_SERVER["DOCUMENT_ROOT"]) ."/utils/auth.hphp";
 
 \auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER, "./../../../../");
 $user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../../../", $oauth2);
@@ -19,7 +19,7 @@ $page = "Gestione Aziende - Aggiungi";
 ?>
 <html lang="it" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
-    <?php include "../../../../utils/pages/head.phtml"; ?>
+    <?php include ($_SERVER["DOCUMENT_ROOT"]) ."/utils/pages/head.phtml"; ?>
 </head>
 <body>
 <?php include "../../../common/google_navbar.php"; ?>
@@ -286,7 +286,7 @@ $page = "Gestione Aziende - Aggiungi";
         </div>
     </div>
 </section>
-<?php include "../../../../utils/pages/footer.phtml"; ?>
+<?php include ($_SERVER["DOCUMENT_ROOT"]) ."/utils/pages/footer.phtml"; ?>
 
 <!--- PopOut: Aggiunta sede -->
 <div class="modal" id="aggiungi_sede">

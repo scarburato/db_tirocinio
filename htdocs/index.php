@@ -5,7 +5,7 @@
  * Date: 18/01/18
  * Time: 15.01
  */
-require_once "utils/lib.hphp";
+require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once "utils/auth.hphp";
 
 \auth\check_and_redirect(\auth\LEVEL_GUEST);
