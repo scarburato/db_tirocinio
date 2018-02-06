@@ -59,7 +59,7 @@ $page = "Cassetta degli strumenti";
                 <div class="media-content">
                     <div class="content">
                         <h1>Gestione Aziende</h1>
-                        <a class="button is-link is-pulled-right" href="pages/docente/control_panel/aziende">
+                        <a class="button is-link is-pulled-right" href="./aziende">
                             Configura
                         </a>
                     </div>
@@ -74,7 +74,7 @@ $page = "Cassetta degli strumenti";
                 <div class="media-content">
                     <div class="content">
                         <h1>Controllo degli accessi</h1>
-                        <a class="button is-link is-pulled-right" href="pages/docente/control_panel/traffico">
+                        <a class="button is-link is-pulled-right" href="./traffico">
                             Configura
                         </a>
                     </div>
@@ -98,6 +98,6 @@ $page = "Cassetta degli strumenti";
         </div>
     </div>
 </section>
-<?php include "../../../utils/pages/footer.phtml"; ?>
+<?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 </body>
 </html>

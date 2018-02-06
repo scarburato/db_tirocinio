@@ -10,7 +10,7 @@
 
 <nav class="navbar is-info">
     <div class="navbar-brand">
-        <a href="index.php" class="title navbar-item">
+        <a href="<?= BASE_DIR ?>index.php" class="title navbar-item">
             <?= SITE_NAME ?>
         </a>
     </div>
@@ -33,7 +33,7 @@
                     </p>
                 </div>
                 <div class="navbar-item is-pulled-right">
-                    <a class="button" href="utils/logout.php">
+                    <a class="button" href="<?= BASE_DIR ?>utils/logout.php">
                         <span>Esci</span>
                         <span class="icon">
                             <i class="fa fa-sign-out" aria-hidden="true"></i>

@@ -38,7 +38,7 @@ else
         </div>
     </div>
     <footer class="card-footer">
-        <a href="pages/studente/tirocinio_resoconto.php?tirocinio=<?=$index?>" class="card-footer-item">
+        <a href="tirocinio_resoconto.php?tirocinio=<?=$index?>" class="card-footer-item">
             <span class="icon">
                 <i class="fa fa-pencil-square" aria-hidden="true"></i>
             </span>

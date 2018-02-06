@@ -12,6 +12,7 @@ const SITE_SUBTITLE = "Interfaccia per gestione tirocini dell'Istituto Tecnico I
 
 // html
 const BASE_DIR  = "/";
+const ERROR_MAIL = "test@example.com";
 
 // Accesso
 /**
@@ -27,4 +28,5 @@ const DBMS_USER = "root";
 const DBMS_PASS = "";
 const DBMS_DB_NAME = "Tirocini";
 
-//error_reporting(E_ERROR);
+if(!isset($force_silent))
+    error_reporting(E_ERROR);

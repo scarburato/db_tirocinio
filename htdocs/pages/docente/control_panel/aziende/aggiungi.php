@@ -11,7 +11,6 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) ."/utils/auth.hphp";
 
 \auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER, "./../../../../");
 $user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../../../", $oauth2);
-
 $server = new \mysqli_wrapper\mysqli();
 
 // Variabili pagina
@@ -64,7 +63,7 @@ $page = "Gestione Aziende - Aggiungi";
                 <?php
             }
             ?>
-            <form id="main_form" method="post" action="pages/docente/control_panel/aziende/aggiungi_db.php">
+            <form id="main_form" method="post" action="./aggiungi_db.php">
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
                         <label class="label">
@@ -84,10 +83,47 @@ $page = "Gestione Aziende - Aggiungi";
                     <div class="field-label is-normal"></div>
                     <div class="field-body">
                         <div class="field">
-                            <input class="input" type="text" minlength="16" maxlength="16" name="codice_fiscale" placeholder="Codice Fiscale">
+                            <div class="control has-icons-right">
+                                <input class="input" type="text" minlength="11" maxlength="11" name="codice_fiscale" placeholder="Codice Fiscale">
+                                <span class="icon is-small is-right" data-status="ok">
+                                    <i class="fa fa-check"></i>
+                                </span>
+                                <span class="icon is-small is-right" data-status="error">
+                                    <i class="fa fa-exclamation-triangle"></i>
+                                </span>
+                                <span class="icon is-small is-right" data-status="warn">
+                                    <i class="fa fa-exclamation-triangle"></i>
+                                </span>
+                                <span class="icon is-small is-right" data-status="load">
+                                    <i class="fa fa-spinner fa-pulse"></i>
+                                </span>
+                            </div>
+                            <p class="help is-danger is-hidden" data-help="error-db">
+                                È stata trovata un'altra occorrenza già registrata!
+                            </p>
                         </div>
                         <div class="field">
-                            <input class="input" type="text" maxlength="11" name="iva" placeholder="Partita I.V.A.">
+                            <div class="control has-icons-right">
+                                <input class="input" type="text" maxlength="11" name="iva" placeholder="Partita I.V.A.">
+                                <span class="icon is-small is-right" data-status="ok">
+                                    <i class="fa fa-check"></i>
+                                </span>
+                                <span class="icon is-small is-right" data-status="error">
+                                    <i class="fa fa-exclamation-triangle"></i>
+                                </span>
+                                <span class="icon is-small is-right" data-status="warn">
+                                    <i class="fa fa-exclamation-triangle"></i>
+                                </span>
+                                <span class="icon is-small is-right" data-status="load">
+                                    <i class="fa fa-spinner fa-pulse"></i>
+                                </span>
+                            </div>
+                            <p class="help is-danger is-hidden" data-help="error-db">
+                                È stata trovata un'altra occorrenza già registrata!
+                            </p>
+                            <p class="help is-warning is-hidden" data-help="error-iva">
+                                La partita IVA potrebbe non essere valida.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -425,8 +461,9 @@ $page = "Gestione Aziende - Aggiungi";
     </div>
 </div>
 
-<script src="js/togglePanel.js"></script>
-<script src="js/docente_control_aziende.js"></script>
-<script src="js/docente_control_aziende_filtroateco.js"></script>
+<script src="<?= BASE_DIR ?>js/togglePanel.js"></script>
+<script src="<?= dirname($_SERVER["REQUEST_URI"]) . "/"?>js/main.js"></script>
+<script src="<?= dirname($_SERVER["REQUEST_URI"]) . "/"?>js/filtro_ateco.js"></script>
+<script src="<?= dirname($_SERVER["REQUEST_URI"]) . "/"?>js/iva_cf_validatore.js"></script>
 </body>
 </html>

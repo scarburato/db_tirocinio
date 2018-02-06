@@ -43,7 +43,7 @@ $page = "Scrivi Resosconto - " . $tirocinio_azienda;
             </p>
             <ul class="menu-list">
                 <li>
-                    <a href="pages/studente/index.php?time=now">
+                    <a href="./index.php?time=now">
                         <span class="icon">
                             <i class="fa fa-play" aria-hidden="true"></i>
                         </span>
@@ -53,7 +53,7 @@ $page = "Scrivi Resosconto - " . $tirocinio_azienda;
                     </a>
                 </li>
                 <li>
-                    <a href="pages/studente/index.php?time=future">
+                    <a href="./index.php?time=future">
                         <span class="icon">
                             <i class="fa fa-fast-forward" aria-hidden="true"></i>
                         </span>
@@ -63,7 +63,7 @@ $page = "Scrivi Resosconto - " . $tirocinio_azienda;
                     </a>
                 </li>
                 <li>
-                    <a href="pages/studente/index.php?time=past">
+                    <a href="./index.php?time=past">
                         <span class="icon">
                             <i class="fa fa-stop" aria-hidden="true"></i>
                         </span>

@@ -30,7 +30,7 @@ $indirizzi->bind_result(
 ?>
 <html lang="it">
 <head>
-    <?php include "../../../../utils/pages/head.phtml"; ?>
+    <?php include ($_SERVER["DOCUMENT_ROOT"]) ."/utils/pages/head.phtml"; ?>
 </head>
 <body>
 <?php include "../../../common/google_navbar.php"; ?>
@@ -82,7 +82,7 @@ $indirizzi->bind_result(
                                 if($tentativi_falliti > 0)
                                 {
                                     ?>
-                                    <a class="button" href="pages/docente/control_panel/traffico/traffico_cristo.php?indirizzo=<?= inet_ntop($indirizzo_ip) ?>">
+                                    <a class="button" href="./traffico_cristo.php?indirizzo=<?= inet_ntop($indirizzo_ip) ?>">
                                         <span>Perdona</span>
                                         <span class="icon">
                                             <i class="fa fa-handshake-o" aria-hidden="true"></i>

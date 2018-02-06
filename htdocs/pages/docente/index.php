@@ -17,7 +17,7 @@ $page = "Cruscotto";
 ?>
 <html lang="it">
 <head>
-    <?php include "../../utils/pages/head.phtml"; ?>
+    <?php include ($_SERVER["DOCUMENT_ROOT"]) ."/utils/pages/head.phtml"; ?>
 </head>
 <body>
 <?php include "../common/google_navbar.php"; ?>
@@ -35,6 +35,6 @@ $page = "Cruscotto";
         </div>
     </div>
 </section>
-<?php include "../../utils/pages/footer.phtml"; ?>
+<?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 </body>
 </html>

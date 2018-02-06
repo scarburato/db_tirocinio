@@ -48,7 +48,7 @@ INSERT INTO Privilegio (nome, descrizione) VALUES
   ('control.network.list.forgive',
    'Consente di "perdonare" gli indirizzi di rete che hanno effettuato eccessi tentativi di autenticazione senza successo.'),
   ('control.google.permissions', 'Consente di modificare i permessi degli utenti Google.'),
-  ('user.root',
+  ('root',
    'Non si applicano restrizioni di alcun tipo, può essere assegnata solo da un\'altro utente root ovvero da chi può accedere in maniera diretta alla base di dati.');
 
 /* TODO Aggiungere altri permessi per i commenti*/
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS CodiceAteco (
 CREATE TABLE IF NOT EXISTS Azienda (
   id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   IVA             CHAR(11) UNIQUE,
-  codiceFiscale   CHAR(16) UNIQUE,
+  codiceFiscale   CHAR(11) UNIQUE,
   nominativo      VARCHAR(100)      NOT NULL,
   parolaOrdine    CHAR(128)         NOT NULL,
   classificazione SMALLINT UNSIGNED NOT NULL,

@@ -150,6 +150,7 @@ $("#main_form").submit(function ()
 	{
 		nome.addClass("is-danger");
 		nome.parent().find("p").addClass("is-danger");
+		nome.focus();
 
 		return false;
 	}
@@ -162,11 +163,13 @@ $("#main_form").submit(function ()
 		parolaordine.addClass("is-danger");
 		nome.parent().find("p").addClass("is-danger");
 
+		parolaordine.focus();
+
 		return false;
 	}
 
 	// Controllo ateco
-	let ateco = $(this).find("input[name='ateco']");
+	let ateco = $(this).find("input[name='ateco_unique']");
 
 	if(ateco.val().length < 1)
 	{
@@ -174,6 +177,8 @@ $("#main_form").submit(function ()
 		ateco.parent().find("p").addClass("is-danger");
 		ateco.parent().parent().find("a.button").removeClass("is-info");
 		ateco.parent().parent().find("a.button").addClass("is-danger");
+
+		ateco.focus();
 
 		return false;
 	}

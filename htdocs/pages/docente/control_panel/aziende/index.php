@@ -17,7 +17,7 @@ $page = "Gestione Aziende";
 ?>
 <html lang="it">
 <head>
-    <?php include "../../../../utils/pages/head.phtml"; ?>
+    <?php include ($_SERVER["DOCUMENT_ROOT"]) .  "/utils/pages/head.phtml"; ?>
 </head>
 <body>
 <?php include "../../../common/google_navbar.php"; ?>
@@ -33,7 +33,7 @@ $page = "Gestione Aziende";
         <div class="column">
             <div>
                 <p>
-                    <a class="button is-primary is-pulled-right is-large" href="pages/docente/control_panel/aziende/aggiungi.php">
+                    <a class="button is-primary is-pulled-right is-large" href="./aggiungi.php">
                         <span class="icon">
                             <i class="fa fa-plus" aria-hidden="true"></i>
                         </span>
@@ -45,9 +45,6 @@ $page = "Gestione Aziende";
                 <table class="table is-fullwidth" style="overflow-x: auto">
                     <thead>
                     <tr>
-                        <th style="width: 10%;">
-                            ID
-                        </th>
                         <th>
                             Nome
                         </th>
@@ -63,25 +60,36 @@ $page = "Gestione Aziende";
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <th>
-                            0
-                        </th>
-                        <td>
-                            Mario et mario
-                        </td>
-                        <td>
-                            wdew
-                        </td>
-                        <td>
-                            efew
-                        </td>
-                        <td>
-                            <a class="button is-warning is-fullwidth">
-                                Altro...
-                            </a>
-                        </td>
-                    </tr>
+                    <?php
+                    $server = new \mysqli_wrapper\mysqli();
+                    $aziende = $server->prepare("SELECT nominativo, codiceFiscale, IVA, id FROM Azienda");
+                    $aziende->execute();
+                    $aziende->bind_result($nome, $cf, $iva, $id);
+                    while ($aziende->fetch())
+                    {
+                        ?>
+                        <tr>
+                            <td><?= $nome ?></td>
+                            <td>
+                                <samp><?= $cf ?></samp>
+                            </td>
+                            <td>
+                                <samp><?= $iva ?></samp>
+                            </td>
+                            <td>
+                                <a class="button is-warning is-small is-fullwidth" href="./info.php?id=<?= $id ?>">
+                                    <span class="icon">
+                                        <i class="fa fa-info"></i>
+                                    </span>
+                                    <span>
+                                        Altre informazioni
+                                    </span>
+                                </a>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                    ?>
                     </tbody>
                 </table>
             </div>

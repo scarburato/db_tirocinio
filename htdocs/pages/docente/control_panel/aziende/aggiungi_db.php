@@ -18,8 +18,8 @@ if(strlen($_POST["nominativo"]) < 1)
     array_push($errori, "nominativo empty");
 
 $tmp = mb_strlen($_POST["codice_fiscale"]);
-if($tmp !== 16 && $tmp !== 0)
-    array_push($errori, "codice fiscale must be 16 chars or must be empty!");
+if($tmp !== 11 && $tmp !== 0)
+    array_push($errori, "codice fiscale must be 11 chars or must be empty!");
 
 $codice_fisclae = $tmp > 0 ? $_POST["codice_fiscale"] : NULL;
 
@@ -120,3 +120,10 @@ if(sizeof($errori) > 0)
     header("Location: aggiungi.php?errors=" . urlencode(json_encode($errori, JSON_PRETTY_PRINT)));
     die("Errors");
 }
+
+$_SESSION["last_passwd"] = [
+    "id" => $azienda_id,
+    "passwd" => $_POST["parolaordine"]
+];
+
+header("Location: aggiunto_mostra_info.php?id={$azienda_id}");
