@@ -107,6 +107,7 @@ codice_fiscale.on ("keyup", function (tasto)
 
 	if(cf === codice_fiscale_ultimo_input)
 		return;
+	codice_fiscale_ultimo_input = cf;
 
 	let actual_request = codice_fiscale_last_request = new Date().getTime();
 
@@ -121,7 +122,7 @@ codice_fiscale.on ("keyup", function (tasto)
 	if(cf.length < 11 || cf.length > 16)
 	{
 		codice_fiscale_icone.switch ("error");
-		return;
+		return
 	}
 
 	codice_fiscale_icone.switch("load");
@@ -146,7 +147,6 @@ codice_fiscale.on ("keyup", function (tasto)
 		else
 			codice_fiscale_icone.switch ("ok");
 	});
-	codice_fiscale_ultimo_input = cf;
 });
 
 let iva = main_form.find ("input[name='iva']");
@@ -164,6 +164,7 @@ iva.on ("keyup", function (tasto)
 	if(iva === iva_ultimo_input)
 		return;
 
+	iva_ultimo_input = iva;
 	let richiesta_attuale = iva_ultima_richiesta = new Date().getTime();
 	let valido;
 
@@ -208,6 +209,4 @@ iva.on ("keyup", function (tasto)
 		else if(valido)
 			iva_icona.switch ("ok");
 	});
-
-	iva_ultimo_input = iva;
 });

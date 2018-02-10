@@ -21,6 +21,7 @@ const ERROR_MAIL = "test@example.com";
  */
 const GOOGLE_REDIRECT_URI = "http://localhost/test.php";
 const TRUSTED_DOMAIN = "itispisa.gov.it";
+const SKIP_CAPTCHA = true;
 
 // Base dati
 const DBMS_SERVER = null;

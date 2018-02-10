@@ -19,7 +19,6 @@ class mysqli_stmt extends \mysqli_stmt
      */
     public function __construct(mysqli $link, string $query)
     {
-
         parent::__construct($link, $query);
     }
 

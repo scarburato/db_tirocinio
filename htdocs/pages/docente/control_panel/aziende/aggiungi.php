@@ -84,7 +84,7 @@ $page = "Gestione Aziende - Aggiungi";
                     <div class="field-body">
                         <div class="field">
                             <div class="control has-icons-right">
-                                <input class="input" type="text" minlength="11" maxlength="11" name="codice_fiscale" placeholder="Codice Fiscale">
+                                <input class="input" type="text" minlength="11" maxlength="16" name="codice_fiscale" placeholder="Codice Fiscale">
                                 <span class="icon is-small is-right" data-status="ok">
                                     <i class="fa fa-check"></i>
                                 </span>

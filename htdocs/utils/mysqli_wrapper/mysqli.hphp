@@ -49,6 +49,7 @@ class mysqli extends \mysqli
 
     /**
      * This function returns all possible values of an enum into an array
+     * Probably not so fast
      * @author https://stackoverflow.com/a/11429272
      * @param string $table
      * @param string $field
@@ -64,7 +65,6 @@ class mysqli extends \mysqli
         $type = $result->fetch_assoc()["Type"];
 
         preg_match("/^enum\(\'(.*)\'\)$/", $type, $matches);
-        $enum = explode("','", $matches[1]);
-        return $enum;
+        return explode("','", $matches[1]);
     }
 }
