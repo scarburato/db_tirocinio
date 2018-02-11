@@ -18,15 +18,41 @@ const EDITABLE_VALID_COLUMNS = ["IVA", "codiceFiscale", "nominativo", "classific
 $return = array();
 if($_POST["method"] === "columns")
 {
-    echo json_encode(EDITABLE_VALID_COLUMNS, JSON_PRETTY_PRINT);
+    echo json_encode(EDITABLE_VALID_COLUMNS);
     return;
 }
-else if($_POST["method"] === "edit")
+
+if($_POST["method"] !== "edit")
 {
-    if(array_search($_POST["column"], EDITABLE_VALID_COLUMNS) === false)
-    {
-        $return["error"] = true;
-        $return["error_type"] = "Invalid column!";
-        echo json_encode($return);
-    }
+    echo json_encode(["error" => true, "what" => ["Unknow argument"]]);
+    return;
 }
+
+if(array_search($_POST["column"], EDITABLE_VALID_COLUMNS) === false)
+{
+    $return["error"] = true;
+    $return["what"] = ["Invalid column!"];
+    echo json_encode($return);
+}
+
+$server = new \mysqli_wrapper\mysqli();
+$edit = $server->prepare("UPDATE Azienda SET {$_POST["column"]} = ? WHERE id = ?");
+
+if($edit)
+{
+    $edit->bind_param(
+        "si",
+        $_POST["value"],
+        $_POST["id"]
+    );
+
+    $return["error"] = !$edit->execute();
+    $return["what"] = $edit->error_list;
+}
+else
+{
+    $return["error"] = true;
+    $return["what"] = $server->error_list;
+}
+
+echo json_encode($return);

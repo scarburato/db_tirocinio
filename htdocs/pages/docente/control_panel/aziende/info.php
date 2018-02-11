@@ -158,12 +158,11 @@ function edit_button()
 </section>
 
 <!-- modifiche -->
-<div class="modal is-active" data-edit-modal="parola_ordine">
+<div class="modal" data-edit-modal="parola_ordine">
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
             <p class="modal-card-title">Nuova Parola d'ordine</p>
-            <button class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
             
