@@ -1,3 +1,10 @@
+/**
+Alcune tabelle contengono CHECK, solo le versioni di MariaDB pari o superiori a 10.2.1 supportano i CHECK,
+nelle altre versioni o in altri DMBS mysql il costrutto viene ignorato.
+
+https://mariadb.com/kb/en/library/constraint/#check-constraints
+ */
+
 DROP DATABASE IF EXISTS Tirocini;
 
 CREATE DATABASE IF NOT EXISTS Tirocini
@@ -41,7 +48,7 @@ CREATE TABLE IF NOT EXISTS Privilegio (
   descrizione TINYTEXT NOT NULL
 );
 
-INSERT INTO Privilegio (nome, descrizione) VALUES
+/*INSERT INTO Privilegio (nome, descrizione) VALUES
   ('control.google.users', 'Consente la gestione delle utenze che accedono al programma.'),
   ('control.business.users', 'Consente la gestione delle utenze aziendali.'),
   ('control.network.list', 'Consente di visualizzare gli indirizzi di rete dei tentativi d\'accesso.'),
@@ -50,8 +57,7 @@ INSERT INTO Privilegio (nome, descrizione) VALUES
   ('control.google.permissions', 'Consente di modificare i permessi degli utenti Google.'),
   ('root',
    'Non si applicano restrizioni di alcun tipo, può essere assegnata solo da un\'altro utente root ovvero da chi può accedere in maniera diretta alla base di dati.');
-
-/* TODO Aggiungere altri permessi per i commenti*/
+*/
 
 CREATE TABLE IF NOT EXISTS PrivilegiApplicati (
   utente     SMALLINT UNSIGNED,
@@ -77,8 +83,8 @@ CREATE TABLE IF NOT EXISTS CodiceAteco (
 
 CREATE TABLE IF NOT EXISTS Azienda (
   id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  IVA             CHAR(11) UNIQUE,
-  codiceFiscale   CHAR(11) UNIQUE,
+  IVA             CHAR(11) UNIQUE CHECK(CHAR_LENGTH(IVA) = 11),
+  codiceFiscale   CHAR(16) UNIQUE CHECK(CHAR_LENGTH(codiceFiscale) BETWEEN 11 AND 16),
   nominativo      VARCHAR(100)      NOT NULL,
   parolaOrdine    CHAR(128)         NOT NULL,
   classificazione SMALLINT UNSIGNED NOT NULL,
@@ -129,8 +135,8 @@ CREATE TABLE IF NOT EXISTS Contatto (
   secondoNome    VARCHAR(128),
   cognome        VARCHAR(48) NOT NULL,
   email          VARCHAR(64),
-  telefono       CHAR(35), /* In conformità a ISO 20022 */
-  FAX            CHAR(35),
+  telefono       CHAR(35) CHECK (telefono REGEXP '\\+[0-9]{1,3}-[0-9()+\\-]{1,30}'), /* In conformità a ISO 20022 */
+  FAX            CHAR(35) CHECK (FAX REGEXP '\\+[0-9]{1,3}-[0-9()+\\-]{1,30}'),
   qualifica      VARCHAR(60),
   ruoloAziendale TINYTEXT    NOT NULL,
 
