@@ -1,0 +1,25 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 11/02/18
+ * Time: 14.42
+ */
+
+function redirect_error(string $nome, string $code, array $what)
+{
+    $errore = [
+        "name" => $nome,
+        "code" => $code,
+        "what" => json_encode($what, JSON_PRETTY_PRINT)
+    ];
+
+    if(session_status() !== PHP_SESSION_ACTIVE)
+        session_start();
+
+    $_SESSION["last_error"] = $errore;
+
+    // TODO Non funzionerà in HTTPS. Risolvere
+    header("Location: http://".$_SERVER['HTTP_HOST']. BASE_DIR . "/error.php?session_mode=true");
+    die("Reindirizzamento fallito!");
+}

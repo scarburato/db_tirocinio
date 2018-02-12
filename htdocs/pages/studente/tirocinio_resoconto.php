@@ -29,8 +29,13 @@ $page = "Scrivi Resosconto - " . $tirocinio_azienda;
 <html lang="it">
 <head>
     <?php include "../../utils/pages/head.phtml"; ?>
-    <script src="https://unpkg.com/lite-editor@1.4.0/js/lite-editor.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/lite-editor@1.4.0/css/lite-editor.css">
+    <link rel="stylesheet" href="<?= BASE_DIR ?>css/editor/themes/modern.min.css" type="text/css" media="all">
+
+    <script src="<?= BASE_DIR ?>js/editor/sceditor.min.js"></script>
+    <script src="<?= BASE_DIR ?>js/editor/bbcode.min.js"></script>
+    <script src="<?= BASE_DIR ?>js/editor/icons/monocons.min.js"></script>
+    <script src="<?= BASE_DIR ?>js/editor/icons/material.min.js"></script>
+
 </head>
 <body>
 <?php include "../common/google_navbar.php"; ?>
@@ -74,12 +79,61 @@ $page = "Scrivi Resosconto - " . $tirocinio_azienda;
                 </li>
             </ul>
         </aside>
-        <div>
-            <div id="summernote">
-                cds
+        <div class="column is-fullwidth is-fullheight">
+            <div class="tabs" id="selector">
+                <ul>
+                    <li class="is-active" data-tab="editor">
+                        <a>
+                            <span class="icon">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                            </span>
+                            <span>
+                                Videoscrittura
+                            </span>
+                        </a>
+                    </li>
+                    <li data-tab="preview">
+                        <a>
+                            <span class="icon">
+                                <i class="fa fa-file-text" aria-hidden="true"></i>
+                            </span>
+                            <span>
+                                Anteprima
+                            </span>
+                        </a>
+                    </li>
+                    <li data-tab="comments">
+                        <a>
+                            <span class="class">
+                                <i class="fa fa-comments" aria-hidden="true"></i>
+                            </span>
+                            <span>
+                                Commenti
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div id="contents">
+                <div class="control" data-tab="editor">
+                    <textarea id="resoconto" class="textarea" rows="20" title="resonto"></textarea>
+                </div>
+                <div data-tab="preview" hidden>
+                    <div class="content" id="preview_editor">
+
+                    </div>
+                </div>
+                <div data-tab="comments" hidden>
+
+                </div>
             </div>
         </div>
     </div>
 </section>
+
+<?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 </body>
+
+<script src="<?= BASE_DIR ?>js/toggleTab.js"></script>
+<script src="js/resoconto.js"></script>
 </html>

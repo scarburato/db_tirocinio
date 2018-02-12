@@ -10,6 +10,11 @@ $page = "Pagina d'errore";
 
 if (isset($_GET["error"]))
     $errore = json_decode(urldecode($_GET["error"]), true);
+else if(isset($_GET["session_mode"]))
+{
+    session_start();
+    $errore = $_SESSION["last_error"];
+}
 else
     $errore = array(
         "name" => "Nessun argomento fornito :P",
@@ -45,7 +50,9 @@ $from = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "sconosciut
             <h1><?= $errore["name"] ?></h1>
             <p><em><?= $errore["code"] ?></em></p>
             <blockquote><?= $from ?></blockquote>
-            <pre><?= $errore["what"] ?></pre>
+            <pre style="height: 80%; overflow-y: scroll">
+                <?= $errore["what"] ?>
+            </pre>
             <a class="button is-warning" href="mailto:<?= ERROR_MAIL ?>?subject=Problema&body=<?= urlencode($from)?>%0A%0A<?= urlencode($_GET["error"]) ?>">
                 <span class="icon">
                     <i class="fa fa-envelope" aria-hidden="true"></i>

@@ -20,6 +20,7 @@ const ERROR_MAIL = "test@example.com";
  * https://console.developers.google.com/apis/credentials
  */
 const GOOGLE_REDIRECT_URI = "http://localhost/test.php";
+//const GOOGLE_REDIRECT_URI = "http://192.168.1.125/test.php";
 const TRUSTED_DOMAIN = "itispisa.gov.it";
 const SKIP_CAPTCHA = true;
 

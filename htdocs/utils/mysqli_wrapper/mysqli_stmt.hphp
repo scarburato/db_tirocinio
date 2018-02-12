@@ -31,20 +31,8 @@ class mysqli_stmt extends \mysqli_stmt
         $success = parent::execute();
 
         if(!$success && $redirect_on_error)
-        {
-            $errore = [
-                "name" => "Errore interrogazione DB",
-                "code" => $this->errno,
-                "what" => json_encode($this->error_list, JSON_PRETTY_PRINT)
-            ];
-
-            // TODO Non funzionerà in HTTPS. Risolvere
-            header("Location: http://".$_SERVER['HTTP_HOST']. BASE_DIR . "/error.php?error=".urlencode(json_encode($errore)));
-            //die("Errore fatale");
-        }
+            redirect_error("Errore interrogazione DB", $this->errno, $this->error_list);
 
         return $success;
     }
-
-
 }

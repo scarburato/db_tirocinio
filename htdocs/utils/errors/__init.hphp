@@ -1,0 +1,10 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 11/02/18
+ * Time: 15.52
+ */
+
+require_once dirname(__FILE__) . "/handler.hphp";
+require_once dirname(__FILE__) . "/redirect.hphp";

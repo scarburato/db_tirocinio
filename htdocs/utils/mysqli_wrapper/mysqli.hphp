@@ -24,7 +24,7 @@ class mysqli extends \mysqli
      * @param string $user
      * @param string $password
      */
-    public function __construct(string $db = NULL,string $server = NULL,string $user = NULL,string $password = NULL)
+    public function __construct(string $db = NULL,string $server = NULL,string $user = NULL,string $password = NULL, bool $redirect_on_error = true)
     {
         if($db !== NULL)
             $this->db = $db;
@@ -39,6 +39,10 @@ class mysqli extends \mysqli
             $this->password = $password;
 
         parent::__construct($this->server_name, $this->user, $this->password, $this->db);
+
+        if($redirect_on_error && $this->connect_errno)
+            redirect_error("Errore conessione", $this->connect_errno, [$this->connect_error]);
+
         parent::set_charset("utf8");
     }
 

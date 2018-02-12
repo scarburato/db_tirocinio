@@ -87,7 +87,7 @@ $page = "In corso";
         </div>
     </div>
 </section>
-<?php include "../../utils/pages/footer.phtml"; ?>
+<?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 
 <script src="js/tirocini_builder.js"></script>
 </body>

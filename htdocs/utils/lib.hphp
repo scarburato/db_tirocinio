@@ -8,30 +8,25 @@
 
 mb_internal_encoding("UTF-8");
 require_once dirname(__FILE__) . "/const.hphp";
+require_once dirname(__FILE__) . "/errors/__init.hphp";
 require_once dirname(__FILE__) . "/mysqli_wrapper/__init.hphp";
 require_once dirname(__FILE__) . "/../../vendor/autoload.php";
 
 session_start();
 
-$google_client = new Google_Client();
 try
 {
+    $google_client = new Google_Client();
     $google_client->setAuthConfig(dirname(__FILE__) . "/../../client_secret_142180740412-f5mtm2geteu9jn5jgi5b9l9uhva5b40b.apps.googleusercontent.com.json");
+
+    $google_client->setRedirectUri(GOOGLE_REDIRECT_URI);
+    $google_client->addScope("https://www.googleapis.com/auth/userinfo.email");
+    $google_client->addScope("https://www.googleapis.com/auth/userinfo.profile");
 }
 catch (Google_Exception $e)
 {
-    $errore = array(
-        "name" => $e->getMessage(),
-        "code" => $e->getCode(),
-        "what" => $e->getTraceAsString()
-    );
-
-    header("Location: " . dirname(__FILE__) . "/../error.php?error=" . json_encode($errore));
+    redirect_error($e->getMessage(), $e->getCode(), $e->getTrace());
 }
-
-$google_client->setRedirectUri(GOOGLE_REDIRECT_URI);
-$google_client->addScope("https://www.googleapis.com/auth/userinfo.email");
-$google_client->addScope("https://www.googleapis.com/auth/userinfo.profile");
 
 // Funzioni
 /**
@@ -40,6 +35,5 @@ $google_client->addScope("https://www.googleapis.com/auth/userinfo.profile");
  */
 function compute_hashes($tries)
 {
-    // (int) non è un cast .-. Perché PHP ?
     return ((int)($tries/2) + 1)*2048;
 }

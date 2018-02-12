@@ -8,6 +8,8 @@
 
 namespace auth
 {
+
+    use GuzzleHttp\Exception\ConnectException;
     const LEVEL_ALL = -1;
     const LEVEL_GUEST = 0;
     const LEVEL_GOOGLE_STUDENT = 1;
@@ -50,7 +52,7 @@ namespace auth
                 header("Location: {$basepath}ambiguita.php");
                 break;
             case LEVEL_FACTORY:
-                header("Location: {$basepath}gestore/index.php");
+                header("Location: {$basepath}pages/azienda/index.php");
                 break;
         }
 
@@ -81,14 +83,13 @@ namespace auth
      */
     function connect_token_google(&$google, $token, $basepath = "", &$oauth2 = null)
     {
-        $google->setAccessToken($token);
-        $oauth2 = new \Google_Service_Oauth2($google);
-
         try
         {
+            $google->setAccessToken($token);
+            $oauth2 = new \Google_Service_Oauth2($google);
             $userinfo = $oauth2->userinfo->get();
         }
-        catch(\Google_Service_Exception $e)
+        catch(\Google_Exception $e)
         {
             log_out();
             if($e->getCode() == 401)
@@ -97,16 +98,14 @@ namespace auth
             }
             else
             {
-                $errore = array(
-                    "name" => $e->getMessage(),
-                    "code" => $e->getCode(),
-                    "what" => $e->getTraceAsString()
-                );
-
-                header("Location: {$basepath}error.php?error=" . json_encode($errore));
+                redirect_error($e->getMessage(), $e->getCode(), $e->getTrace());
             }
 
             die("Sessione scaduta. <br>" . $e->getTraceAsString());
+        }
+        catch (ConnectException $e)
+        {
+            redirect_error("Controllare la conessione ad internet", $e->getCode(), $e->getTrace());
         }
 
         return $userinfo;

@@ -14,10 +14,10 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 $index = (isset($_GET["index"]) ? $_GET["index"] : 0);
 
 // TODO Controllare GET
-if($index > 1)
+if($index > 3)
     return;
 
-if($index < 1)
+if($index < 3)
     $next = $index + 1;
 else
     $next = NULL;

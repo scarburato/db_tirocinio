@@ -17,7 +17,7 @@ window.setInterval(function ()
 	{
 		semaforo = true;
 		$.get(
-			"pages/studente/tirocinio.php",
+			"tirocinio.php",
 			{
 				index: index++,
 			}
@@ -35,4 +35,4 @@ window.setInterval(function ()
 			semaforo = false;
 		});
 	}
-},100);
+},250);
