@@ -6,10 +6,10 @@
  * Time: 18.27
  */
 
-require_once "utils/const.hphp";
 require_once "utils/lib.hphp";
+require_once "utils/auth.hphp";
 
-
+// Controllo captcha abilitato
 if(!SKIP_CAPTCHA)
 {
     $captcha_key = json_decode(file_get_contents("../client_secret_captcha.json"), true);
@@ -25,8 +25,10 @@ if(!SKIP_CAPTCHA)
         ]
     ]);
 
+    // Post alle API per verificare validità del captcha
     $risposta_captcha = json_decode(file_get_contents('https://api.coinhive.com/token/verify', false, $post));
 
+    // Risposta pervenuta e valida?
     if (!$risposta_captcha || !$risposta_captcha->success)
     {
         header("Location: index.php?coinhive_error=true");
@@ -34,41 +36,50 @@ if(!SKIP_CAPTCHA)
     }
 }
 
+// Collegamento DB
 $server = new \mysqli_wrapper\mysqli();
 $indirizzo = (inet_pton($_SERVER["REMOTE_ADDR"]));
 
-$controllo_indirizzo = $server->prepare("SELECT indirizzo_rete FROM AziendeTentativiAccesso WHERE indirizzo_rete = ?");
+// Ottenere parola d'ordine
+$azienda = $server->prepare("SELECT parolaOrdine FROM Azienda WHERE id = ?");
+$azienda->bind_param(
+    "i",
+    $_POST["id"]
+);
+
+$azienda->execute(true);
+$azienda->bind_result($hash_pass);
+$esiste = $azienda->fetch();
+$azienda->close();
+
+echo $_POST["id"] . "<br>" . $_POST["pass"] . "<br>" . $hash_pass . "<br>";
+
+$success = false;
+if($esiste && password_verify($_POST["pass"], $hash_pass))
+{
+    echo "Dentro!";
+    // TODO password_needs_ reash
+
+    $_SESSION["user"]["type"] = \auth\LEVEL_FACTORY;
+    $_SESSION["user"]["id"] = $_POST["id"];
+
+    $controllo_indirizzo = $server->prepare(/** @lang MySQL */"SELECT successoAcesso(?)");
+}
+else
+{
+    $controllo_indirizzo = $server->prepare(/** @lang MySQL */
+        "SELECT aggiungiTentativoAccesso(?)");
+
+    $fail = true;
+    echo "Fuori!";
+}
+
 $controllo_indirizzo->bind_param(
     "s",
     $indirizzo
 );
 
-$controllo_indirizzo->execute();
-$esiste = $controllo_indirizzo->fetch() !== NULL;
+$controllo_indirizzo->execute(true);
 $controllo_indirizzo->close();
-if($esiste)
-{
-    $incremento = $server->prepare(
-        "UPDATE AziendeTentativiAccesso
-                SET tentativi_falliti = tentativi_falliti + 1
-                WHERE indirizzo_rete = ?");
-    $incremento->bind_param(
-        "s",
-        $indirizzo
-    );
-    $incremento->execute();
-    $incremento->close();
-}
-else
-{
-    $aggiungi = $server->prepare(
-        "INSERT INTO AziendeTentativiAccesso(indirizzo_rete, tentativi_falliti, ultimo_tentativo) VALUES (?, 1, CURRENT_TIMESTAMP())"
-    );
 
-    $aggiungi->bind_param(
-        "s",
-        $indirizzo
-    );
-    $aggiungi->execute();
-    $aggiungi->close();
-}
+header("Location: index.php?login_fail=" . ($fail ? 1 : 0));

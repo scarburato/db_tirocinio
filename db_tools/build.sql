@@ -77,14 +77,14 @@ CREATE TABLE IF NOT EXISTS Classificazioni (
 
 CREATE TABLE IF NOT EXISTS CodiceAteco (
   id          SMALLINT UNSIGNED PRIMARY KEY,
-  cod2007     CHAR(8) UNIQUE ,
+  cod2007     CHAR(8) UNIQUE,
   descrizione TEXT
 );
 
 CREATE TABLE IF NOT EXISTS Azienda (
-  id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  IVA             CHAR(11) UNIQUE CHECK(CHAR_LENGTH(IVA) = 11),
-  codiceFiscale   CHAR(16) UNIQUE CHECK(CHAR_LENGTH(codiceFiscale) BETWEEN 11 AND 16),
+  id              INT UNSIGNED               AUTO_INCREMENT PRIMARY KEY,
+  IVA             CHAR(11) UNIQUE CHECK (CHAR_LENGTH(IVA) = 11),
+  codiceFiscale   CHAR(16) UNIQUE CHECK (CHAR_LENGTH(codiceFiscale) BETWEEN 11 AND 16),
   nominativo      VARCHAR(100)      NOT NULL,
   parolaOrdine    CHAR(128)         NOT NULL,
   classificazione SMALLINT UNSIGNED NOT NULL,
@@ -195,8 +195,45 @@ CREATE TABLE IF NOT EXISTS Commento (
 );
 
 CREATE TABLE IF NOT EXISTS AziendeTentativiAccesso (
-  indirizzo_rete    VARBINARY(16)   NOT NULL PRIMARY KEY,
-  ultimo_accesso    TIMESTAMP    NULL     DEFAULT NULL,
-  tentativi_falliti INT UNSIGNED NOT NULL DEFAULT 0,
-  ultimo_tentativo  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP()
+  indirizzo_rete    VARBINARY(16) NOT NULL PRIMARY KEY,
+  ultimo_accesso    TIMESTAMP     NULL     DEFAULT NULL,
+  tentativi_falliti INT UNSIGNED  NOT NULL DEFAULT 0,
+  ultimo_tentativo  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP()
 );
+
+CREATE FUNCTION aggiungiTentativoAccesso(indirizzo VARBINARY(16))
+  RETURNS INT UNSIGNED
+  BEGIN
+    IF NOT EXISTS(SELECT *
+                  FROM AziendeTentativiAccesso
+                  WHERE indirizzo_rete = indirizzo)
+    THEN
+      INSERT INTO AziendeTentativiAccesso (indirizzo_rete, tentativi_falliti) VALUES (indirizzo, 1);
+    ELSE
+      UPDATE AziendeTentativiAccesso
+      SET tentativi_falliti = tentativi_falliti + 1, ultimo_tentativo = CURRENT_TIMESTAMP()
+      WHERE indirizzo_rete = indirizzo;
+    END IF;
+
+    RETURN (SELECT tentativi_falliti
+            FROM AziendeTentativiAccesso
+            WHERE indirizzo_rete = indirizzo);
+  END;
+
+CREATE FUNCTION successoAcesso(indirizzo VARBINARY(16))
+  RETURNS INT UNSIGNED
+  BEGIN
+    IF NOT EXISTS(SELECT *
+                  FROM AziendeTentativiAccesso
+                  WHERE indirizzo_rete = indirizzo)
+    THEN
+      INSERT INTO AziendeTentativiAccesso (indirizzo_rete, ultimo_accesso) VALUES (indirizzo, CURRENT_TIMESTAMP());
+    ELSE
+      UPDATE AziendeTentativiAccesso
+        SET tentativi_falliti = 0, ultimo_accesso = CURRENT_TIMESTAMP()
+      WHERE indirizzo_rete = indirizzo;
+    END IF;
+    RETURN (SELECT tentativi_falliti
+            FROM AziendeTentativiAccesso
+            WHERE indirizzo_rete = indirizzo);
+  END;

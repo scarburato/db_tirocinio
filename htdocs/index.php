@@ -137,7 +137,7 @@ if(isset($_GET["google_expired"]))
                                 Identificativo univoco numerico
                             </label>
                             <div class="control">
-                                <input class="input" type="number" placeholder="Mumero" required>
+                                <input class="input" type="number" name="id" placeholder="Mumero" required>
                             </div>
                         </div>
                         <div class="field">
@@ -145,7 +145,7 @@ if(isset($_GET["google_expired"]))
                                 Parola d'ordine
                             </label>
                             <div class="control">
-                                <input class="input" type="password" placeholder="Parola d'ordine">
+                                <input class="input" type="password" name="pass" placeholder="Parola d'ordine">
                             </div>
                         </div>
 
