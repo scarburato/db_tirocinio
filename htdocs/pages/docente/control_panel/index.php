@@ -44,7 +44,7 @@ $page = "Cassetta degli strumenti";
                     <div class="content">
                         <h1>Gestione Utenze scolastiche</h1>
                         <p class="has-text-justified">È necessario avere un'utenza su Google in grado di sfogliare le utenze sul dominio</p>
-                        <a class="button is-link is-pulled-right">
+                        <a class="button is-link is-pulled-right" href="users">
                             Configura
                         </a>
                     </div>

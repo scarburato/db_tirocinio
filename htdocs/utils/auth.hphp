@@ -10,12 +10,13 @@ namespace auth
 {
 
     use GuzzleHttp\Exception\ConnectException;
-    const LEVEL_ALL = -1;
-    const LEVEL_GUEST = 0;
-    const LEVEL_GOOGLE_STUDENT = 1;
-    const LEVEL_GOOGLE_TEACHER = 2;
-    const LEVEL_GOOGLE_BOTH = 3;
-    const LEVEL_FACTORY = 4;
+    const LEVEL_ALL                     =-1;
+    const LEVEL_GUEST                   = 0;
+    const LEVEL_GOOGLE_STUDENT          = 1;
+    const LEVEL_GOOGLE_TEACHER          = 2;
+    const LEVEL_GOOGLE_BOTH             = 3;
+    const LEVEL_GOOGLE_UNAUTHORIZED     = 4;
+    const LEVEL_FACTORY                 = 5;
 
     /**
      * Controlla i permessi
@@ -39,6 +40,7 @@ namespace auth
         switch ($_SESSION["user"]["type"])
         {
             case LEVEL_GUEST:
+            case LEVEL_GOOGLE_UNAUTHORIZED:
             default:
                 header("Location: {$basepath}index.php");
                 break;

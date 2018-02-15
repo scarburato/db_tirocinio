@@ -63,7 +63,7 @@ if($esiste && password_verify($_POST["pass"], $hash_pass))
     $_SESSION["user"]["type"] = \auth\LEVEL_FACTORY;
     $_SESSION["user"]["id"] = $_POST["id"];
 
-    $controllo_indirizzo = $server->prepare(/** @lang MySQL */"SELECT successoAcesso(?)");
+    $controllo_indirizzo = $server->prepare(/** @lang MySQL */"SELECT successoAccesso(?)");
 }
 else
 {

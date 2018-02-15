@@ -25,7 +25,7 @@
 </p>
 <ul class="menu-list">
     <li>
-        <a class="<?= ($index_menu !== 1 ?: "is-active")?>">
+        <a href="<?= BASE_DIR ?>pages/docente/tirocini/" class="<?= ($index_menu !== 1 ?: "is-active")?>">
             <span class="icon">
             <i class="fa fa-briefcase" aria-hidden="true"></i>
             </span>

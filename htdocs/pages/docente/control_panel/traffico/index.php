@@ -102,6 +102,6 @@ $indirizzi->bind_result(
         </div>
     </div>
 </section>
-<?php include "../../../../utils/pages/footer.phtml"; ?>
+<?php include ($_SERVER["DOCUMENT_ROOT"]) ."/utils/pages/footer.phtml"; ?>
 </body>
 </html>

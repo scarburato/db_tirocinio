@@ -26,7 +26,7 @@ $login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
     </style>
 </head>
 <body>
-<div class="modal is-active" id="no_js">
+<noscript class="modal is-active" id="no_js">
     <div class="modal-background"></div>
     <div class="modal-content">
         <div class="message is-danger">
@@ -46,7 +46,7 @@ $login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
             </div>
         </div>
     </div>
-</div>
+</noscript>
 <header class="hero is-primary is-medium">
     <div class="hero-body">
         <div class="container">
@@ -204,9 +204,5 @@ if(isset($_GET["google_expired"]))
     </section>
 </section>
 <?php include "utils/pages/footer.phtml"; ?>
-
-<script>
-	$("#no_js").removeClass("is-active");
-</script>
 </body>
 </html>

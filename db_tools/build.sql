@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS UtenteGoogle (
   nome            VARCHAR(32) NOT NULL,
   secondoNome     VARCHAR(128),
   cognome         VARCHAR(48) NOT NULL,
-  indirizzo_posta VARCHAR(64) NOT NULL
+  indirizzo_posta VARCHAR(64) NOT NULL,
+  fotografia      VARCHAR(2083)
 );
 
 CREATE TABLE IF NOT EXISTS Indirizzo (
@@ -28,8 +29,8 @@ CREATE TABLE IF NOT EXISTS Indirizzo (
 
 CREATE TABLE IF NOT EXISTS Studente (
   utente    SMALLINT UNSIGNED PRIMARY KEY,
-  indirizzo VARCHAR(20)        NOT NULL,
-  Matricola VARCHAR(10) UNIQUE NOT NULL,
+  indirizzo VARCHAR(20),
+  matricola VARCHAR(10) UNIQUE,
 
   FOREIGN KEY (utente)
   REFERENCES UtenteGoogle (id),
@@ -167,7 +168,7 @@ CREATE TABLE IF NOT EXISTS Tirocinio (
   dataTermine     DATE,
 
   giudizio        TINYINT UNSIGNED,
-  descrizione     TINYTEXT,
+  descrizione     LONGTEXT,
   visibilita      ENUM ('studente', 'docente', 'azienda') NOT NULL DEFAULT 'studente',
 
   UNIQUE (Studente, Azienda, DataInizio),
@@ -220,7 +221,7 @@ CREATE FUNCTION aggiungiTentativoAccesso(indirizzo VARBINARY(16))
             WHERE indirizzo_rete = indirizzo);
   END;
 
-CREATE FUNCTION successoAcesso(indirizzo VARBINARY(16))
+CREATE FUNCTION successoAccesso(indirizzo VARBINARY(16))
   RETURNS INT UNSIGNED
   BEGIN
     IF NOT EXISTS(SELECT *
