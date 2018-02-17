@@ -9,16 +9,31 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER, "./../../../../");
+\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
 $user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../../../", $oauth2);
 
 // Variabili pagina
 $page = "Accessi";
 
 $server = new \mysqli_wrapper\mysqli();
-$indirizzi  = $server->prepare(
+$indirizzi  = new class(
+        $server,
         "SELECT indirizzo_rete, ultimo_accesso, tentativi_falliti, ultimo_tentativo FROM AziendeTentativiAccesso ORDER BY ultimo_tentativo DESC "
-);
+) extends helper\Pagination
+{
+    public  function compute_rows()
+    {
+        $rows = 0;
+        $stm = $this->link->prepare("SELECT COUNT(indirizzo_rete) FROM AziendeTentativiAccesso");
+        $stm->execute(true);
+        $stm->bind_result($rows);
+        $stm->fetch();
+        $stm->close();
+
+        return $rows;
+    }
+};
+
 $indirizzi->execute(true);
 $indirizzi->bind_result(
         $indirizzo_ip,
@@ -27,6 +42,7 @@ $indirizzi->bind_result(
         $ultimo_tentativo
 );
 
+$nav = new helper\PaginationIndexBuilder($indirizzi);
 ?>
 <html lang="it">
 <head>
@@ -98,6 +114,7 @@ $indirizzi->bind_result(
                     ?>
                     </tbody>
                 </table>
+                <?php $nav->generate_index($_GET) ?>
             </div>
         </div>
     </div>

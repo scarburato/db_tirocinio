@@ -31,7 +31,7 @@ if(!SKIP_CAPTCHA)
     // Risposta pervenuta e valida?
     if (!$risposta_captcha || !$risposta_captcha->success)
     {
-        header("Location: index.php?coinhive_error=true");
+        header("Location: index.php?login_fail=captcha");
         die("NON SI È USATO IL CAPTCHA!¡");
     }
 }
@@ -82,4 +82,4 @@ $controllo_indirizzo->bind_param(
 $controllo_indirizzo->execute(true);
 $controllo_indirizzo->close();
 
-header("Location: index.php?login_fail=" . ($fail ? 1 : 0));
+header("Location: index.php?login_fail=" . ($fail ? "credentials" : ""));

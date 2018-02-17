@@ -24,6 +24,8 @@ const GOOGLE_REDIRECT_URI = "http://localhost/test.php";
 const TRUSTED_DOMAIN = "itispisa.gov.it";
 const SKIP_CAPTCHA = true;
 
+const PROTOCOL = "http://";
+
 // Base dati
 const DBMS_SERVER = null;
 const DBMS_USER = "root";

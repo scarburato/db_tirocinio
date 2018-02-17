@@ -6,11 +6,13 @@
  * Time: 15.01
  */
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
-require_once "utils/auth.hphp";
+require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
 \auth\check_and_redirect(\auth\LEVEL_GUEST);
 
 $login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
+
+$login_fail = isset($_GET["login_fail"]) && $_GET["login_fail"] === "credentials";
 ?>
 
 <html lang="it">
@@ -137,7 +139,7 @@ if(isset($_GET["google_expired"]))
                                 Identificativo univoco numerico
                             </label>
                             <div class="control">
-                                <input class="input" type="number" name="id" placeholder="Mumero" required>
+                                <input class="input <?= $login_fail ? "is-danger" : ""?>" type="number" name="id" placeholder="Mumero" required>
                             </div>
                         </div>
                         <div class="field">
@@ -145,8 +147,18 @@ if(isset($_GET["google_expired"]))
                                 Parola d'ordine
                             </label>
                             <div class="control">
-                                <input class="input" type="password" name="pass" placeholder="Parola d'ordine">
+                                <input class="input <?= $login_fail ? "is-danger" : ""?>" type="password" name="pass" placeholder="Parola d'ordine">
                             </div>
+                            <?php
+                            if($login_fail)
+                            {
+                                ?>
+                                <p class="help is-danger">
+                                    Le credenziali inserite sono invalide
+                                </p>
+                                <?php
+                            }
+                            ?>
                         </div>
 
                         <div class="field">
@@ -177,7 +189,7 @@ if(isset($_GET["google_expired"]))
                                     </em>
                                 </div>
                                 <?php
-                                if (isset($_GET["coinhive_error"]))
+                                if (isset($_GET["login_fail"]) && $_GET["login_fail"] === "captcha")
                                 {
                                     ?>
                                     <p class="help is-danger">

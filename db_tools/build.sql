@@ -159,11 +159,11 @@ CREATE TABLE IF NOT EXISTS EntratoInContatto (
 );
 
 CREATE TABLE IF NOT EXISTS Tirocinio (
-  id              INT(8) UNSIGNED                                  AUTO_INCREMENT PRIMARY KEY,
+  id              INT(8) UNSIGNED                         AUTO_INCREMENT PRIMARY KEY,
   studente        SMALLINT UNSIGNED                       NOT NULL,
   azienda         INT UNSIGNED                            NOT NULL,
   docenteTutore   SMALLINT UNSIGNED                       NOT NULL,
-  tutoreAziendale INT(8) UNSIGNED                         NOT NULL,
+  tutoreAziendale INT(8) UNSIGNED,
   dataInizio      DATE                                    NOT NULL,
   dataTermine     DATE,
 
@@ -179,7 +179,9 @@ CREATE TABLE IF NOT EXISTS Tirocinio (
   FOREIGN KEY (DocenteTutore)
   REFERENCES Docente (Utente),
   FOREIGN KEY (TutoreAziendale)
-  REFERENCES Contatto (ID)
+  REFERENCES Contatto (ID),
+
+  CONSTRAINT CHK_data CHECK (dataTermine IS NULL OR dataInizio <= dataTermine)
 );
 
 CREATE TABLE IF NOT EXISTS Commento (

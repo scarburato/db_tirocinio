@@ -50,7 +50,7 @@ $from = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "sconosciut
             <h1><?= $errore["name"] ?></h1>
             <p><em><?= $errore["code"] ?></em></p>
             <blockquote><?= $from ?></blockquote>
-            <pre style="height: 80%; overflow-y: scroll">
+            <pre style="height: 80%; overflow-y: scroll; font-size: 60%">
                 <?= $errore["what"] ?>
             </pre>
             <a class="button is-warning" href="mailto:<?= ERROR_MAIL ?>?subject=Problema&body=<?= urlencode($from)?>%0A%0A<?= urlencode($_GET["error"]) ?>">

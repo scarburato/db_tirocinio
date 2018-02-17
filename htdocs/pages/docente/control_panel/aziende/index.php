@@ -9,11 +9,33 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER, "./../../../../");
+\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
 $user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../../../", $oauth2);
 
 // Variabili pagina
 $page = "Gestione Aziende";
+
+$server = new \mysqli_wrapper\mysqli();
+$aziende = new class($server, "SELECT nominativo, codiceFiscale, IVA, id FROM Azienda") extends \helper\Pagination
+{
+    public function compute_rows()
+    {
+        $rows = 0;
+        $conta = $this->link->prepare(
+            "SELECT COUNT(id) AS 'c' FROM Azienda");
+
+
+        $conta->execute(true);
+        $conta->bind_result($row_tot);
+        $conta->fetch();
+        $conta->close();
+
+        return $row_tot;
+    }
+};
+
+$aziende->execute();
+$aziende->bind_result($nome, $cf, $iva, $id);
 ?>
 <html lang="it">
 <head>
@@ -61,10 +83,6 @@ $page = "Gestione Aziende";
                     </thead>
                     <tbody>
                     <?php
-                    $server = new \mysqli_wrapper\mysqli();
-                    $aziende = $server->prepare("SELECT nominativo, codiceFiscale, IVA, id FROM Azienda");
-                    $aziende->execute();
-                    $aziende->bind_result($nome, $cf, $iva, $id);
                     while ($aziende->fetch())
                     {
                         ?>

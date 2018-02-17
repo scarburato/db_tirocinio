@@ -9,7 +9,7 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) ."/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER, "./../../../../");
+\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
 $user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../../../", $oauth2);
 $server = new \mysqli_wrapper\mysqli();
 
@@ -33,9 +33,9 @@ $page = "Gestione Aziende - Aggiungi";
         </aside>
         <div class="column">
             <?php
-            if(isset($_GET["errors"]))
+            if(isset($_GET["url_utils"]))
             {
-                $errori = urldecode($_GET["errors"]);
+                $errori = urldecode($_GET["url_utils"]);
                 ?>
                 <article class="message is-danger" id="errore_db">
                     <div class="message-header">
@@ -462,8 +462,8 @@ $page = "Gestione Aziende - Aggiungi";
 </div>
 
 <script src="<?= BASE_DIR ?>js/togglePanel.js"></script>
-<script src="<?= dirname($_SERVER["REQUEST_URI"]) . "/"?>js/main.js"></script>
-<script src="<?= dirname($_SERVER["REQUEST_URI"]) . "/"?>js/filtro_ateco.js"></script>
-<script src="<?= dirname($_SERVER["REQUEST_URI"]) . "/"?>js/iva_cf_validatore.js"></script>
+<script src="js/main.js"></script>
+<script src="js/filtro_ateco.js"></script>
+<script src="js/iva_cf_validatore.js"></script>
 </body>
 </html>

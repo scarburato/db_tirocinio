@@ -8,8 +8,9 @@
 
 namespace auth
 {
-
+    require_once dirname(__FILE__) . "/url_utils/__init.hphp";
     use GuzzleHttp\Exception\ConnectException;
+
     const LEVEL_ALL                     =-1;
     const LEVEL_GUEST                   = 0;
     const LEVEL_GOOGLE_STUDENT          = 1;
@@ -22,8 +23,10 @@ namespace auth
      * Controlla i permessi
      * @param $auth_level
      * @param string $basepath
+     * @param bool $redirect
+     * @return bool
      */
-    function check_and_redirect($auth_level, $basepath = "/", $google = NULL)
+    function check_and_redirect($auth_level, $basepath = "/", $google = NULL, $redirect = true): bool
     {
         if (!isset($_SESSION["user"]))
             $_SESSION["user"] = array(
@@ -33,7 +36,9 @@ namespace auth
             );
 
         if($auth_level === LEVEL_ALL || $auth_level === $_SESSION["user"]["type"])
-            return;
+            return true;
+        elseif (!$redirect)
+            return false;
 
         // TODO Se "loggato" con Google controllare validità del token
 
@@ -42,19 +47,19 @@ namespace auth
             case LEVEL_GUEST:
             case LEVEL_GOOGLE_UNAUTHORIZED:
             default:
-                header("Location: {$basepath}index.php");
+                redirect("/index.php");
                 break;
             case LEVEL_GOOGLE_STUDENT:
-                header("Location: {$basepath}pages/studente/index.php");
+                redirect("/pages/studente/");
                 break;
             case LEVEL_GOOGLE_TEACHER:
-                header("Location: {$basepath}pages/docente/index.php");
+                redirect("/pages/docente/");
                 break;
             case LEVEL_GOOGLE_BOTH:
-                header("Location: {$basepath}ambiguita.php");
+                redirect("/ambiguita.php");
                 break;
             case LEVEL_FACTORY:
-                header("Location: {$basepath}pages/azienda/index.php");
+                redirect("/pages/azienda/");
                 break;
         }
 

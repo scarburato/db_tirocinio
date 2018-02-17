@@ -6,6 +6,18 @@
  * Time: 14.42
  */
 
+function redirect(string $path, array $get_args = [])
+{
+    if(count($get_args) > 0)
+        $path = $path . "?" . http_build_query($get_args);
+
+    if($path[0] === '/')
+        $path = PROTOCOL . $_SERVER['HTTP_HOST'] . BASE_DIR . substr($path, 1);
+
+    header("Location: {$path}");
+    die();
+}
+
 function redirect_error(string $nome, string $code, array $what)
 {
     $errore = [
@@ -19,7 +31,5 @@ function redirect_error(string $nome, string $code, array $what)
 
     $_SESSION["last_error"] = $errore;
 
-    // TODO Non funzionerà in HTTPS. Risolvere
-    header("Location: http://".$_SERVER['HTTP_HOST']. BASE_DIR . "/error.php?session_mode=true");
-    die("Reindirizzamento fallito!");
+    redirect("/error.php", ["session_mode" => true]);
 }

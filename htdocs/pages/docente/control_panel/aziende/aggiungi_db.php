@@ -9,7 +9,7 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER, "./../../../../");
+\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
 // Controllo validità campi
 $errori = array();
 
@@ -56,7 +56,7 @@ if($sedi === NULL || !is_array($sedi))
 
 if(sizeof($errori) > 0)
 {
-    header("Location: aggiungi.php?errors=" . urlencode(json_encode($errori, JSON_PRETTY_PRINT)));
+    header("Location: aggiungi.php?url_utils=" . urlencode(json_encode($errori, JSON_PRETTY_PRINT)));
     die("Errors");
 }
 
@@ -83,7 +83,7 @@ $fail = !$inserimento->execute();
 
 if($fail)
 {
-    header("Location: aggiungi.php?errors=" . urlencode(json_encode($server->error_list, JSON_PRETTY_PRINT)));
+    header("Location: aggiungi.php?url_utils=" . urlencode(json_encode($server->error_list, JSON_PRETTY_PRINT)));
     die("Errore query");
 }
 
@@ -117,7 +117,7 @@ foreach ($sedi as $sede)
 
 if(sizeof($errori) > 0)
 {
-    header("Location: aggiungi.php?errors=" . urlencode(json_encode($errori, JSON_PRETTY_PRINT)));
+    header("Location: aggiungi.php?url_utils=" . urlencode(json_encode($errori, JSON_PRETTY_PRINT)));
     die("Errors");
 }
 

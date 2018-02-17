@@ -8,7 +8,7 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_FACTORY, "./../../");
+\auth\check_and_redirect(\auth\LEVEL_FACTORY);
 ?>
 
 <a href="../../utils/logout.php">Esci.</a>

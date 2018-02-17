@@ -9,7 +9,7 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_STUDENT, "./../../");
+\auth\check_and_redirect(\auth\LEVEL_GOOGLE_STUDENT);
 
 $index = (isset($_GET["index"]) ? $_GET["index"] : 0);
 

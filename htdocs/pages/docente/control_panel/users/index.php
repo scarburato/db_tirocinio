@@ -9,42 +9,58 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER, "./../../../../");
+\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
 $user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../../../", $oauth2);
 
 // Variabili pagina
 $page = "Utenze Google";
-$page_n = (isset($_GET["pagina"]) && $_GET["pagina"] >= 0) ? $_GET["pagina"] : 0;
-$limit = 50;
 
+$filtro = (isset($_GET["filtro"])) ? "%{$_GET["filtro"]}%" : "%";
 $server = new \mysqli_wrapper\mysqli();
-
-// Numero di righe
-$conta = $server->prepare("SELECT COUNT(id) FROM UtenteGoogle");
-$conta->execute(true);
-$conta->bind_result($row_tot);
-$conta->fetch();
-$conta->close();
-
-$page_tot = (int)($row_tot / $limit);
-if($page_n > $page_tot)
-    $page_n = $page_tot;
-
-$offset = $page_n * $limit;
-
-$utenze = $server->prepare("SELECT id, SUB_GOOGLE, nome, cognome, indirizzo_posta, D.utente, S.utente FROM UtenteGoogle
+$utenze = new class($server, "SELECT id, nome, cognome, indirizzo_posta, D.utente, S.utente FROM UtenteGoogle
   LEFT JOIN Docente D ON UtenteGoogle.id = D.utente
   LEFT JOIN Studente S ON UtenteGoogle.id = S.utente
-  LIMIT ? OFFSET ?");
+  WHERE nome LIKE ? OR cognome LIKE ? OR indirizzo_posta LIKE ?
+  ") extends \helper\Pagination
+{
+    public function compute_rows()
+    {
+        $row_tot = 0;
+        $filtro = (isset($_GET["filtro"])) ? "%{$_GET["filtro"]}%" : "%";
+
+        $conta = $this->link->prepare(
+                "SELECT COUNT(id) AS 'c' FROM UtenteGoogle WHERE nome LIKE ? OR cognome LIKE ? OR indirizzo_posta LIKE ?");
+
+        $conta->bind_param(
+                "sss",
+                $filtro,
+                $filtro,
+                $filtro
+        );
+        $conta->execute(true);
+        $conta->bind_result($row_tot);
+        $conta->fetch();
+        $conta->close();
+
+        return $row_tot;
+    }
+};
+
+$utenze->set_limit((isset($_GET["limite"]) && $_GET["limite"] > 1) ? $_GET["limite"] : 15);
+$utenze->set_current_page((isset($_GET["pagina"]) && $_GET["pagina"] >= 0) ? $_GET["pagina"] : 0);
 
 $utenze->bind_param(
-        "ii",
-        $limit,
-        $offset
+        "sss",
+        $filtro,
+        $filtro,
+        $filtro
 );
 
 $utenze->execute(true);
-$utenze->bind_result($id_interno, $id_google, $nome, $cognome, $posta, $docente, $studente);
+
+$utenze->bind_result($id_interno, $nome, $cognome, $posta, $docente, $studente);
+
+$nav = new \helper\PaginationIndexBuilder($utenze);
 ?>
 
 <html lang="it">
@@ -63,16 +79,29 @@ $utenze->bind_result($id_interno, $id_google, $nome, $cognome, $posta, $docente,
             ?>
         </aside>
         <div class="column is-fullwidth">
+            <form method="get">
+                <div class="field has-addons is-pulled-right">
+                    <p class="control">
+                        <input class="input" name="filtro" type="text" value="<?= $_GET["filtro"] ?>" placeholder="Filtra persone">
+                    </p>
+                    <input title="limite" hidden type="number" name="limite" value="<?= $utenze->get_limit() ?>">
+                    <p class="control">
+                        <button type="submit" class="button">
+                            Filtra
+                        </button>
+                    </p>
+                </div>
+            </form>
+
             <table class="table is-fullwidth">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>ID Google</th>
                     <th title="I nomi sono stati inseriti all'icontrario dalla scuola">Nome</th>
                     <th title="I nomi sono stati inseriti all'icontrario dalla scuola">Cognome</th>
                     <th>Posta Elettronica</th>
                     <th>Studente</th>
                     <th>Docente</th>
+                    <th style="width: 8%"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -81,8 +110,6 @@ $utenze->bind_result($id_interno, $id_google, $nome, $cognome, $posta, $docente,
                 {
                     ?>
                     <tr>
-                        <th><?= $id_interno ?></th>
-                        <td><?= $id_google ?></td>
                         <td><?= $nome ?></td>
                         <td><?= $cognome ?></td>
                         <td>
@@ -92,50 +119,23 @@ $utenze->bind_result($id_interno, $id_google, $nome, $cognome, $posta, $docente,
                         </td>
                         <td><?= ($studente !== null) ? "SÌ" : "NO" ?></td>
                         <td><?= ($docente !== null) ? "SÌ" : "NO" ?></td>
-
+                        <td>
+                            <a class="button is-small is-fullwidth is-warning">
+                                <span class="icon">
+                                    <i class="fa fa-cog" aria-hidden="true"></i>
+                                </span>
+                                <span>
+                                    Imposta
+                                </span>
+                            </a>
+                        </td>
                     </tr>
                     <?php
                 }
                 ?>
                 </tbody>
             </table>
-
-
-
-            <nav class="pagination" role="navigation" aria-label="pagination">
-                <a href="?pagina=<?= $page_n - 1 ?>" class="pagination-previous" <?= $page_n == 0 ? "disabled" : ""?>>Indietro</a>
-                <a href="?pagina=<?= $page_n + 1 ?>" class="pagination-next" <?= $page_n >= $page_tot ? "disabled" : ""?>>Avanti</a>
-
-
-                <ul class="pagination-list">
-                    <li><a href="?pagina=0" class="pagination-link" aria-label="Pagina 0">0</a></li>
-                    <li><span class="pagination-ellipsis">&hellip;</span></li>
-
-
-                    <?php
-                    if($page_n > 0)
-                    {
-                        ?>
-                        <li><a href="?pagina=<?= $page_n - 1 ?>" class="pagination-link"
-                               aria-label="Pagina <?= $page_n - 1 ?>"><?= $page_n - 1 ?></a></li>
-                        <?php
-                    }
-                    ?>
-                    <li><a href="?pagina=<?= $page_n ?>" class="pagination-link is-current" aria-label="Pagina <?= $page_n ?>" aria-current="page"><?= $page_n ?></a></li>
-                    <?php
-                    if($page_n < $page_tot)
-                    {
-                        ?>
-                        <li><a href="?pagina=<?= $page_n + 1 ?>" class="pagination-link"
-                               aria-label="Pagina <?= $page_n + 1 ?>"><?= $page_n + 1 ?></a></li>
-                        <?php
-                    }
-                    ?>
-
-                    <li><span class="pagination-ellipsis">&hellip;</span></li>
-                    <li><a href="?pagina=<?= $page_tot ?>" class="pagination-link" aria-label="Pagina <?= $page_tot ?>"><?= $page_tot ?></a></li>
-                </ul>
-            </nav>
+            <?php $nav->generate_index($_GET); ?>
         </div>
     </div>
 </section>
