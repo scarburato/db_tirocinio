@@ -82,4 +82,6 @@ $controllo_indirizzo->bind_param(
 $controllo_indirizzo->execute(true);
 $controllo_indirizzo->close();
 
-header("Location: index.php?login_fail=" . ($fail ? "credentials" : ""));
+redirect("index.php",[
+    "login_fail" => ($fail ? "credentials" : "")
+]);

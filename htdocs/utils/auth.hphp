@@ -22,11 +22,10 @@ namespace auth
     /**
      * Controlla i permessi
      * @param $auth_level
-     * @param string $basepath
      * @param bool $redirect
      * @return bool
      */
-    function check_and_redirect($auth_level, $basepath = "/", $google = NULL, $redirect = true): bool
+    function check_and_redirect($auth_level, $redirect = true): bool
     {
         if (!isset($_SESSION["user"]))
             $_SESSION["user"] = array(
@@ -86,9 +85,10 @@ namespace auth
      * @param $google \Google_Client
      * @param $basepath string
      * @param $token string
+     * @param $redirect bool
      * @return mixed
      */
-    function connect_token_google(&$google, $token, $basepath = "", &$oauth2 = null)
+    function connect_token_google(&$google, $token, &$oauth2 = null, $redirect = true)
     {
         try
         {
@@ -101,7 +101,9 @@ namespace auth
             log_out();
             if($e->getCode() == 401)
             {
-                header("Location: {$basepath}index.php?google_expired=" . urlencode($e->getMessage()));
+                redirect("/index.php", [
+                    "google_expired" => urlencode($e->getMessage())
+                ]);
             }
             else
             {

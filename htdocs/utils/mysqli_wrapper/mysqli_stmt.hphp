@@ -14,6 +14,7 @@ class mysqli_stmt extends \mysqli_stmt
 {
     /**
      * MySqliStmWrapper constructor.
+     * @see mysqli_stmt
      * @param mysqli $link
      * @param string $query
      */
@@ -23,6 +24,7 @@ class mysqli_stmt extends \mysqli_stmt
     }
 
     /**
+     * @see mysqli_stmt::execute()
      * @param bool $redirect_on_error
      * @return bool
      */

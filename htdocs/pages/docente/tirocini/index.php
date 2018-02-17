@@ -9,8 +9,8 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER, "./../../../");
-$user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../../", $oauth2);
+\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
+$user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"],$oauth2);
 
 // Variabili pagina
 $page = "Tirocini";
@@ -31,9 +31,23 @@ $page = "Tirocini";
             ?>
         </aside>
         <div class="column">
-
+            <div>
+                <p>
+                    <a class="button is-primary is-pulled-right is-large" href="./aggiungi.php">
+                        <span class="icon">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                        </span>
+                        <span>
+                            Aggiungi
+                        </span>
+                    </a>
+                </p>
+            </div>
         </div>
     </div>
 </section>
+
+
+<script src="<?= BASE_DIR ?>js/togglePanel.js"></script>
 </body>
 </html>

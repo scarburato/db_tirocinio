@@ -105,34 +105,7 @@ $(document).on("click", ".rimuovi_sede_trigger", function ()
 
 
 //// SELEZIONE ATECO
-$("#ateco_tbody").on("click", "tr", function ()
-{
-	$("#ateco_tbody").find("tr").removeClass("is-selected");
-	$(this).addClass("is-selected");
-});
 
-listener_ateco = new TogglePanel("#seleziona_ateco");
-
-$("#seleziona_ateco_trigger").on("click", function ()
-{
-	listener_ateco.show()
-});
-
-$("#seleziona_ateco_scarta").on("click", function ()
-{
-	listener_ateco.hide();
-});
-
-$("#seleziona_ateco_aggiungi").on("click",function ()
-{
-	let main_form = $("#main_form");
-	let ateco_selected = $("#ateco_tbody").find("tr.is-selected").find("td.codice_ateco_value");
-	main_form.find("input[name='ateco_unique']").val(ateco_selected.html());
-	console.log(ateco_selected.data("dbid"));
-	main_form.find("input[name='ateco']").val(ateco_selected.data("dbid"));
-
-	listener_ateco.hide();
-});
 
 //// FORM PRINCIPE
 

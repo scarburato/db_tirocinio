@@ -10,7 +10,7 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) ."/utils/auth.hphp";
 
 \auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
-$user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../../../", $oauth2);
+$user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], $oauth2);
 $server = new \mysqli_wrapper\mysqli();
 
 // Variabili pagina
@@ -135,14 +135,14 @@ $page = "Gestione Aziende - Aggiungi";
                     </div>
                     <div class="field-body" >
                         <div class="field box is-fullwidth" style="height: 10rem; overflow-y: auto">
-                            <a class="button is-small is-link is-pulled-right" id="aggiungi_sede_trigger">
+                            <button type="button" class="button is-small is-link is-pulled-right" id="aggiungi_sede_trigger">
                                 <span class="icon">
                                     <i class="fa fa-plus" aria-hidden="true"></i>
                                 </span>
                                 <span>
                                     Aggiungi
                                 </span>
-                            </a>
+                            </button>
                             <table class="table is-fullwidth" >
                                 <tbody id="sedi_memoria">
 
@@ -259,14 +259,14 @@ $page = "Gestione Aziende - Aggiungi";
                                 </p>
                             </div>
                             <div class="control">
-                                <a class="button is-info" id="seleziona_ateco_trigger">
+                                <button type="button" class="button is-info" id="seleziona_ateco_trigger">
                                     <span class="icon">
                                         <i class="fa fa-list-alt" aria-hidden="true"></i>
                                     </span>
                                     <span>
                                         Seleziona...
                                     </span>
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -286,14 +286,14 @@ $page = "Gestione Aziende - Aggiungi";
                                 </p>
                             </div>
                             <div class="control">
-                                <a class="button is-info" id="nuovaparola">
+                                <button type="button" class="button is-info" id="nuovaparola">
                                     <span class="icon">
                                         <i class="fa fa-key" aria-hidden="true"></i>
                                     </span>
                                     <span>
                                         Rigenera....
                                     </span>
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -427,6 +427,7 @@ $page = "Gestione Aziende - Aggiungi";
                     <tr>
                         <th>Codice</th>
                         <th>Descrizione</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody id="ateco_tbody">
@@ -446,6 +447,9 @@ $page = "Gestione Aziende - Aggiungi";
 
                             <td class="codice_ateco_value" data-dbid="<?= $id ?>"><?= $codice?></td>
                             <td><?= $descrizione?></td>
+                            <td>
+                                <a class="is-link" tabindex="">Seleziona</a>
+                            </td>
                         </tr>
                         <?php
                     }

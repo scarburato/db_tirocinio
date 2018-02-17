@@ -10,7 +10,7 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
 \auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
-\auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../../../");
+\auth\connect_token_google($google_client, $_SESSION["user"]["token"]);
 
 $server = new \mysqli_wrapper\mysqli();
 
@@ -25,6 +25,8 @@ $perdono->bind_param(
     inet_pton($_GET["indirizzo"])
 );
 
-$perdono->execute();
+$successo = $perdono->execute();
 
-header("Location: index.php");
+redirect("index.php", [
+    "success" => $successo
+]);

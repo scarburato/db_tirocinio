@@ -25,7 +25,7 @@
                 <div class="navbar-item">
                     <p class="title is-4 is-capitalized">
                         <span class="icon">
-                            <img src="<?= $user["picture"] ?>">
+                            <img alt="profile_picture" src="<?= $user["picture"] ?>">
                         </span>
                         <span>
                             <?= $user["name"] ?>
