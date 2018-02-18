@@ -1,8 +1,12 @@
 class TogglePanel
 {
-	constructor(panelName)
+	/**
+	 *
+	 * @param panel String a string to use in jQuery (yes... I know )
+	 */
+	constructor(panel)
 	{
-		this.panelName = panelName;
+		this.panelName = panel;
 		this.onShow = function (index)
 		{
 			index.value = "";

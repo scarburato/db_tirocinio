@@ -86,18 +86,51 @@ namespace auth
      * @param $basepath string
      * @param $token string
      * @param $redirect bool
-     * @return mixed
+     * @return \Google_Service_Oauth2;
      */
-    function connect_token_google(&$google, $token, &$oauth2 = null, $redirect = true)
+    function connect_token_google(&$google, $token, $redirect = true)
     {
         try
         {
             $google->setAccessToken($token);
+
+            if($google->isAccessTokenExpired())
+            {
+                log_out();
+
+                if($redirect)
+                    redirect("/index.php", [
+                        "google_expired" => true
+                    ]);
+                else
+                    throw new \Google_Exception("Token expired", 401);
+            }
+
             $oauth2 = new \Google_Service_Oauth2($google);
-            $userinfo = $oauth2->userinfo->get();
+        }
+        catch (\Exception $e)
+        {
+            if(!$redirect)
+                throw $e;
+
+            redirect_error("Controllare la conessione ad internet", $e->getMessage(), $e->getTrace());
+        }
+
+        return $oauth2;
+    }
+
+    function get_user_info(\Google_Service_Oauth2 &$oauth2, $redirect = true)
+    {
+        $user = null;
+        try
+        {
+            $user = $oauth2->userinfo->get();
         }
         catch(\Google_Exception $e)
         {
+            if(!$redirect)
+                throw $e;
+
             log_out();
             if($e->getCode() == 401)
             {
@@ -114,9 +147,11 @@ namespace auth
         }
         catch (ConnectException $e)
         {
+            if(!$redirect)
+                throw $e;
+
             redirect_error("Controllare la conessione ad internet", $e->getCode(), $e->getTrace());
         }
-
-        return $userinfo;
+        return $user;
     }
 }

@@ -10,17 +10,35 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
 $server = new \mysqli_wrapper\mysqli();
-$aggiungi = $server->prepare("INSERT INTO UtenteGoogle(SUB_GOOGLE, nome, cognome, indirizzo_posta, fotografia) VALUES  (?,?,?,?,?);");
+$aggiungi = $server->prepare("INSERT INTO UtenteGoogle(SUB_GOOGLE, nome, cognome, indirizzo_posta) VALUES  (?, ?, ?, ?);");
+$news = array();
 
-for($i = 52*2; $i < 52*5; $i++)
+for($i = 0; $i < 2000*15; $i++)
+{
+    $id = time() . $i;
+    $posta = $id . "@itispisa.gov.it";
+    $nome = "N" . $id;
+    $aggiungi->bind_param(
+        "ssss",
+        $id,
+        $nome,
+        $id,
+        $posta)
+    ;
+    $aggiungi->execute(true);
+
+    array_push($news, $aggiungi->insert_id);
+}
+
+$aggiungi->close();
+
+$aggiungi = $server->prepare("INSERT INTO Studente(utente) VALUES (?)");
+
+foreach ($news as $id)
 {
     $aggiungi->bind_param(
-        "sssss",
-        $i,
-        $i,
-        $i,
-        $i,
-        $i
+        "i",
+        $id
     );
     $aggiungi->execute(true);
 }

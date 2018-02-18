@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS UtenteGoogle (
   id              SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   SUB_GOOGLE      VARCHAR(64) UNIQUE,
   nome            VARCHAR(32) NOT NULL,
-  secondoNome     VARCHAR(128),
   cognome         VARCHAR(48) NOT NULL,
   indirizzo_posta VARCHAR(64) NOT NULL,
   fotografia      VARCHAR(2083)

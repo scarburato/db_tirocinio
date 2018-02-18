@@ -12,7 +12,7 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) ."/utils/auth.hphp";
 
 \auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
-$user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], $oauth2);
+$oauth2 = \auth\connect_token_google($google_client, $_SESSION["user"]["token"]);$user = \auth\get_user_info($oauth2);
 
 const EDITABLE_VALID_COLUMNS = ["IVA", "codiceFiscale", "nominativo", "classificazione", "ateco", "dimensione", "gestione", "no_accessi"];
 $return = array();

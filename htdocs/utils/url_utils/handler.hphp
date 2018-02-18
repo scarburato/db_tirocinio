@@ -11,4 +11,19 @@ function trowh_handler(Throwable $e)
     redirect_error($e->getMessage(), $e->getCode(), $e->getTrace());
 }
 
-set_exception_handler('trowh_handler');
+function trowh_json_handler(Throwable $e)
+{
+    echo json_encode(
+        [
+            "error" => $e->getCode(),
+            "what" => $e->getMessage(),
+            "trace" => $e->getTrace()
+        ]
+    );
+    die();
+}
+
+if(isset($json_mode))
+    set_exception_handler("trowh_json_handler");
+else
+    set_exception_handler('trowh_handler');

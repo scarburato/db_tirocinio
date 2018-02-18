@@ -35,7 +35,8 @@ abstract class Pagination extends mysqli_stmt
         $this->link = &$link;
         $this->rows = $this->compute_rows();
 
-        parent::__construct($link, "({$query}) LIMIT ? OFFSET ?");
+        //parent::__construct($link, "({$query}) LIMIT ? OFFSET ?");
+        parent::__construct($link, "{$query} LIMIT ? OFFSET ?");
     }
 
     /**
@@ -114,9 +115,6 @@ abstract class Pagination extends mysqli_stmt
      */
     public function set_limit(int $limit)
     {
-        if($limit < 2)
-            $limit = 2;
-
         $this->limit = $limit;
     }
 
