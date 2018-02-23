@@ -25,7 +25,6 @@ try
     $google_client->setRedirectUri(GOOGLE_REDIRECT_URI);
     $google_client->addScope("https://www.googleapis.com/auth/userinfo.email");
     $google_client->addScope("https://www.googleapis.com/auth/userinfo.profile");
-    $google_client->addScope("https://www.googleapis.com/auth/admin.directory.orgunit.readonly");
 }
 catch (Google_Exception $e)
 {
