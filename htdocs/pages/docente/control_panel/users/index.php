@@ -79,20 +79,44 @@ $nav = new \helper\PaginationIndexBuilder($utenze);
             ?>
         </aside>
         <div class="column is-fullwidth">
-            <form method="get">
-                <div class="field has-addons is-pulled-right">
-                    <p class="control">
-                        <input class="input" name="filtro" type="text" value="<?= $_GET["filtro"] ?>" placeholder="Filtra persone">
-                    </p>
-                    <input title="limite" hidden type="number" name="limite" value="<?= $utenze->get_limit() ?>">
-                    <p class="control">
-                        <button type="submit" class="button">
-                            Filtra
-                        </button>
-                    </p>
+            <form  method="get">
+                <div class="level">
+                    <div class="level-left">
+                        <div class="level-item">
+                            <button class="button is-primary" type="button">
+                                <span class="icon">
+                                    <i class="fa fa-user-plus" aria-hidden="true"></i>
+                                </span>
+                                <span>
+                                    Aggiungi utente dal dominio
+                                </span>
+                            </button>
+                        </div>
+                        <div class="level-item">
+                            <button class="button" type="button" title="Imposta">
+                                <span class="icon">
+                                    <i class="fa fa-gear" aria-hidden="true"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="level-right">
+                        <div class="level-item">
+                            <div class="field has-addons">
+                                <p class="control">
+                                    <input class="input" name="filtro" type="text" value="<?= $_GET["filtro"] ?>" placeholder="Filtra persone">
+                                </p>
+                                <input title="limite" hidden type="number" name="limite" value="<?= $utenze->get_limit() ?>">
+                                <p class="control">
+                                    <button type="submit" class="button">
+                                        Filtra
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </form>
-
             <table class="table is-fullwidth">
                 <thead>
                 <tr>
@@ -120,7 +144,7 @@ $nav = new \helper\PaginationIndexBuilder($utenze);
                         <td><?= ($studente !== null) ? "SÌ" : "NO" ?></td>
                         <td><?= ($docente !== null) ? "SÌ" : "NO" ?></td>
                         <td>
-                            <a class="button is-small is-fullwidth is-warning">
+                            <a href="" class="button is-small is-fullwidth is-warning">
                                 <span class="icon">
                                     <i class="fa fa-cog" aria-hidden="true"></i>
                                 </span>

@@ -6,18 +6,22 @@
  * Time: 17.09
  */
 
-error_reporting(0);
 $force_silent =true;
+$json_mode = true;
+
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) ."/utils/auth.hphp";
 
 \auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
-$oauth2 = \auth\connect_token_google($google_client, $_SESSION["user"]["token"]);$user = \auth\get_user_info($oauth2);
+$oauth2 = \auth\connect_token_google($google_client, $_SESSION["user"]["token"]);
 
 $return = array();
 $server = new \mysqli_wrapper\mysqli();
 
-$codice_fiscale = $server->prepare("SELECT COUNT(*) FROM Azienda WHERE codiceFiscale = ?");
+//$codice_fiscale = $server->prepare("SELECT COUNT(*) FROM Azienda WHERE codiceFiscale = ?");
+$codice_fiscale = $server->prepare( "SELECT EXISTS(
+    SELECT id FROM Azienda WHERE codiceFiscale = ?
+    )");
 
 $codice_fiscale->bind_param(
     "s",
@@ -28,5 +32,5 @@ $codice_fiscale->execute();
 $codice_fiscale->bind_result($count);
 $codice_fiscale->fetch();
 
-$return["esiste"] = ($count > 0);
+$return["esiste"] = ($count == 1);
 echo json_encode($return);

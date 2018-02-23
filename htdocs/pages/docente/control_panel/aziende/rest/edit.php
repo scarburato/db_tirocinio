@@ -6,8 +6,9 @@
  * Time: 14.13
  */
 
-error_reporting(0);
 $force_silent =true;
+$json_mode = true;
+
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) ."/utils/auth.hphp";
 

@@ -56,8 +56,9 @@ if($sedi === NULL || !is_array($sedi))
 
 if(sizeof($errori) > 0)
 {
-    header("Location: aggiungi.php?url_utils=" . urlencode(json_encode($errori, JSON_PRETTY_PRINT)));
-    die("Errors");
+    redirect("aggiungi.php", [
+        "errors" => json_encode($errori, JSON_PRETTY_PRINT)
+            ]);
 }
 
 // Controlli 0k, procedere all'inserimento!
@@ -83,8 +84,9 @@ $fail = !$inserimento->execute();
 
 if($fail)
 {
-    header("Location: aggiungi.php?url_utils=" . urlencode(json_encode($server->error_list, JSON_PRETTY_PRINT)));
-    die("Errore query");
+    redirect("aggiungi.php", [
+        "errors" => json_encode($server->error_list, JSON_PRETTY_PRINT)
+    ]);
 }
 
 $azienda_id = $inserimento->insert_id;
@@ -117,8 +119,9 @@ foreach ($sedi as $sede)
 
 if(sizeof($errori) > 0)
 {
-    header("Location: aggiungi.php?url_utils=" . urlencode(json_encode($errori, JSON_PRETTY_PRINT)));
-    die("Errors");
+    redirect("aggiungi.php", [
+        "errors" => json_encode($errori, JSON_PRETTY_PRINT)
+    ]);
 }
 
 $_SESSION["last_passwd"] = [
@@ -126,4 +129,6 @@ $_SESSION["last_passwd"] = [
     "passwd" => $_POST["parolaordine"]
 ];
 
-header("Location: aggiunto_mostra_info.php?id={$azienda_id}");
+redirect("aggiunto_mostra_info.php", [
+    "id" => $azienda_id
+]);

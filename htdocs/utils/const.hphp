@@ -12,6 +12,9 @@ if(!isset($force_silent))
 else
     error_reporting(0);
 
+if(isset($json_mode))
+    header('Content-Type: application/json');
+
 // Sito
 const SITE_NAME = "Tirocini ITIS";
 const SITE_SUBTITLE = "Interfaccia per gestione tirocini dell'Istituto Tecnico Industriale Statale \"Leonardo da Vinci\".<br>Studenti, docenti ed aziende";

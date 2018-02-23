@@ -20,11 +20,12 @@ session_start();
 try
 {
     $google_client = new Google_Client();
-    $google_client->setAuthConfig(dirname(__FILE__) . "/../../client_secret_142180740412-f5mtm2geteu9jn5jgi5b9l9uhva5b40b.apps.googleusercontent.com.json");
+    $google_client->setAuthConfig(dirname(__FILE__) . "/../../client_secret_login.json");
 
     $google_client->setRedirectUri(GOOGLE_REDIRECT_URI);
     $google_client->addScope("https://www.googleapis.com/auth/userinfo.email");
     $google_client->addScope("https://www.googleapis.com/auth/userinfo.profile");
+    $google_client->addScope("https://www.googleapis.com/auth/admin.directory.orgunit.readonly");
 }
 catch (Google_Exception $e)
 {

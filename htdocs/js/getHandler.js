@@ -84,7 +84,7 @@ class GetHandler
 		)
 			.done((data) =>
 			{
-				let res = JSON.parse (data);
+				let res = data;
 
 				if(res.data_rows <= 0)
 				{

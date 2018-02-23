@@ -34,9 +34,9 @@ $page = "Gestione Aziende - Aggiungi";
         </aside>
         <div class="column">
             <?php
-            if(isset($_GET["url_utils"]))
+            if(isset($_GET["errors"]))
             {
-                $errori = urldecode($_GET["url_utils"]);
+                $errori = urldecode($_GET["errors"]);
                 ?>
                 <article class="message is-danger" id="errore_db">
                     <div class="message-header">

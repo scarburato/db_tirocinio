@@ -137,7 +137,7 @@ codice_fiscale.on ("keyup", function (tasto)
 		if(actual_request !== codice_fiscale_last_request)
 			return;
 
-		let esiste = JSON.parse(data).esiste;
+		let esiste = data.esiste;
 
 		if(esiste)
 		{

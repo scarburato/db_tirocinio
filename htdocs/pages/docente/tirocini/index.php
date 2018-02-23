@@ -46,7 +46,7 @@ $page = "Tirocini";
         </div>
     </div>
 </section>
-
+<?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 
 <script src="<?= BASE_DIR ?>js/togglePanel.js"></script>
 </body>

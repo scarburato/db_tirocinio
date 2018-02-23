@@ -11,22 +11,32 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
 \auth\check_and_redirect(\auth\LEVEL_GOOGLE_STUDENT);
 
-$index = (isset($_GET["index"]) ? $_GET["index"] : 0);
+$index = (isset($_GET["index"]) && $_GET["index"] >= 0 ? $_GET["index"] : 0);
+$server = new \mysqli_wrapper\mysqli();
+$train = $server->prepare(
+        "SELECT Tirocinio.id, A.nominativo, dataInizio, dataTermine FROM Tirocinio
+                LEFT JOIN Azienda A ON Tirocinio.azienda = A.id
+                LEFT JOIN Docente D ON Tirocinio.docenteTutore = D.utente
+                LEFT JOIN Contatto C ON Tirocinio.tutoreAziendale = C.id
+               WHERE studente = ? LIMIT 1 OFFSET ?");
 
-// TODO Controllare GET
-if($index > 3)
+$train->bind_param(
+        "ii",
+        $_SESSION["user"]["id"],
+        $index
+);
+
+$train->execute(false);
+$train->bind_result($db_id, $business_name, $data_inizio, $data_termine);
+
+if(!$train->fetch())
     return;
-
-if($index < 3)
-    $next = $index + 1;
-else
-    $next = NULL;
 ?>
 
-<article class="card tirocinio" id="tirocinio_<?= $index ?>" data-nextid="<?= (string)($next) ?>">
+<article class="card tirocinio" id="tirocinio_<?= $index ?>" data-nextid="<?= $index + 1 ?>">
     <header class="card-header">
         <h1 class="card-header-title">
-            Stage a Black Mesa corp.
+            Tirocinio a <?= $business_name ?>
         </h1>
     </header>
     <div class="card-content">
@@ -34,11 +44,23 @@ else
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
             <a href="#">@bulmaio</a>. <a href="#">#css</a> <a href="#">#responsive</a>
             <br>
-            <time datetime="2016-01-01">11:09 PM - 1 Jan 2016</time>
+            <?php if($data_termine === null)
+            {
+                ?>
+                <time datetime="<?= $data_inizio ?>">Dal <?= $data_inizio ?>. Data termine non pervenuta</time>
+                <?php
+            }
+            else
+            {
+                ?>
+                <time datetime="<?= $data_inizio ?>/<?= $data_termine ?>">Dal <?= $data_inizio ?> al <?= $data_termine ?></time>
+                <?php
+            }
+            ?>
         </div>
     </div>
     <footer class="card-footer">
-        <a href="tirocinio_resoconto.php?tirocinio=<?=$index?>" class="card-footer-item">
+        <a href="tirocinio_resoconto.php?tirocinio=<?=$db_id?>" class="card-footer-item">
             <span class="icon">
                 <i class="fa fa-pencil-square" aria-hidden="true"></i>
             </span>

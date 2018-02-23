@@ -52,11 +52,11 @@ else
 
 $operazione->bind_param(
     "sssss",
-    $user["id"],
     $user["givenName"],
     $user["familyName"],
     $user["email"],
-    $user["picture"]
+    $user["picture"],
+    $user["id"]
     );
 
 $operazione->execute(true);

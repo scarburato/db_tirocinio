@@ -6,8 +6,15 @@
  * Time: 20.01
  */
 
+if(false)
+{
+    ?>
+    <pre
+            style="height: 15vh; overflow-y: scroll"
+            class="has-text-justified"><?= json_encode($_SESSION, JSON_PRETTY_PRINT) ?></pre>
+    <?php
+}
 ?>
-
 <nav class="navbar is-info">
     <div class="navbar-brand">
         <a href="<?= BASE_DIR ?>index.php" class="title navbar-item">
