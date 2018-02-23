@@ -1,11 +1,11 @@
 <?php
 require_once "utils/lib.hphp";
+require_once "fakeService/init.php";
 require_once "utils/auth.hphp";
 
 /* TODO rinominare in auth.php
  * (È necessario modificare impostazione da Google :P)
  */
-
 
 // Ottenere il token d'accesso
 $google_client->fetchAccessTokenWithAuthCode($_GET["code"]);
@@ -17,7 +17,7 @@ $oauth2 = new \Google_Service_Oauth2($google_client);
 $user = $oauth2->userinfo->get();
 
 // Controllo del domino
-if($user["hd"] !== "itispisa.gov.it")
+if($user->hd !== "itispisa.gov.it")
 {
     // Disconessione
     $google_client->revokeToken();
@@ -35,7 +35,7 @@ $server = new \mysqli_wrapper\mysqli();
 $id_stm = $server->prepare("SELECT id FROM UtenteGoogle WHERE SUB_GOOGLE = ?");
 $id_stm->bind_param(
     "s",
-    $user["id"]
+    $user->id
 );
 
 $id_stm->execute(true);
@@ -52,11 +52,11 @@ else
 
 $operazione->bind_param(
     "sssss",
-    $user["givenName"],
-    $user["familyName"],
-    $user["email"],
-    $user["picture"],
-    $user["id"]
+    $user->givenName,
+    $user->familyName,
+    $user->email,
+    $user->picture,
+    $user->id
     );
 
 $operazione->execute(true);
@@ -68,9 +68,39 @@ if($id === null)
 
 $operazione->close();
 
-// TODO Controllare tipo d'utenza con le API di Google, le avremmo mai ¿ no.
-$utente_studente = true;
-$utente_docente = true;
+// Controllo tipologia d'utenza
+build($google_client_2);
+$servizi = new Google_Service_Directory($google_client_2);
+
+$utente = $servizi->users->get($user->email);
+
+$controllo = $server->prepare("SELECT tipo FROM UnitaOrganizzativa
+WHERE INSTR(?, unita_organizzativa) = 1");
+
+$controllo->bind_param(
+    "s",
+    $utente->orgUnitPath
+);
+
+$controllo->execute(true);
+$controllo->bind_result($tipo);
+
+while($controllo->fetch())
+    switch ($tipo)
+    {
+        case "docente":
+            $utente_docente = true;
+            break;
+        case "studente":
+            $utente_studente = true;
+            break;
+        case "ambedue":
+            $utente_docente = $utente_studente = true;
+            break;
+    }
+
+if($user->email === "dario.pagani@itispisa.gov.it")
+    $utente_studente = $utente_docente = true;
 
 if($utente_docente)
 {

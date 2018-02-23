@@ -13,6 +13,16 @@ CREATE DATABASE IF NOT EXISTS Tirocini
 
 USE Tirocini;
 
+CREATE TABLE IF NOT EXISTS UnitaOrganizzativa(
+  tipo                ENUM ('docente', 'studente', 'ambedue') NOT NULL,
+  unita_organizzativa VARCHAR(2083) NOT NULL
+);
+
+INSERT INTO UnitaOrganizzativa(tipo, unita_organizzativa) VALUES
+  ('studente', '/STUDENTI'),
+  ('docente', '/DOCENTI ITI'),
+  ('docente', '/Docenti IPSIA');
+
 CREATE TABLE IF NOT EXISTS UtenteGoogle (
   id              SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   SUB_GOOGLE      VARCHAR(64) UNIQUE,
