@@ -21,13 +21,93 @@ if($user["hd"] !== "itispisa.gov.it")
 {
     // Disconessione
     $google_client->revokeToken();
-    header("Location: index.php?wrong_domain='la mela e stata mangiata'");
+    header("Location: index.php?wrong_domain=true");
     die("Dominio errato! Non si dovrobbe arrivare a questo punto");
 }
 
-// TODO Controllare tipo d'utenza nel db
-$_SESSION["user"]["type"] = \auth\LEVEL_GOOGLE_STUDENT;
-$_SESSION["user"]["id"] = "No db";
+// Variabili
+$id = null;
+
+// Aggiunta al servente¡
+$server = new \mysqli_wrapper\mysqli();
+
+// Cerco di ottenre l'ID se esiste altrimenti lo aggiungo
+$id_stm = $server->prepare("SELECT id FROM UtenteGoogle WHERE SUB_GOOGLE = ?");
+$id_stm->bind_param(
+    "s",
+    $user["id"]
+);
+
+$id_stm->execute(true);
+$id_stm->store_result();
+$id_stm->bind_result($id);
+
+// Se c'è una riga allora aggiorno i dati altrimenti creo
+if($id_stm->fetch())
+    $operazione = $server->prepare(
+        "UPDATE UtenteGoogle SET nome = ?, cognome = ?, indirizzo_posta = ?, fotografia = ? WHERE SUB_GOOGLE = ?"
+    );
+else
+    $operazione = $server->prepare("INSERT INTO UtenteGoogle(nome, cognome, indirizzo_posta, fotografia, SUB_GOOGLE) VALUES  (?,?,?,?,?);");
+
+$operazione->bind_param(
+    "sssss",
+    $user["givenName"],
+    $user["familyName"],
+    $user["email"],
+    $user["picture"],
+    $user["id"]
+    );
+
+$operazione->execute(true);
+$operazione->bind_result($id);
+$operazione->fetch();
+
+if($id === null)
+    $id = $operazione->insert_id;
+
+$operazione->close();
+
+// TODO Controllare tipo d'utenza con le API di Google, le avremmo mai ¿ no.
+$utente_studente = true;
+$utente_docente = true;
+
+if($utente_docente)
+{
+    $operazione = $server->prepare("INSERT INTO Docente(utente) VALUES (?)");
+    $operazione->bind_param(
+        "i",
+        $id
+    );
+    $operazione->execute(false);
+    $operazione->close();
+}
+
+if($utente_studente)
+{
+    $operazione = $server->prepare("INSERT INTO Studente(utente) VALUES (?)");
+    $operazione->bind_param(
+        "i",
+        $id
+    );
+    $operazione->execute(false);
+    $operazione->close();
+}
+
+$_SESSION["user"]["id"] = $id;
 $_SESSION["user"]["token"] = $token;
 
-header("Location: index.php");
+if($utente_studente && $utente_docente)
+    $_SESSION["user"]["type"] = \auth\LEVEL_GOOGLE_BOTH;
+elseif ($utente_docente)
+    $_SESSION["user"]["type"] = \auth\LEVEL_GOOGLE_TEACHER;
+elseif ($utente_studente)
+    $_SESSION["user"]["type"] = \auth\LEVEL_GOOGLE_STUDENT;
+else
+{
+    $_SESSION["user"]["type"] = \auth\LEVEL_GOOGLE_UNAUTHORIZED;
+    /** @noinspection PhpUnhandledExceptionInspection */
+    throw new Exception("Current user is not allowed to do anything :P");
+}
+
+header("Location: ambiguita.php");

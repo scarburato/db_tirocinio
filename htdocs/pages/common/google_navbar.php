@@ -6,11 +6,18 @@
  * Time: 20.01
  */
 
+if(false)
+{
+    ?>
+    <pre
+            style="height: 15vh; overflow-y: scroll"
+            class="has-text-justified"><?= json_encode($_SESSION, JSON_PRETTY_PRINT) ?></pre>
+    <?php
+}
 ?>
-
 <nav class="navbar is-info">
     <div class="navbar-brand">
-        <a href="index.php" class="title navbar-item">
+        <a href="<?= BASE_DIR ?>index.php" class="title navbar-item">
             <?= SITE_NAME ?>
         </a>
     </div>
@@ -25,7 +32,7 @@
                 <div class="navbar-item">
                     <p class="title is-4 is-capitalized">
                         <span class="icon">
-                            <img src="<?= $user["picture"] ?>">
+                            <img alt="profile_picture" src="<?= $user["picture"] ?>">
                         </span>
                         <span>
                             <?= $user["name"] ?>
@@ -33,7 +40,7 @@
                     </p>
                 </div>
                 <div class="navbar-item is-pulled-right">
-                    <a class="button" href="utils/logout.php">
+                    <a class="button" href="<?= BASE_DIR ?>utils/logout.php">
                         <span>Esci</span>
                         <span class="icon">
                             <i class="fa fa-sign-out" aria-hidden="true"></i>

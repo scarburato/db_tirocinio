@@ -1,0 +1,128 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 15/02/18
+ * Time: 10.25
+ */
+
+namespace helper;
+
+
+use mysqli_wrapper\mysqli;
+use mysqli_wrapper\mysqli_stmt;
+
+abstract class Pagination extends mysqli_stmt
+{
+    private $limit = 25;
+    private $current_page = 0;
+    private $rows = PHP_INT_MAX;
+
+    private $bind_param_r = false;
+
+    public $link;
+
+    /**
+     * Pagination constructor.
+     * La query deve
+     *  - Ritornare una tabella (Solo SELECT no ALTER TABLE, CREATE FUNCTION etc...)
+     *  - Non deve terminare con ;
+     * @param mysqli $link
+     * @param string $query
+     */
+    public function __construct(mysqli &$link, string $query)
+    {
+        $this->link = &$link;
+        $this->rows = $this->compute_rows();
+
+        //parent::__construct($link, "({$query}) LIMIT ? OFFSET ?");
+        parent::__construct($link, "{$query} LIMIT ? OFFSET ?");
+    }
+
+    /**
+     * @return integer
+     */
+    public abstract function compute_rows();
+
+    public function bind_param($types, &$var1, &...$_)
+    {
+        array_push($_, $this->limit);
+        array_push($_, (int)($this->current_page * $this->limit ));
+        $types = $types . "ii";
+
+        $this->bind_param_r = true;
+        return parent::bind_param($types,$var1,  ...$_);
+    }
+
+    public function execute(bool $redirect_on_error = false)
+    {
+        if(!$this->bind_param_r)
+        {
+            $tmp = (int)($this->current_page * $this->limit );
+            parent::bind_param("ii", $this->limit, $tmp);
+        }
+
+        return parent::execute($redirect_on_error);
+    }
+
+    /**
+     * @param int $page
+     */
+    public function set_current_page(int $page)
+    {
+        if($page < 0)
+            $page = 0;
+
+        if($page > $this->get_max_page())
+            $page = $this->get_max_page();
+
+        $this->current_page = $page;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_current_page(): int
+    {
+        return $this->current_page;
+    }
+
+    public function has_next_page(): bool
+    {
+        return $this->current_page < $this->get_max_page();
+    }
+
+    public function has_previus_page(): bool
+    {
+        return $this->current_page > 0;
+    }
+
+    public function get_max_page(): int
+    {
+        return $this->rows > 0 ? (int)(ceil($this->rows / $this->limit) -1) : 0;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_rows(): int
+    {
+        return $this->rows;
+    }
+
+    /**
+     * @param int $limit
+     */
+    public function set_limit(int $limit)
+    {
+        $this->limit = $limit;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_limit(): int
+    {
+        return $this->limit;
+    }
+}

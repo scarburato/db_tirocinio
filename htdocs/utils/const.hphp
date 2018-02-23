@@ -6,18 +6,37 @@
  * Time: 18.58
  */
 
+
+if(!isset($force_silent))
+    error_reporting(E_ERROR);
+else
+    error_reporting(0);
+
+if(isset($json_mode))
+    header('Content-Type: application/json');
+
 // Sito
 const SITE_NAME = "Tirocini ITIS";
 const SITE_SUBTITLE = "Interfaccia per gestione tirocini dell'Istituto Tecnico Industriale Statale \"Leonardo da Vinci\".<br>Studenti, docenti ed aziende";
 
 // html
-const BASE_DIR  = "/DB_Tirocini/htdocs";
+const BASE_DIR  = "/";
+const ERROR_MAIL = "test@example.com";
 
 // Accesso
+/**
+ * URI deve essere coerente con quelli memorizzati
+ * https://console.developers.google.com/apis/credentials
+ */
+const GOOGLE_REDIRECT_URI = "http://localhost/test.php";
+//const GOOGLE_REDIRECT_URI = "http://192.168.1.125/test.php";
 const TRUSTED_DOMAIN = "itispisa.gov.it";
+const SKIP_CAPTCHA = true;
+
+const PROTOCOL = "http://";
 
 // Base dati
 const DBMS_SERVER = null;
 const DBMS_USER = "root";
 const DBMS_PASS = "";
-const DBMS_DB_NAME = null;
+const DBMS_DB_NAME = "Tirocini";

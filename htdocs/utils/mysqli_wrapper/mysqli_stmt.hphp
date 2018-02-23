@@ -1,0 +1,40 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 01/02/18
+ * Time: 18.07
+ */
+
+namespace mysqli_wrapper;
+
+use mysqli;
+
+class mysqli_stmt extends \mysqli_stmt
+{
+    /**
+     * MySqliStmWrapper constructor.
+     * @see mysqli_stmt
+     * @param mysqli $link
+     * @param string $query
+     */
+    public function __construct(mysqli $link, string $query)
+    {
+        parent::__construct($link, $query);
+    }
+
+    /**
+     * @see mysqli_stmt::execute()
+     * @param bool $redirect_on_error
+     * @return bool
+     */
+    public function execute(bool $redirect_on_error = false)
+    {
+        $success = parent::execute();
+
+        if(!$success && $redirect_on_error)
+            redirect_error("Errore interrogazione DB", $this->errno, $this->error_list);
+
+        return $success;
+    }
+}

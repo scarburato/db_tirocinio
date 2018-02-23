@@ -1,0 +1,35 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 11/02/18
+ * Time: 14.42
+ */
+
+function redirect(string $path, array $get_args = [])
+{
+    if(count($get_args) > 0)
+        $path = $path . "?" . http_build_query($get_args);
+
+    if($path[0] === '/')
+        $path = PROTOCOL . $_SERVER['HTTP_HOST'] . BASE_DIR . substr($path, 1);
+
+    header("Location: {$path}");
+    die();
+}
+
+function redirect_error(string $nome, string $code, array $what)
+{
+    $errore = [
+        "name" => $nome,
+        "code" => $code,
+        "what" => json_encode($what, JSON_PRETTY_PRINT)
+    ];
+
+    if(session_status() !== PHP_SESSION_ACTIVE)
+        session_start();
+
+    $_SESSION["last_error"] = $errore;
+
+    redirect("/error.php", ["session_mode" => true]);
+}

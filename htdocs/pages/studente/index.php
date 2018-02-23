@@ -6,11 +6,11 @@
  * Time: 20.06
  */
 
-require_once "../../utils/lib.hphp";
-require_once "../../utils/auth.hphp";
+require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
+require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_STUDENT, "./../../");
-$user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../", $oauth2);
+\auth\check_and_redirect(\auth\LEVEL_GOOGLE_STUDENT);
+$oauth2 = \auth\connect_token_google($google_client, $_SESSION["user"]["token"]);$user = \auth\get_user_info($oauth2);
 
 // Variabili pagina
 $page = "In corso";
@@ -87,7 +87,7 @@ $page = "In corso";
         </div>
     </div>
 </section>
-<?php include "../../utils/pages/footer.phtml"; ?>
+<?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 
 <script src="js/tirocini_builder.js"></script>
 </body>

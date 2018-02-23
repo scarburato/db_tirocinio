@@ -1,14 +1,25 @@
+/**
+Alcune tabelle contengono CHECK, solo le versioni di MariaDB pari o superiori a 10.2.1 supportano i CHECK,
+nelle altre versioni o in altri DMBS mysql il costrutto viene ignorato.
+
+https://mariadb.com/kb/en/library/constraint/#check-constraints
+ */
+
 DROP DATABASE IF EXISTS Tirocini;
-CREATE DATABASE IF NOT EXISTS Tirocini;
+
+CREATE DATABASE IF NOT EXISTS Tirocini
+  DEFAULT CHARACTER SET utf8
+  DEFAULT COLLATE utf8_general_ci;
+
 USE Tirocini;
 
 CREATE TABLE IF NOT EXISTS UtenteGoogle (
   id              SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   SUB_GOOGLE      VARCHAR(64) UNIQUE,
   nome            VARCHAR(32) NOT NULL,
-  secondoNome     VARCHAR(128),
   cognome         VARCHAR(48) NOT NULL,
-  indirizzo_posta VARCHAR(64) NOT NULL
+  indirizzo_posta VARCHAR(64) NOT NULL,
+  fotografia      VARCHAR(2083)
 );
 
 CREATE TABLE IF NOT EXISTS Indirizzo (
@@ -17,8 +28,8 @@ CREATE TABLE IF NOT EXISTS Indirizzo (
 
 CREATE TABLE IF NOT EXISTS Studente (
   utente    SMALLINT UNSIGNED PRIMARY KEY,
-  indirizzo VARCHAR(20)        NOT NULL,
-  Matricola VARCHAR(10) UNIQUE NOT NULL,
+  indirizzo VARCHAR(20),
+  matricola VARCHAR(10) UNIQUE,
 
   FOREIGN KEY (utente)
   REFERENCES UtenteGoogle (id),
@@ -33,9 +44,20 @@ CREATE TABLE IF NOT EXISTS Docente (
 );
 
 CREATE TABLE IF NOT EXISTS Privilegio (
-  nome        VARCHAR(10) PRIMARY KEY,
+  nome        VARCHAR(126) PRIMARY KEY,
   descrizione TINYTEXT NOT NULL
 );
+
+/*INSERT INTO Privilegio (nome, descrizione) VALUES
+  ('control.google.users', 'Consente la gestione delle utenze che accedono al programma.'),
+  ('control.business.users', 'Consente la gestione delle utenze aziendali.'),
+  ('control.network.list', 'Consente di visualizzare gli indirizzi di rete dei tentativi d\'accesso.'),
+  ('control.network.list.forgive',
+   'Consente di "perdonare" gli indirizzi di rete che hanno effettuato eccessi tentativi di autenticazione senza successo.'),
+  ('control.google.permissions', 'Consente di modificare i permessi degli utenti Google.'),
+  ('root',
+   'Non si applicano restrizioni di alcun tipo, può essere assegnata solo da un\'altro utente root ovvero da chi può accedere in maniera diretta alla base di dati.');
+*/
 
 CREATE TABLE IF NOT EXISTS PrivilegiApplicati (
   utente     SMALLINT UNSIGNED,
@@ -49,31 +71,33 @@ CREATE TABLE IF NOT EXISTS PrivilegiApplicati (
 );
 
 CREATE TABLE IF NOT EXISTS Classificazioni (
-  id          SMALLINT UNSIGNED PRIMARY KEY,
+  id          SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   descrizione TINYTEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS CodiceAteco (
-  cod2007     VARCHAR(8) PRIMARY KEY,
-  cod2004     VARCHAR(8) UNIQUE,
-  descrizione TINYTEXT
+  id          SMALLINT UNSIGNED PRIMARY KEY,
+  cod2007     CHAR(8) UNIQUE,
+  descrizione TEXT
 );
 
 CREATE TABLE IF NOT EXISTS Azienda (
-  id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  IVA             CHAR(11) UNIQUE   NOT NULL,
-  codiceFiscale   CHAR(16) UNIQUE,
-  nominativo      VARCHAR(40)       NOT NULL,
+  id              INT UNSIGNED               AUTO_INCREMENT PRIMARY KEY,
+  IVA             CHAR(11) UNIQUE CHECK (CHAR_LENGTH(IVA) = 11),
+  codiceFiscale   CHAR(16) UNIQUE CHECK (CHAR_LENGTH(codiceFiscale) BETWEEN 11 AND 16),
+  nominativo      VARCHAR(100)      NOT NULL,
   parolaOrdine    CHAR(128)         NOT NULL,
   classificazione SMALLINT UNSIGNED NOT NULL,
-  ateco           VARCHAR(8)        NOT NULL,
+  ateco           SMALLINT UNSIGNED NOT NULL,
   dimensione      ENUM ('0-9', '10-49', '50-99', '100-199', '200-499', '500+'),
   gestione        ENUM ('pubblica', 'privata', 'mista'),
+
+  no_accessi      BOOLEAN           NOT NULL DEFAULT TRUE,
 
   FOREIGN KEY (Classificazione)
   REFERENCES Classificazioni (ID),
   FOREIGN KEY (Ateco)
-  REFERENCES CodiceAteco (Cod2007)
+  REFERENCES CodiceAteco (id)
 );
 
 CREATE TABLE IF NOT EXISTS Sede (
@@ -81,10 +105,10 @@ CREATE TABLE IF NOT EXISTS Sede (
   azienda   INT UNSIGNED,
   nomeSede  VARCHAR(128) NOT NULL,
   indirizzo VARCHAR(128),
-  numCivico SMALLINT(3) UNSIGNED,
-  comune    VARCHAR(60),
-  provincia VARCHAR(30),
-  stato     VARCHAR(30),
+  numCivico VARCHAR(15),
+  comune    VARCHAR(128),
+  provincia VARCHAR(128),
+  stato     VARCHAR(128),
   CAP       SMALLINT(5) UNSIGNED,
 
   PRIMARY KEY (ID, Azienda),
@@ -111,8 +135,8 @@ CREATE TABLE IF NOT EXISTS Contatto (
   secondoNome    VARCHAR(128),
   cognome        VARCHAR(48) NOT NULL,
   email          VARCHAR(64),
-  telefono       CHAR(35), /* In conformità a ISO 20022 */
-  FAX            CHAR(35),
+  telefono       CHAR(35) CHECK (telefono REGEXP '\\+[0-9]{1,3}-[0-9()+\\-]{1,30}'), /* In conformità a ISO 20022 */
+  FAX            CHAR(35) CHECK (FAX REGEXP '\\+[0-9]{1,3}-[0-9()+\\-]{1,30}'),
   qualifica      VARCHAR(60),
   ruoloAziendale TINYTEXT    NOT NULL,
 
@@ -134,17 +158,17 @@ CREATE TABLE IF NOT EXISTS EntratoInContatto (
 );
 
 CREATE TABLE IF NOT EXISTS Tirocinio (
-  id              INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  studente        SMALLINT UNSIGNED NOT NULL,
-  azienda         INT UNSIGNED      NOT NULL,
-  docenteTutore   SMALLINT UNSIGNED NOT NULL,
-  tutoreAziendale INT(8) UNSIGNED   NOT NULL,
-  dataInizio      DATE              NOT NULL,
+  id              INT(8) UNSIGNED                         AUTO_INCREMENT PRIMARY KEY,
+  studente        SMALLINT UNSIGNED                       NOT NULL,
+  azienda         INT UNSIGNED                            NOT NULL,
+  docenteTutore   SMALLINT UNSIGNED                       NOT NULL,
+  tutoreAziendale INT(8) UNSIGNED,
+  dataInizio      DATE                                    NOT NULL,
   dataTermine     DATE,
 
   giudizio        TINYINT UNSIGNED,
-  descrizione     TINYTEXT,
-  visibilita      ENUM('studente', 'docente', 'azienda') NOT NULL DEFAULT 'studente',
+  descrizione     LONGTEXT,
+  visibilita      ENUM ('studente', 'docente', 'azienda') NOT NULL DEFAULT 'studente',
 
   UNIQUE (Studente, Azienda, DataInizio),
   FOREIGN KEY (Studente)
@@ -154,7 +178,9 @@ CREATE TABLE IF NOT EXISTS Tirocinio (
   FOREIGN KEY (DocenteTutore)
   REFERENCES Docente (Utente),
   FOREIGN KEY (TutoreAziendale)
-  REFERENCES Contatto (ID)
+  REFERENCES Contatto (ID),
+
+  CONSTRAINT CHK_data CHECK (dataTermine IS NULL OR dataInizio <= dataTermine)
 );
 
 CREATE TABLE IF NOT EXISTS Commento (
@@ -169,3 +195,47 @@ CREATE TABLE IF NOT EXISTS Commento (
   FOREIGN KEY (Autore)
   REFERENCES UtenteGoogle (id)
 );
+
+CREATE TABLE IF NOT EXISTS AziendeTentativiAccesso (
+  indirizzo_rete    VARBINARY(16) NOT NULL PRIMARY KEY,
+  ultimo_accesso    TIMESTAMP     NULL     DEFAULT NULL,
+  tentativi_falliti INT UNSIGNED  NOT NULL DEFAULT 0,
+  ultimo_tentativo  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP()
+);
+
+CREATE FUNCTION aggiungiTentativoAccesso(indirizzo VARBINARY(16))
+  RETURNS INT UNSIGNED
+  BEGIN
+    IF NOT EXISTS(SELECT *
+                  FROM AziendeTentativiAccesso
+                  WHERE indirizzo_rete = indirizzo)
+    THEN
+      INSERT INTO AziendeTentativiAccesso (indirizzo_rete, tentativi_falliti) VALUES (indirizzo, 1);
+    ELSE
+      UPDATE AziendeTentativiAccesso
+      SET tentativi_falliti = tentativi_falliti + 1, ultimo_tentativo = CURRENT_TIMESTAMP()
+      WHERE indirizzo_rete = indirizzo;
+    END IF;
+
+    RETURN (SELECT tentativi_falliti
+            FROM AziendeTentativiAccesso
+            WHERE indirizzo_rete = indirizzo);
+  END;
+
+CREATE FUNCTION successoAccesso(indirizzo VARBINARY(16))
+  RETURNS INT UNSIGNED
+  BEGIN
+    IF NOT EXISTS(SELECT *
+                  FROM AziendeTentativiAccesso
+                  WHERE indirizzo_rete = indirizzo)
+    THEN
+      INSERT INTO AziendeTentativiAccesso (indirizzo_rete, ultimo_accesso) VALUES (indirizzo, CURRENT_TIMESTAMP());
+    ELSE
+      UPDATE AziendeTentativiAccesso
+        SET tentativi_falliti = 0, ultimo_accesso = CURRENT_TIMESTAMP()
+      WHERE indirizzo_rete = indirizzo;
+    END IF;
+    RETURN (SELECT tentativi_falliti
+            FROM AziendeTentativiAccesso
+            WHERE indirizzo_rete = indirizzo);
+  END;

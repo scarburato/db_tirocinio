@@ -1,0 +1,74 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 31/01/18
+ * Time: 15.19
+ */
+
+namespace mysqli_wrapper;
+
+use mysqli_sql_exception;
+
+class mysqli extends \mysqli
+{
+    private $db = DBMS_DB_NAME;
+    private $server_name = DBMS_SERVER;
+    private $user = DBMS_USER;
+    private $password = DBMS_PASS;
+
+    /**
+     * MySqliWrapper constructor.
+     * @param string $db
+     * @param string $server
+     * @param string $user
+     * @param string $password
+     */
+    public function __construct(string $db = NULL,string $server = NULL,string $user = NULL,string $password = NULL, bool $redirect_on_error = true)
+    {
+        if($db !== NULL)
+            $this->db = $db;
+
+        if($server !== NULL)
+            $this->server_name = $server;
+
+        if($user !== NULL)
+            $this->user = $user;
+
+        if($password !== NULL)
+            $this->password = $password;
+
+        parent::__construct($this->server_name, $this->user, $this->password, $this->db);
+
+        if($redirect_on_error && $this->connect_errno)
+            redirect_error("Errore conessione", $this->connect_errno, [$this->connect_error]);
+
+        parent::set_charset("utf8");
+    }
+
+    public function prepare($query): mysqli_stmt
+    {
+        return new mysqli_stmt($this, $query);
+    }
+
+    /**
+     * This function returns all possible values of an enum into an array
+     * Probably not so fast
+     * @author https://stackoverflow.com/a/11429272
+     * @param string $table
+     * @param string $field
+     * @return array
+     * @throws mysqli_sql_exception
+     */
+    public function enum_values(string $table, string $field): array
+    {
+        $result = $this->query( "SHOW COLUMNS FROM {$table} WHERE Field = '{$field}'" );
+        if($result === FALSE)
+            throw new mysqli_sql_exception($this->error);
+
+        $type = $result->fetch_assoc()["Type"];
+
+        preg_match("/^enum\(\'(.*)\'\)$/", $type, $matches);
+        return explode("','", $matches[1]);
+    }
+}

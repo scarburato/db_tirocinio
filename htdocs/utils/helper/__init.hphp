@@ -1,0 +1,3 @@
+<?php
+require_once dirname(__FILE__) . "/Pagination.hphp";
+require_once dirname(__FILE__) . "/PaginationIndexBuilder.hphp";

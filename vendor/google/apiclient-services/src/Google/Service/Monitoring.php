@@ -136,6 +136,14 @@ class Google_Service_Monitoring extends Google_Service
                   'type' => 'string',
                   'required' => true,
                 ),
+                'childrenOfGroup' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+                'descendantsOfGroup' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
                 'pageToken' => array(
                   'location' => 'query',
                   'type' => 'string',
@@ -145,14 +153,6 @@ class Google_Service_Monitoring extends Google_Service
                   'type' => 'integer',
                 ),
                 'ancestorsOfGroup' => array(
-                  'location' => 'query',
-                  'type' => 'string',
-                ),
-                'childrenOfGroup' => array(
-                  'location' => 'query',
-                  'type' => 'string',
-                ),
-                'descendantsOfGroup' => array(
                   'location' => 'query',
                   'type' => 'string',
                 ),
@@ -344,6 +344,11 @@ class Google_Service_Monitoring extends Google_Service
                   'type' => 'string',
                   'required' => true,
                 ),
+                'aggregation.groupByFields' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                  'repeated' => true,
+                ),
                 'interval.endTime' => array(
                   'location' => 'query',
                   'type' => 'string',
@@ -383,11 +388,6 @@ class Google_Service_Monitoring extends Google_Service
                 'view' => array(
                   'location' => 'query',
                   'type' => 'string',
-                ),
-                'aggregation.groupByFields' => array(
-                  'location' => 'query',
-                  'type' => 'string',
-                  'repeated' => true,
                 ),
               ),
             ),
@@ -476,13 +476,13 @@ class Google_Service_Monitoring extends Google_Service
               'path' => 'v3/uptimeCheckIps',
               'httpMethod' => 'GET',
               'parameters' => array(
-                'pageSize' => array(
-                  'location' => 'query',
-                  'type' => 'integer',
-                ),
                 'pageToken' => array(
                   'location' => 'query',
                   'type' => 'string',
+                ),
+                'pageSize' => array(
+                  'location' => 'query',
+                  'type' => 'integer',
                 ),
               ),
             ),

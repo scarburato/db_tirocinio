@@ -6,11 +6,13 @@
  * Time: 20.03
  */
 
-require_once "../../../utils/lib.hphp";
-require_once "../../../utils/auth.hphp";
+require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
+require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_STUDENT, "./../../../");
-$user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../../", $oauth2);
+\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
+$oauth2 = \auth\connect_token_google($google_client, $_SESSION["user"]["token"]);
+
+$user = \auth\get_user_info($oauth2);
 
 // Variabili pagina
 $page = "Cassetta degli strumenti";
@@ -44,7 +46,7 @@ $page = "Cassetta degli strumenti";
                     <div class="content">
                         <h1>Gestione Utenze scolastiche</h1>
                         <p class="has-text-justified">È necessario avere un'utenza su Google in grado di sfogliare le utenze sul dominio</p>
-                        <a class="button is-link is-pulled-right">
+                        <a class="button is-link is-pulled-right" href="users">
                             Configura
                         </a>
                     </div>
@@ -59,7 +61,7 @@ $page = "Cassetta degli strumenti";
                 <div class="media-content">
                     <div class="content">
                         <h1>Gestione Aziende</h1>
-                        <a class="button is-link is-pulled-right" href="pages/docente/control_panel/aziende.php">
+                        <a class="button is-link is-pulled-right" href="./aziende">
                             Configura
                         </a>
                     </div>
@@ -74,7 +76,7 @@ $page = "Cassetta degli strumenti";
                 <div class="media-content">
                     <div class="content">
                         <h1>Controllo degli accessi</h1>
-                        <a class="button is-link is-pulled-right">
+                        <a class="button is-link is-pulled-right" href="./traffico">
                             Configura
                         </a>
                     </div>
@@ -98,6 +100,6 @@ $page = "Cassetta degli strumenti";
         </div>
     </div>
 </section>
-<?php include "../../../utils/pages/footer.phtml"; ?>
+<?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 </body>
 </html>

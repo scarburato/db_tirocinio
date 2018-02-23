@@ -5,12 +5,14 @@
  * Date: 18/01/18
  * Time: 15.01
  */
-require_once "utils/lib.hphp";
-require_once "utils/auth.hphp";
+require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
+require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
 \auth\check_and_redirect(\auth\LEVEL_GUEST);
 
 $login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
+
+$login_fail = isset($_GET["login_fail"]) && $_GET["login_fail"] === "credentials";
 ?>
 
 <html lang="it">
@@ -26,7 +28,7 @@ $login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
     </style>
 </head>
 <body>
-<div class="modal is-active" id="no_js">
+<noscript class="modal is-active" id="no_js">
     <div class="modal-background"></div>
     <div class="modal-content">
         <div class="message is-danger">
@@ -46,15 +48,15 @@ $login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
             </div>
         </div>
     </div>
-</div>
+</noscript>
 <header class="hero is-primary is-medium">
     <div class="hero-body">
         <div class="container">
             <h1 class="title">
-                <?php echo SITE_NAME ?>
+                <?= SITE_NAME ?>
             </h1>
             <h2>
-                <?php echo SITE_SUBTITLE ?>
+                <?= SITE_SUBTITLE ?>
             </h2>
         </div>
     </div>
@@ -131,13 +133,13 @@ if(isset($_GET["google_expired"]))
                 </div>
                 <div class="column ">
                     <h1 class="title">Accesso utenze aziendali</h1>
-                    <form>
+                    <form action="aziende_ingresso.php" method="POST">
                         <div class="field">
                             <label class="label">
                                 Identificativo univoco numerico
                             </label>
                             <div class="control">
-                                <input class="input" type="number" placeholder="Mumero" required>
+                                <input class="input <?= $login_fail ? "is-danger" : ""?>" type="number" name="id" placeholder="Mumero" required>
                             </div>
                         </div>
                         <div class="field">
@@ -145,21 +147,58 @@ if(isset($_GET["google_expired"]))
                                 Parola d'ordine
                             </label>
                             <div class="control">
-                                <input class="input" type="password" placeholder="Parola d'ordine">
+                                <input class="input <?= $login_fail ? "is-danger" : ""?>" type="password" name="pass" placeholder="Parola d'ordine">
                             </div>
+                            <?php
+                            if($login_fail)
+                            {
+                                ?>
+                                <p class="help is-danger">
+                                    Le credenziali inserite sono invalide
+                                </p>
+                                <?php
+                            }
+                            ?>
                         </div>
 
                         <div class="field">
                             <label class="label">
                                 Sono umano?<!--Il mio portafogli no-->
                             </label>
-                            <div class="coinhive-captcha" data-hashes="1024" data-key="SITE_KEY">
-                                <em>
-                                    Caricando il "Captcha"...<br>
-                                    Se non carica considerare di disattivare AdBlock ovvero concedere il dominio <samp><strong>https://authedmine.com/</strong></samp>.<br>
-                                    Questo è necessario per impedire attacchi automatizzati.
-                                </em>
-                            </div>
+                            <?php
+                            if(SKIP_CAPTCHA)
+                            {
+                                ?>
+                                <p class="help">Sembra di sì</p>
+                                <?php
+                            }
+                            else
+                            {
+                                ?>
+                                <div
+                                        class="coinhive-captcha"
+                                        data-hashes="<?= 256 ?>"
+                                        data-key="gWI9zLqM6hJ0k8rh7kZJd0Z4rTICDHcJ"
+                                        data-disable-elements="button[type=submit]"
+                                >
+                                    <em>
+                                        Caricando il "Captcha"...<br>
+                                        Se non carica considerare di disattivare AdBlock ovvero concedere il dominio
+                                        <samp><strong>https://authedmine.com/</strong></samp>.<br>
+                                        Questo è necessario per impedire attacchi automatizzati.
+                                    </em>
+                                </div>
+                                <?php
+                                if (isset($_GET["login_fail"]) && $_GET["login_fail"] === "captcha")
+                                {
+                                    ?>
+                                    <p class="help is-danger">
+                                        Per cortesia verificare la propria umanità!
+                                    </p>
+                                    <?php
+                                }
+                            }
+                            ?>
                         </div>
 
                         <button class="button is-info is-pulled-right" type="submit">
@@ -177,9 +216,5 @@ if(isset($_GET["google_expired"]))
     </section>
 </section>
 <?php include "utils/pages/footer.phtml"; ?>
-
-<script>
-	$("#no_js").removeClass("is-active");
-</script>
 </body>
 </html>

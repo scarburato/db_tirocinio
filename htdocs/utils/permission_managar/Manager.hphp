@@ -1,0 +1,15 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 03/02/18
+ * Time: 11.48
+ */
+
+namespace permission_manager;
+
+
+class Manager
+{
+
+}

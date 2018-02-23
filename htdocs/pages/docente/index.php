@@ -6,18 +6,19 @@
  * Time: 19.27
  */
 
-require_once "../../utils/lib.hphp";
-require_once "../../utils/auth.hphp";
+require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
+require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_STUDENT, "./../../");
-$user = \auth\connect_token_google($google_client, $_SESSION["user"]["token"], "./../../", $oauth2);
+\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
+$oauth2 = \auth\connect_token_google($google_client, $_SESSION["user"]["token"]);
+$user = \auth\get_user_info($oauth2);
 
 // Variabili pagina
 $page = "Cruscotto";
 ?>
 <html lang="it">
 <head>
-    <?php include "../../utils/pages/head.phtml"; ?>
+    <?php include ($_SERVER["DOCUMENT_ROOT"]) ."/utils/pages/head.phtml"; ?>
 </head>
 <body>
 <?php include "../common/google_navbar.php"; ?>
@@ -35,6 +36,6 @@ $page = "Cruscotto";
         </div>
     </div>
 </section>
-<?php include "../../utils/pages/footer.phtml"; ?>
+<?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 </body>
 </html>

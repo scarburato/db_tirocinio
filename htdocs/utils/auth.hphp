@@ -8,18 +8,25 @@
 
 namespace auth
 {
-    const LEVEL_ALL = -1;
-    const LEVEL_GUEST = 0;
-    const LEVEL_GOOGLE_STUDENT = 1;
-    const LEVEL_GOOGLE_TEACHER = 2;
-    const LEVEL_FACTORY = 3;
+    require_once dirname(__FILE__) . "/url_utils/__init.hphp";
+    use GuzzleHttp\Exception\ConnectException;
+    use mysqli_wrapper\mysqli;
+
+    const LEVEL_ALL                     =-1;
+    const LEVEL_GUEST                   = 0;
+    const LEVEL_GOOGLE_STUDENT          = 1;
+    const LEVEL_GOOGLE_TEACHER          = 2;
+    const LEVEL_GOOGLE_BOTH             = 3;
+    const LEVEL_GOOGLE_UNAUTHORIZED     = 4;
+    const LEVEL_FACTORY                 = 5;
 
     /**
      * Controlla i permessi
      * @param $auth_level
-     * @param string $basepath
+     * @param bool $redirect
+     * @return bool
      */
-    function check_and_redirect($auth_level, $basepath = "", $google = NULL)
+    function check_and_redirect($auth_level, $redirect = true): bool
     {
         if (!isset($_SESSION["user"]))
             $_SESSION["user"] = array(
@@ -29,24 +36,30 @@ namespace auth
             );
 
         if($auth_level === LEVEL_ALL || $auth_level === $_SESSION["user"]["type"])
-            return;
+            return true;
+        elseif (!$redirect)
+            return false;
 
         // TODO Se "loggato" con Google controllare validità del token
 
         switch ($_SESSION["user"]["type"])
         {
             case LEVEL_GUEST:
+            case LEVEL_GOOGLE_UNAUTHORIZED:
             default:
-                header("Location: {$basepath}index.php");
+                redirect("/index.php");
                 break;
             case LEVEL_GOOGLE_STUDENT:
-                header("Location: {$basepath}pages/studente/index.php");
+                redirect("/pages/studente/");
                 break;
             case LEVEL_GOOGLE_TEACHER:
-                header("Location: {$basepath}pages/docente/index.php");
+                redirect("/pages/docente/");
+                break;
+            case LEVEL_GOOGLE_BOTH:
+                redirect("/ambiguita.php");
                 break;
             case LEVEL_FACTORY:
-                header("Location: {$basepath}gestore/index.php");
+                redirect("/pages/azienda/");
                 break;
         }
 
@@ -73,38 +86,88 @@ namespace auth
      * @param $google \Google_Client
      * @param $basepath string
      * @param $token string
-     * @return mixed
+     * @param $redirect bool
+     * @return \Google_Service_Oauth2;
      */
-    function connect_token_google(&$google, $token, $basepath = "", &$oauth2 = null)
+    function connect_token_google(&$google, $token, $redirect = true)
     {
-        $google->setAccessToken($token);
-        $oauth2 = new \Google_Service_Oauth2($google);
-
         try
         {
-            $userinfo = $oauth2->userinfo->get();
+            $google->setAccessToken($token);
+            if($google->isAccessTokenExpired())
+            {
+                if(!$redirect)
+                    throw new \Google_Exception("Token expired", 401);
+
+                log_out();
+                redirect("/index.php", [
+                    "google_expired" => true
+                ]);
+            }
+
+            $oauth2 = new \Google_Service_Oauth2($google);
         }
-        catch(\Google_Service_Exception $e)
+        catch (\Exception $e)
         {
+            if(!$redirect)
+                throw $e;
+
+            redirect_error("Controllare la conessione ad internet", $e->getMessage(), $e->getTrace());
+        }
+
+        return $oauth2;
+    }
+
+    /**
+     * @param \Google_Service_Oauth2 $oauth2
+     * @param bool $redirect
+     * @return \Google_Service_Oauth2_Userinfoplus|null
+     * @throws \Google_Exception
+     */
+    function get_user_info(\Google_Service_Oauth2 &$oauth2, $redirect = true)
+    {
+        $user = null;
+        try
+        {
+            $user = $oauth2->userinfo->get();
+        }
+        catch(\Google_Exception $e)
+        {
+            if(!$redirect)
+                throw $e;
+
             log_out();
             if($e->getCode() == 401)
             {
-                header("Location: {$basepath}index.php?google_expired=" . urlencode($e->getMessage()));
+                redirect("/index.php", [
+                    "google_expired" => urlencode($e->getMessage())
+                ]);
             }
             else
             {
-                $errore = array(
-                    "name" => $e->getMessage(),
-                    "code" => $e->getCode(),
-                    "what" => $e->getTraceAsString()
-                );
-
-                header("Location: {$basepath}error.php?error=" . json_encode($errore));
+                redirect_error($e->getMessage(), $e->getCode(), $e->getTrace());
             }
 
             die("Sessione scaduta. <br>" . $e->getTraceAsString());
         }
+        catch (ConnectException $e)
+        {
+            if(!$redirect)
+                throw $e;
 
-        return $userinfo;
+            redirect_error("Controllare la conessione ad internet", $e->getCode(), $e->getTrace());
+        }
+        return $user;
+    }
+
+    /**
+     * @param mysqli $link
+     * @param string $permission
+     * @param bool $redirect
+     * @return bool
+     */
+    function check_permission(mysqli $link, string $permission, bool $redirect = true): bool
+    {
+        return true;
     }
 }
