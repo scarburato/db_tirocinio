@@ -13,13 +13,7 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/fakeService/init.php";
 
-$logged = \auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER, false);
-
-if(!$logged)
-{
-    echo json_encode(["error" => 401, "what" => "unauthorized"]);
-    return;
-}
+(new \auth\User())->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
 
 $server = new \mysqli_wrapper\mysqli();
 if(!\auth\check_permission($server, "control.google.users"))

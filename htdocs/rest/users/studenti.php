@@ -12,13 +12,7 @@ $force_silent = true;
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-$logged = \auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER, false);
-
-if(!$logged)
-{
-    echo json_encode(["error" => 401, "what" => "unauthorized"]);
-    return;
-}
+(new \auth\User())->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
 
 \auth\connect_token_google($google_client, $_SESSION["user"]["token"], false);
 

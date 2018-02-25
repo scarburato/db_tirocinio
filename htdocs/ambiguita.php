@@ -8,16 +8,20 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_BOTH);
-$oauth2 = \auth\connect_token_google($google_client, $_SESSION["user"]["token"]);
-$user = \auth\get_user_info($oauth2);
+$server = new \mysqli_wrapper\mysqli();
+
+$user = new \auth\User();
+$user->is_authorized(\auth\LEVEL_GOOGLE_BOTH, \auth\User::UNAUTHORIZED_REDIRECT);
+$user_info = ($user->get_info(new RetriveStudenteFromDatabase($server)));
+
+$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
 
 if(isset($_GET["tipo"]))
 {
     if($_GET["tipo"] == 0)
-        $_SESSION["user"]["type"] = \auth\LEVEL_GOOGLE_STUDENT;
+        $user->set_type(\auth\LEVEL_GOOGLE_STUDENT);
     elseif($_GET["tipo"] == 1)
-        $_SESSION["user"]["type"] = \auth\LEVEL_GOOGLE_TEACHER;
+        $user->set_type(\auth\LEVEL_GOOGLE_TEACHER);
 
     header("Location: index.php");
     die("Finito!");

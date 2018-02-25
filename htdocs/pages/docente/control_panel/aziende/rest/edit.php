@@ -12,8 +12,11 @@ $json_mode = true;
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) ."/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
-$oauth2 = \auth\connect_token_google($google_client, $_SESSION["user"]["token"]);$user = \auth\get_user_info($oauth2);
+$server = new \mysqli_wrapper\mysqli();
+
+$user = new \auth\User();
+$user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
+$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
 
 const EDITABLE_VALID_COLUMNS = ["IVA", "codiceFiscale", "nominativo", "classificazione", "ateco", "dimensione", "gestione", "no_accessi"];
 $return = array();
@@ -36,7 +39,6 @@ if(array_search($_POST["column"], EDITABLE_VALID_COLUMNS) === false)
     echo json_encode($return);
 }
 
-$server = new \mysqli_wrapper\mysqli();
 $edit = $server->prepare("UPDATE Azienda SET {$_POST["column"]} = ? WHERE id = ?");
 
 if($edit)

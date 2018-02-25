@@ -8,23 +8,15 @@
 
 namespace auth
 {
-    require_once dirname(__FILE__) . "/url_utils/__init.hphp";
     use GuzzleHttp\Exception\ConnectException;
     use mysqli_wrapper\mysqli;
-
-    const LEVEL_ALL                     =-1;
-    const LEVEL_GUEST                   = 0;
-    const LEVEL_GOOGLE_STUDENT          = 1;
-    const LEVEL_GOOGLE_TEACHER          = 2;
-    const LEVEL_GOOGLE_BOTH             = 3;
-    const LEVEL_GOOGLE_UNAUTHORIZED     = 4;
-    const LEVEL_FACTORY                 = 5;
 
     /**
      * Controlla i permessi
      * @param $auth_level
      * @param bool $redirect
      * @return bool
+     * @deprecated
      */
     function check_and_redirect($auth_level, $redirect = true): bool
     {
@@ -69,6 +61,7 @@ namespace auth
 
     /**
      * Fa il logout
+     * @deprecated
      */
     function log_out()
     {

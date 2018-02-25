@@ -8,10 +8,12 @@
 
 mb_internal_encoding("UTF-8");
 require_once dirname(__FILE__) . "/const.hphp";
-require_once dirname(__FILE__) . "/url_utils/__init.hphp";
 
+require_once dirname(__FILE__) . "/url_utils/__init.hphp";
 require_once dirname(__FILE__) . "/mysqli_wrapper/__init.hphp";
 require_once dirname(__FILE__) . "/helper/__init.hphp";
+require_once dirname(__FILE__) . "/auth/__init.hphp";
+
 
 require_once dirname(__FILE__) . "/../../vendor/autoload.php";
 

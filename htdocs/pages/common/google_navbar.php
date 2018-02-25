@@ -25,17 +25,17 @@ if(false)
     <div class="navbar-end">
         <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
-                <?= $user["email"] ?>
+                <?= $user_info->username ?>
             </a>
 
             <div class="navbar-dropdown">
                 <div class="navbar-item">
                     <p class="title is-4 is-capitalized">
                         <span class="icon">
-                            <img alt="profile_picture" src="<?= $user["picture"] ?>">
+                            <img alt="profile_picture" src="<?= $user_info["picture"] ?>">
                         </span>
                         <span>
-                            <?= $user["name"] ?>
+                            <?= $user_info->nominative ?>
                         </span>
                     </p>
                 </div>

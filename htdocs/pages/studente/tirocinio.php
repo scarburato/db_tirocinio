@@ -7,9 +7,9 @@
  */
 
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
-require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_STUDENT);
+(new \auth\User())->is_authorized(\auth\User::UNAUTHORIZED_THROW);
+
 
 $index = (isset($_GET["index"]) && $_GET["index"] >= 0 ? $_GET["index"] : 0);
 $server = new \mysqli_wrapper\mysqli();

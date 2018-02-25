@@ -8,7 +8,10 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GUEST);
+$server = new \mysqli_wrapper\mysqli();
+
+$user = new \auth\User();
+$user->is_authorized(\auth\LEVEL_GUEST, \auth\User::UNAUTHORIZED_REDIRECT);
 
 $login_url = filter_var($google_client->createAuthUrl(), FILTER_SANITIZE_URL);
 

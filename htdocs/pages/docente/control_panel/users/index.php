@@ -9,14 +9,17 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
-$oauth2 = \auth\connect_token_google($google_client, $_SESSION["user"]["token"]);$user = \auth\get_user_info($oauth2);
+$server = new \mysqli_wrapper\mysqli();
 
+$user = new \auth\User();
+$user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
+$user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
+
+$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
 // Variabili pagina
 $page = "Utenze Google";
 
 $filtro = (isset($_GET["filtro"])) ? "%{$_GET["filtro"]}%" : "%";
-$server = new \mysqli_wrapper\mysqli();
 $utenze = new class($server, "SELECT id, nome, cognome, indirizzo_posta, D.utente, S.utente FROM UtenteGoogle
   LEFT JOIN Docente D ON UtenteGoogle.id = D.utente
   LEFT JOIN Studente S ON UtenteGoogle.id = S.utente
@@ -83,14 +86,14 @@ $nav = new \helper\PaginationIndexBuilder($utenze);
                 <div class="level">
                     <div class="level-left">
                         <div class="level-item">
-                            <button class="button is-primary" type="button">
+                            <a class="button is-primary" href="import.php">
                                 <span class="icon">
                                     <i class="fa fa-user-plus" aria-hidden="true"></i>
                                 </span>
                                 <span>
                                     Aggiungi utente dal dominio
                                 </span>
-                            </button>
+                            </a>
                         </div>
                         <div class="level-item">
                             <button class="button" type="button" title="Imposta">
