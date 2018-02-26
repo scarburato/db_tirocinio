@@ -5,8 +5,9 @@ $.fn.isOnScreen = function()
 	return bounds.top < window.innerHeight && bounds.bottom > 0;
 };
 
-index = 0;
-semaforo = false;
+let index = 0;
+let semaforo = false;
+let selezione = 1;
 window.setInterval(function ()
 {
 	if(semaforo)
@@ -20,6 +21,7 @@ window.setInterval(function ()
 			"tirocinio.php",
 			{
 				index: index++,
+				chTrain: selezione,
 			}
 		).done(function (data)
 		{
@@ -36,3 +38,20 @@ window.setInterval(function ()
 		});
 	}
 },250);
+
+$('.switch').on('click', function() {
+	// Todo implementare attesa del semaforo libero
+	if ($(this).hasClass("is-active"))
+		return;
+	if (semaforo)
+		return;
+	semaforo=true;
+	selezione=$(this).data("selezione");
+	$("#loading_go_on").show();
+	$("#loading_stop").hide();
+	$("#tirocinis").html("");
+	$('.switch').removeClass("is-active");
+	$(this).addClass("is-active");
+	index = 0;
+	semaforo=false;
+});

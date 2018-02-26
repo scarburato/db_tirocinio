@@ -10,15 +10,45 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 
 (new \auth\User())->is_authorized(\auth\User::UNAUTHORIZED_THROW);
 
-
+$tempo = (isset($_GET['chTrain']) ? $_GET['chTrain'] : 1);
 $index = (isset($_GET["index"]) && $_GET["index"] >= 0 ? $_GET["index"] : 0);
 $server = new \mysqli_wrapper\mysqli();
-$train = $server->prepare(
-        "SELECT Tirocinio.id, A.nominativo, dataInizio, dataTermine FROM Tirocinio
-                LEFT JOIN Azienda A ON Tirocinio.azienda = A.id
-                LEFT JOIN Docente D ON Tirocinio.docenteTutore = D.utente
-                LEFT JOIN Contatto C ON Tirocinio.tutoreAziendale = C.id
-               WHERE studente = ? LIMIT 1 OFFSET ?");
+
+switch ($tempo) {
+  case 0: // Tirocini passati
+  $train = $server->prepare(
+          "SELECT Tirocinio.id, A.nominativo, dataInizio, dataTermine FROM Tirocinio
+              LEFT JOIN Azienda A ON Tirocinio.azienda = A.id
+              LEFT JOIN Docente D ON Tirocinio.docenteTutore = D.utente
+              LEFT JOIN Contatto C ON Tirocinio.tutoreAziendale = C.id
+              WHERE studente = ?
+                AND (dataTermine<CURRENT_DATE() AND dataTermine IS NOT NULL)
+              ORDER BY dataInizio ASC
+              LIMIT 1 OFFSET ?");
+    break;
+  case 1: // Presenti
+  default:
+  $train = $server->prepare(
+          "SELECT Tirocinio.id, A.nominativo, dataInizio, dataTermine FROM Tirocinio
+              LEFT JOIN Azienda A ON Tirocinio.azienda = A.id
+              LEFT JOIN Docente D ON Tirocinio.docenteTutore = D.utente
+              LEFT JOIN Contatto C ON Tirocinio.tutoreAziendale = C.id
+              WHERE studente = ?
+                AND (CURRENT_DATE()>=dataInizio AND (dataTermine IS NULL OR CURRENT_DATE()<=dataTermine))
+              ORDER BY dataInizio ASC
+              LIMIT 1 OFFSET ?");
+    break;
+  case 2: // Futuri
+  $train = $server->prepare(
+          "SELECT Tirocinio.id, A.nominativo, dataInizio, dataTermine FROM Tirocinio
+              LEFT JOIN Azienda A ON Tirocinio.azienda = A.id
+              LEFT JOIN Docente D ON Tirocinio.docenteTutore = D.utente
+              LEFT JOIN Contatto C ON Tirocinio.tutoreAziendale = C.id
+              WHERE studente = ? AND CURRENT_DATE()<dataInizio
+              ORDER BY dataInizio ASC
+              LIMIT 1 OFFSET ?");
+    break;
+}
 
 $train->bind_param(
         "ii",
