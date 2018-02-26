@@ -11,6 +11,8 @@ $google_client_2->setApplicationName('fakeService');
 $google_client_2->setAuthConfig(dirname(__FILE__) . "/../../client_secret_fake_service.json");
 
 $google_client_2->setRedirectUri("http://localhost/fakeService/auth.php");
+//$google_client_2->setRedirectUri("https://pgnfba.dtdns.net:10101/fakeService/auth.php");
+
 $google_client_2->addScope("https://www.googleapis.com/auth/admin.directory.user.readonly");
 $google_client_2->addScope("https://www.googleapis.com/auth/admin.directory.orgunit.readonly");
 $google_client_2->addScope("https://www.googleapis.com/auth/userinfo.email");

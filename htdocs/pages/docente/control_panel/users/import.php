@@ -16,6 +16,7 @@ $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRE
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
 $oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+
 // Variabili pagina
 $page = "Importa utente da Google";
 
@@ -44,34 +45,69 @@ $page = "Importa utente da Google";
             </div>
             <div class="field has-addons">
                 <div class="control is-expanded">
-                    <input class="input" type="email" placeholder="Indirizzo di posta elettronica">
+                    <input id="query" class="input" type="email" placeholder="Indirizzo di posta elettronica">
                 </div>
                 <div class="control">
-                    <a class="button is-link">
+                    <button id="search" class="button is-link">
                         <span class="icon">
                             <i class="fa fa-search" aria-hidden="true"></i>
                         </span>
                         <span>
                             Cerca
                         </span>
-                    </a>
+                    </button>
                 </div>
+            </div>
+
+            <div id="wait" class="is-boxed">
+
+            </div>
+
+            <div id="info" class="message is-info">
+                <div class="message-body">
+                    Per cominciare inserire l'indirizzo di <strong>posta elettronica</strong> dell'utente che si vuole aggiungere.
+                </div>
+            </div>
+
+            <div id="error" class="message is-danger">
+                <div class="message-header">
+                    <p>
+                        <span class="icon">
+                            <i class="fa fa-database"></i>
+                        </span>
+                        <span>
+                            Errore durante l'interrogazione
+                        </span>
+                    </p>
+                </div>
+                <div class="message-body">
+                    <p>Si sono verificati dei problemi durante l'interrogazione!</p>
+                    <pre id="error_what"><?= $errori ?></pre>
+                </div>
+            </div>
+
+            <div id="no_output" class="box">
+                <h1 class="title is-2">
+                    <span class="icon is-large">
+                        <i class="fa fa-frown-o" aria-hidden="true"></i>
+                    </span>
+                    <span>Nessun risultato</span>
+                </h1>
             </div>
 
             <div id="output" class="box">
                 <div class="media">
-                    <figure class="image is-96x96 media-left">
-                        <img src="https://plus.google.com/_/focus/photos/public/AIbEiAIAAABDCOzvp6qfv9q6CCILdmNhcmRfcGhvdG8qKDc4ODZkNzUzN2U2ZDM1NWRhODRkNDdhMDM4ODQ5ZWFkNjdhZTZlNzgwAZU1sk7AdSwrMfBtPsgA445O-F2R">
+                    <figure class="image is-96x96 media-left" id="output_img">
+                        <img src="">
                     </figure>
                     <div class="media-right">
-                        <h1 class="title is-2">Mario Rossi</h1>
+                        <h1 class="title is-2" id="output_nominative"></h1>
                         <h3 class="subtitle is-3">
-                            <a href="mailto:dario.pagani@itispisa.gov.it">
-                                dario.pagani@itispisa.gov.it
+                            <a id="output_email" href="">
                             </a>
                         </h3>
                         <p>
-                            Unità organizzativa <code>/STUDENTI/5INF-2017</code>
+                            Unità organizzativa <code id="output_orgunit"></code>
                         </p>
                         <p><strong>Livelli</strong></p>
                         <ul>
@@ -80,7 +116,7 @@ $page = "Importa utente da Google";
                     </div>
                 </div>
                 <br>
-                <button class="button is-large is-primary is-fullwidth">
+                <button id="add_user" class="button is-large is-primary is-fullwidth" >
                     <span class="icon">
                         <i class="fa fa-plus" aria-hidden="true"></i>
                     </span>
@@ -88,10 +124,12 @@ $page = "Importa utente da Google";
                         Aggiungi
                     </span>
                 </button>
+                <p class="help is-danger" id="user_exists" hidden>Questo utente è già registrato!</p>
             </div>
         </div>
     </div>
 </section>
 </body>
 <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
+<script src="js/main.js"></script>
 </html>

@@ -74,3 +74,34 @@ class RetriveDocenteFromDatabase implements \auth\RetriveInformations
         return $return;
     }
 }
+
+class RetriveAziendaFromDatabase implements \auth\RetriveInformations
+{
+    private $link;
+
+    public function __construct(\mysqli_wrapper\mysqli &$link)
+    {
+        $this->link = &$link;
+    }
+
+    public function retrive(\auth\User $user): \auth\UserInfo
+    {
+        $retrive = $this->link->prepare(
+            "SELECT id, nominativo, IVA, codiceFiscale, NULL AS 'picture' FROM Azienda");
+
+        $retrive->bind_param(
+            "i",
+            $user->get_database_id()
+        );
+        $retrive->execute(true);
+
+        $return = new \auth\UserInfo($retrive->get_result()->fetch_assoc());
+        $return->id = $user->get_database_id();
+        $return->nominative = $return["nominativo"];
+        $return->username = $return["nominativo"];
+
+        $retrive->close();
+
+        return $return;
+    }
+}

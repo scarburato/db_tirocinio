@@ -10,7 +10,6 @@ $json_mode = true;
 $force_silent = true;
 
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
-require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/fakeService/init.php";
 
 (new \auth\User())->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
@@ -22,7 +21,7 @@ if(!\auth\check_permission($server, "control.google.users"))
     return;
 };
 
-if(empty($_GET["email"]) || filter_var($_GET["mail"],FILTER_VALIDATE_EMAIL))
+if(empty($_GET["email"]))
 {
     echo json_encode(["error" => -1, "what" => "invalid email"]);
     return;
@@ -38,19 +37,26 @@ try
 catch (Google_Exception $e)
 {
     if($e->getCode() == 404)
-        echo json_encode(["found" => false]);
+        echo json_encode(["error" => null, "found" => false]);
     else
         throw $e;
 
     return;
 }
 
+$esiste_db = $server->prepare("SELECT id FROM UtenteGoogle WHERE SUB_GOOGLE = ?");
+$esiste_db->bind_param(
+    "s",
+    $utente->id
+);
+$esiste_db->execute(false);
+
 echo  json_encode([
+    "error" => null,
     "found" => true,
+    "no_db" => $esiste_db->fetch() === null,
     "email" => $utente->primaryEmail,
     "orgUnitPath" => $utente->orgUnitPath,
     "thumbnailPhotoUrl" => $utente->thumbnailPhotoUrl,
     "name" => $utente->getName()
 ]);
-
-

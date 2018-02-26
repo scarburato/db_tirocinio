@@ -6,7 +6,6 @@
  * Time: 18.58
  */
 
-
 if(!isset($force_silent))
     error_reporting(E_ERROR);
 else
@@ -28,12 +27,14 @@ const ERROR_MAIL = "test@example.com";
  * URI deve essere coerente con quelli memorizzati
  * https://console.developers.google.com/apis/credentials
  */
+
 const GOOGLE_REDIRECT_URI = "http://localhost/test.php";
-//const GOOGLE_REDIRECT_URI = "http://192.168.1.125/test.php";
+//const GOOGLE_REDIRECT_URI = "https://pgnfba.dtdns.net:10101/test.php";
 const TRUSTED_DOMAIN = "itispisa.gov.it";
 const SKIP_CAPTCHA = true;
 
 const PROTOCOL = "http://";
+//const PROTOCOL = "https://";
 
 // Base dati
 const DBMS_SERVER = null;

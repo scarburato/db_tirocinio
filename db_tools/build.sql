@@ -125,14 +125,13 @@ CREATE TABLE IF NOT EXISTS IndirizziAzienda (
 CREATE TABLE IF NOT EXISTS Contatto (
   id             INT(8) UNSIGNED PRIMARY KEY,
   azienda        INT UNSIGNED,
-  nome           VARCHAR(32) NOT NULL,
-  secondoNome    VARCHAR(128),
-  cognome        VARCHAR(48) NOT NULL,
+  nome           VARCHAR(64) NOT NULL,
+  cognome        VARCHAR(64) NOT NULL,
   email          VARCHAR(64),
   telefono       CHAR(35) CHECK (telefono REGEXP '\\+[0-9]{1,3}-[0-9()+\\-]{1,30}'), /* In conformità a ISO 20022 */
   FAX            CHAR(35) CHECK (FAX REGEXP '\\+[0-9]{1,3}-[0-9()+\\-]{1,30}'),
-  qualifica      VARCHAR(60),
-  ruoloAziendale TINYTEXT    NOT NULL,
+  qualifica      VARCHAR(64),
+  ruoloAziendale TEXT    NOT NULL,
 
   FOREIGN KEY (Azienda)
   REFERENCES Azienda (ID)

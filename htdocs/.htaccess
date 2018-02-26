@@ -1,0 +1,9 @@
+<Files .htaccess>
+Order allow,deny
+Deny from all
+</Files>
+
+<Files secret_token.json>
+Order allow,deny
+Deny from all
+</Files>

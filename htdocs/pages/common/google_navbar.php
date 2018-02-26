@@ -32,7 +32,7 @@ if(false)
                 <div class="navbar-item">
                     <p class="title is-4 is-capitalized">
                         <span class="icon">
-                            <img alt="profile_picture" src="<?= $user_info["picture"] ?>">
+                            <img alt="" src="<?= $user_info["picture"] ?>">
                         </span>
                         <span>
                             <?= $user_info->nominative ?>
