@@ -40,7 +40,7 @@ window.setInterval(function ()
 },250);
 
 $('.switch').on('click', function() {
-	// Todo implementare attesa del semaforo libero
+	// TODO implementare attesa del semaforo libero
 	if ($(this).hasClass("is-active"))
 		return;
 	if (semaforo)
