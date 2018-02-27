@@ -96,11 +96,11 @@ $nav = new \helper\PaginationIndexBuilder($utenze);
                             </a>
                         </div>
                         <div class="level-item">
-                            <button class="button" type="button" title="Imposta">
+                            <a href="set_orgunit.php" class="button" type="button" title="Imposta">
                                 <span class="icon">
                                     <i class="fa fa-gear" aria-hidden="true"></i>
                                 </span>
-                            </button>
+                            </a>
                         </div>
                     </div>
                     <div class="level-right">

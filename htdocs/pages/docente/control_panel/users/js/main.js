@@ -1,3 +1,9 @@
+let semaforo = false;
+let info = {
+	email: null,
+	already: true
+};
+
 $("#error").hide();
 $("#no_output").hide();
 $("#output").hide();
@@ -9,8 +15,33 @@ $("#query").on("keyup", function (e)
 		ricerca();
 });
 
+$("#add_user").on("click", function ()
+{
+	if(semaforo || info.already)
+		return;
+
+	semaforo = true;
+
+	$.get (
+		BASE + "rest/domain/users/insert.php",
+		{
+			email: info.email
+		}
+	).done(function (data)
+	{
+		console.log(data);
+		$("#add_user").prop("disabled", true);
+	});
+
+	semaforo = false;
+});
+
 function ricerca()
 {
+	if(semaforo)
+		return;
+	semaforo = true;
+
 	$("#info").hide();
 	$("#error").hide();
 	$("#no_output").hide();
@@ -50,6 +81,13 @@ function ricerca()
 					$("#user_exists").hide();
 
 				$("#output").show();
+
+				info.email = data.email;
+				info.already = !data.no_db;
 			}
 		})
+		.always(function ()
+		{
+			semaforo = false;
+		});
 }

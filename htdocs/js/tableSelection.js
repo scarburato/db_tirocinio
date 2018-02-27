@@ -11,6 +11,8 @@ class TableSelection
 
 		this.tbody.on("click", "tr", this.onClick.bind(this));
 		this.tbody.on("keyup", "tr", this.onClick.bind(this));
+
+		this.handlers = [];
 	}
 
 	/**
@@ -22,6 +24,10 @@ class TableSelection
 		return this.selected_row;
 	}
 
+	/**
+	 * @private
+	 * @param event
+	 */
 	onClick(event)
 	{
 		let code = event.which;
@@ -38,5 +44,19 @@ class TableSelection
 		}
 		else
 			this.selected_row = null;
+
+		for(let i = 0; i < this.handlers.length; i++)
+			this.handlers[i](this.selected_row);
+	}
+
+	/**
+	 * La funzione passata come argomento verra chiamataogni qualcova una line viene
+	 * selezionata ovvero deleselezionata!
+	 * @param handler (row). Il primo argomento è il riferimo alla TR selezionata,
+	 * null viene passato se nessuna riga è selezionata!
+	 */
+	addHandler(handler)
+	{
+		this.handlers.push(handler);
 	}
 }

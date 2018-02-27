@@ -24,6 +24,7 @@ $("#main_form").submit(function ()
 	{
 		valido = false;
 		telefono.addClass("is-danger");
+		telefono.parent().parent().find("p").addClass("is-danger");
 		telefono.focus();
 	}
 
@@ -31,6 +32,7 @@ $("#main_form").submit(function ()
 	{
 		valido = false;
 		telefax.addClass("is-danger");
+		telefax.parent().parent().find("p").addClass("is-danger");
 		telefax.focus();
 	}
 

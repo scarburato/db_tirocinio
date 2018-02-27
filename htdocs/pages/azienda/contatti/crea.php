@@ -73,6 +73,16 @@ $page = "Creazione Contatto"
                         <div class="field">
                             <input name="tel" class="input" type="tel"
                                    placeholder="Numero di telefono" maxlength="35">
+                            <p class="help">
+                                Inserire un numero di telefono in conformità ad
+                                <a target="_blank" href="https://www.iso20022.org/standardsrepository/public/wqt/Description/mx/dico/datatypes/_YXvFB9p-Ed-ak6NoX_4Aeg_-1045927120">
+                                    ISO 20022
+                                </a>
+                                come
+                                <code>
+                                    +39-05066666
+                                </code>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -82,6 +92,16 @@ $page = "Creazione Contatto"
                         <div class="field">
                             <input name="fax" class="input" type="tel"
                                    placeholder="Numero di telefono telefax" maxlength="35">
+                            <p class="help">
+                                Inserire un numero di telefono in conformità ad
+                                <a target="_blank" href="https://www.iso20022.org/standardsrepository/public/wqt/Description/mx/dico/datatypes/_YXvFB9p-Ed-ak6NoX_4Aeg_-1045927120">
+                                    ISO 20022
+                                </a>
+                                come
+                                <code>
+                                    +39-050-66666
+                                </code>
+                            </p>
                         </div>
                     </div>
                 </div>
