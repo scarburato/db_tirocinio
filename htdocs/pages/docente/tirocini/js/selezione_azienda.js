@@ -1,6 +1,5 @@
 let azienda_tbody = $ ("#aziende_tbody");
-console.log(BASE + "rest/users/aziende.php");
-let azienda = new GetHandler(azienda_tbody, BASE + "rest/users/aziende.php", function (datum, tbody)
+let azienda = new GetHandler(azienda_tbody, BASE + "rest/users/list/aziende.php", function (datum, tbody)
 {
 	tbody.append (
 		"<tr data-dbid='"+ datum.id + "'>" +

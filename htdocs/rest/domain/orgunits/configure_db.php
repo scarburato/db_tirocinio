@@ -21,17 +21,34 @@ if(!\auth\check_permission($server, "control.training.create"))
     return;
 };
 
-if(empty($_GET["orgunits"]))
+if(!is_array($_POST["orgunits"]))
 {
     echo json_encode(["error" => -1, "what" => "You have to supply an array!"]);
     return;
 }
 
-$unita = json_decode($_GET["orgunits"], JSON_OBJECT_AS_ARRAY);
-$error = json_last_error();
-if($error !== JSON_ERROR_NONE)
+$server->autocommit(false);
+$drop = $server->prepare("DELETE FROM UnitaOrganizzativa WHERE TRUE ");
+$drop->execute();
+$drop->close();
+
+$add = $server->prepare("INSERT INTO UnitaOrganizzativa(tipo, unita_organizzativa) VALUES (?, ?)");
+
+$add->bind_param(
+    "ss",
+    $tipo,
+    $path
+);
+
+foreach ($_POST["orgunits"] as $value)
 {
-    echo json_encode(["error" => $error, "what" => json_last_error_msg()]);
+    $tipo = $value["type"];
+    $path = $value["path"];
+    $add->execute();
 }
 
-echo json_encode($unita);
+$add->close();
+
+$server->commit();
+
+echo json_encode($_POST["orgunits"], JSON_UNESCAPED_UNICODE);

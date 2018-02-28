@@ -149,7 +149,20 @@ $("#upload").on("click", function ()
 		});
 	});
 
-	console.log((esportare));
+	$.post(
+		BASE +  "rest/domain/orgunits/configure_db.php",
+		{
+			orgunits: esportare
+		}
+	)
+		.done(function (data)
+		{
+			console.log(data)
+		})
+		.always(function ()
+		{
+			location.reload(true);
+		});
 
 	semaforo = false;
 });

@@ -94,7 +94,7 @@ $page = "Cassetta degli strumenti";
                 <div class="media-content">
                     <div class="content">
                         <h1>Gestione permessi docenti</h1>
-                        <a class="button is-link is-pulled-right">
+                        <a href="permissions" class="button is-link is-pulled-right">
                             Configura
                         </a>
                     </div>
