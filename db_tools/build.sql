@@ -177,12 +177,14 @@ CREATE TABLE IF NOT EXISTS Tirocinio (
 );
 
 CREATE TABLE IF NOT EXISTS Commento (
-  tirocinio INT(8) UNSIGNED,
-  autore    SMALLINT UNSIGNED,
+  id        INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  tirocinio INT(8) UNSIGNED NOT NULL,
+  autore    SMALLINT UNSIGNED NOT NULL,
   testo     TEXT      NOT NULL,
   quando    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
 
-  PRIMARY KEY (Tirocinio, Autore, Quando),
+  UNIQUE (tirocinio, autore),
+
   FOREIGN KEY (Tirocinio)
   REFERENCES Tirocinio (id),
   FOREIGN KEY (Autore)

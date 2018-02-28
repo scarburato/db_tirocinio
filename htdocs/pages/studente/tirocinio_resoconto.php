@@ -6,8 +6,6 @@
  * Time: 17.02
  */
 
- // TODO scelta iniziale del tag attivo da tirocinio.php
-
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
@@ -20,16 +18,13 @@ $user_info = ($user->get_info(new RetriveStudenteFromDatabase($server)));
 $oauth2 = \auth\connect_token_google($google_client, $user->get_token());
 
 if(!isset($_GET["tirocinio"]))
-{
-    header("Location: index.php");
-    die("");
-}
+  redirect ('index.php');
 
 $tirocinio_azienda = $server->prepare(
     'SELECT A.nominativo,
     C.nome, C.secondoNome, C.cognome, C.email, C.telefono, C.FAX,
     D.nome, D.cognome, D.indirizzo_posta,
-    T.dataInizio, T.dataTermine, T.giudizio, T.descrizione, T.visibilita
+    T.dataInizio, T.dataTermine, T.giudizio, T.descrizione, T.visibilita, MD5(T.descrizione)
     FROM Tirocinio T LEFT JOIN Azienda A ON T.azienda = A.id
         LEFT JOIN UtenteGoogle D ON T.docenteTutore = D.id
         LEFT JOIN Contatto C ON T.tutoreAziendale = C.id
@@ -42,7 +37,7 @@ $tirocinio_azienda->execute(true);
 $tirocinio_azienda->bind_result($a_nom,
     $c_nome, $c_secNom, $c_cognome, $c_posta, $c_tel, $c_fax,
     $doc_nome, $doc_cog, $doc_posta,
-    $t_ini, $t_end, $t_giud, $t_desc, $t_vis);
+    $t_ini, $t_end, $t_giud, $t_desc, $t_vis, $desc_md5);
 
 if (!$tirocinio_azienda->fetch()) // errore, utente non valido e/o tirocinio non trovatos
   redirect("/index.php");
@@ -55,7 +50,6 @@ if ($t_desc === NULL)
  * 1 = in corso o simile, resoconto privato, modificabile
  * 2 = resoconto visibile globalmente, modifica non effettuabile
  * Questi dati sono già calcolati in tirocinio.php, ma sono ricalcolati per evitare possibili intrusioni dannose
- * TODO applicare le conseguenze di $status
 */
 $status = ($t_ini > date('Y-m-d') ? 0 : ($t_vis=='azienda' ? 2 : 1));
 // Questo permette un comportamento ottimizzato con lo switch seguente
@@ -77,7 +71,7 @@ unset($_GET['page']);
 
 // Variabili pagina
 $page = "Gestione Tirocinio - " . $a_nom;
-
+$num_tir = $_GET['tirocinio'];
 ?>
 
 <html lang="it">
@@ -89,7 +83,12 @@ $page = "Gestione Tirocinio - " . $a_nom;
     <script src="<?= BASE_DIR ?>js/editor/bbcode.min.js"></script>
     <script src="<?= BASE_DIR ?>js/editor/icons/monocons.min.js"></script>
     <script src="<?= BASE_DIR ?>js/editor/icons/material.min.js"></script>
-    <script> const PASSED='<?= $passed?>'</script>
+    <script src="<?= BASE_DIR ?>js/lib/jquery.md5.js"></script>
+    <script> const PASSED='<?= $passed?>';
+      md5_ATT='<?=$desc_md5?>';
+      const TIR ='<?=$num_tir?>' </script>
+
+
 </head>
 <body>
 <?php include "../common/google_navbar.php"; ?>
@@ -141,7 +140,7 @@ $page = "Gestione Tirocinio - " . $a_nom;
             <div class="tabs" id="selector">
                 <ul>
                   <li data-tab="info">
-                      <a> <!-- TODO fare tutto -->
+                      <a>
                           <span class="icon">
                               <i class="fa fa-info" aria-hidden="true"></i>
                           </span>
@@ -152,7 +151,7 @@ $page = "Gestione Tirocinio - " . $a_nom;
                   </li>
                     <?php if ($status==1) { ?>
                       <li data-tab="editor" >
-                          <a> <!-- TODO salvataggio -->
+                          <a>
                               <span class="icon">
                                   <i class="fa fa-pencil" aria-hidden="true"></i>
                               </span>
@@ -164,7 +163,7 @@ $page = "Gestione Tirocinio - " . $a_nom;
                     <?php }
                     if ($status!=0) { ?>
                       <li data-tab="preview">
-                          <a> <!-- TODO salvataggio / confronto -->
+                          <a> <!-- TODO confronto per l'utente -->
                               <span class="icon">
                                   <i class="fa fa-file-text" aria-hidden="true"></i>
                               </span>
@@ -189,13 +188,6 @@ $page = "Gestione Tirocinio - " . $a_nom;
 
             <!-- Contenuti -->
             <div id="contents">
-                <?php /* TODO implementare questo bottone (salvataggio)
-                if ($t_vis!="azienda") { ?>
-                <div class="field" data-tab="editor anteprima"> <!-- TODO aggiornare toggleTab per accettare un vettore? -->
-                    <button class="button" id="bt_save"> Salva Modifiche</button>
-                </div>
-                <?php }  */ ?>
-
                 <div data-tab="info" hidden>
                   <!-- TODO formattare -->
                   <h1> <?= $a_nom ?> </h1>
@@ -211,18 +203,34 @@ $page = "Gestione Tirocinio - " . $a_nom;
                 </div>
               <?php if ($status==1) { ?>
                 <div class="control" data-tab="editor" hidden>
-                    <!-- TODO aggiungere scritta di informazione se è impossibile modificare -->
-                    <textarea id="resoconto" class="textarea" rows="20" title="resonto" <?php if ($t_vis=="azienda") echo 'readonly>'; else echo '>',$t_desc;?></textarea>
+                    <textarea id="resoconto" class="textarea" rows="30" title="resonto" <?php if ($t_vis=="azienda") echo 'readonly';?> ><?=$t_desc?></textarea>
                 </div>
               <?php }
               if ($status!=0) { ?>
-                <div data-tab="preview" hidden>
+                  <div data-tab="preview" hidden>
+                  <?php
+                  if ($status==1) { /*
+                    * TODO Spostare il bottone formattandolo meglio
+                    */ ?>
+                    <div class="field">
+                        <button class="button" id="bt_save">Salva Modifiche</button>
+                    </div>
+                <?php } ?>
                     <div class="content" id="preview_editor">
                       <?php if ($t_vis=='azienda') echo $t_desc;?>
                     </div>
                 </div>
                 <div data-tab="comments" hidden>
-
+                  <div class="control">
+                    <div class="field">
+                      <textarea id="commento" class="textarea is-pulled-right" rows="4" type="text"></textarea>
+                    </div>
+                    <div class="field is-pulled-right">
+                        <button class="button" id="bt_comments">Invia</button>
+                    </div>
+                  </div>
+                  <div id="commentiPassati"> <!-- TODO js+php che estrae i commenti necessari-->
+                  </div>
                 </div>
               <?php } ?>
             </div>
