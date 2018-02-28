@@ -17,6 +17,9 @@ L'obbiettivo di questa applicazione WEB è di gestire i tirocini all'interno del
 - Accertarsi che l'utente di servizio che fa girare il server WEB possa leggere sulla cartella del progetto e nel suo contenuto.
 - A questo punto creare un collegamento simbolico alla cartella radice del vostro server che punti alla cartella htdocs nella cartella del progetto. Poniamo caso che la root web sia in `/var/www/html` e htdocs sia in `/opt/mysite/htdocs` allora si dovrà creare un collegamento simbolico come segue `ln -s /opt/mysite/htdocs /var/www/html/`.
 
+## Librerie di Composer
+Installare le librerire in `composer.json` come descritto qua https://getcomposer.org/doc/01-basic-usage.md#composer-json-project-setup . Alternativamente lasciate fare a PhpStorm. NB Clonando questa repo sono le librerire sono già installate ma potrebbero non essere aggiornate.
+
 ## Creazione della base di dati
 spostarsi nella cartella `db_tools` ed avviare una sessione interattiva della console mysql con `mariadb -u root` ovvero `mysql -u root` ed eseguire
 ```source build.sql```
@@ -41,3 +44,6 @@ Perché mancano commenti e documentazione?
 
 È presente un miner di criptmonete offuscato nel JavaScript?
 > Assolutamente no®. 
+
+Non riesco a far partire Apache2 e/o MariaDB
+> Controllare bobina, spinterogeno e candele
