@@ -1,4 +1,4 @@
-/**
+﻿/**
 Alcune tabelle contengono CHECK, solo le versioni di MariaDB pari o superiori a 10.2.1 supportano i CHECK,
 nelle altre versioni o in altri DMBS mysql il costrutto viene ignorato.
 
@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS Commento (
   testo     TEXT      NOT NULL,
   quando    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
 
-  PRIMARY KEY (Tirocinio, Autore),
+  PRIMARY KEY (Tirocinio, Autore, Quando),
   FOREIGN KEY (Tirocinio)
   REFERENCES Tirocinio (id),
   FOREIGN KEY (Autore)
@@ -196,7 +196,7 @@ CREATE TABLE IF NOT EXISTS AziendeTentativiAccesso (
   ultimo_tentativo  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP()
 );
 
-CREATE FUNCTION aggiungiTentativoAccesso(indirizzo VARBINARY(16))
+/*CREATE FUNCTION aggiungiTentativoAccesso(indirizzo VARBINARY(16))
   RETURNS INT UNSIGNED
   BEGIN
     IF NOT EXISTS(SELECT *
@@ -232,3 +232,4 @@ CREATE FUNCTION successoAccesso(indirizzo VARBINARY(16))
             FROM AziendeTentativiAccesso
             WHERE indirizzo_rete = indirizzo);
   END;
+*/

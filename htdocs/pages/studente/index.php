@@ -16,9 +16,9 @@ $user->is_authorized(\auth\LEVEL_GOOGLE_STUDENT, \auth\User::UNAUTHORIZED_REDIRE
 $user_info = ($user->get_info(new RetriveStudenteFromDatabase($server)));
 
 $oauth2 = \auth\connect_token_google($google_client, $user->get_token());
-
 // Variabili pagina
 $page = "In corso";
+
 ?>
 <html lang="it">
 <head>
@@ -35,7 +35,7 @@ $page = "In corso";
             </p>
             <ul class="menu-list">
                 <li>
-                    <a class="is-active">
+                    <a class="is-active switch" data-selezione="1">
                         <span class="icon">
                             <i class="fa fa-play" aria-hidden="true"></i>
                         </span>
@@ -45,7 +45,7 @@ $page = "In corso";
                     </a>
                 </li>
                 <li>
-                    <a>
+                    <a class="switch" data-selezione="2">
                         <span class="icon">
                             <i class="fa fa-fast-forward" aria-hidden="true"></i>
                         </span>
@@ -55,7 +55,7 @@ $page = "In corso";
                     </a>
                 </li>
                 <li>
-                    <a>
+                    <a class="switch" data-selezione="0">
                         <span class="icon">
                             <i class="fa fa-stop" aria-hidden="true"></i>
                         </span>
