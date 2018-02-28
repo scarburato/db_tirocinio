@@ -16,9 +16,9 @@ $user->is_authorized(\auth\LEVEL_GOOGLE_STUDENT, \auth\User::UNAUTHORIZED_REDIRE
 $user_info = ($user->get_info(new RetriveStudenteFromDatabase($server)));
 
 $oauth2 = \auth\connect_token_google($google_client, $user->get_token());
-
 // Variabili pagina
 $page = "In corso";
+
 ?>
 <html lang="it">
 <head>

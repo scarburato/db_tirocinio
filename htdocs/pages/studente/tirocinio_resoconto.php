@@ -58,6 +58,22 @@ if ($t_desc === NULL)
  * TODO applicare le conseguenze di $status
 */
 $status = ($t_ini > date('Y-m-d') ? 0 : ($t_vis=='azienda' ? 2 : 1));
+// Questo permette un comportamento ottimizzato con lo switch seguente
+if (!isset($_GET['page']))
+  $_GET['page']='no';
+
+switch ($status) {
+  case 0:
+  default:
+    $passed = 'info';
+  case 1:
+    $passed = ($_GET['page']=='resoconto' ? 'editor' : 'info');
+    break;
+  case 2:
+    $passed = ($_GET['page']=='resoconto' ? 'preview' : 'info');
+    break;
+}
+unset($_GET['page']);
 
 // Variabili pagina
 $page = "Gestione Tirocinio - " . $a_nom;
@@ -73,6 +89,7 @@ $page = "Gestione Tirocinio - " . $a_nom;
     <script src="<?= BASE_DIR ?>js/editor/bbcode.min.js"></script>
     <script src="<?= BASE_DIR ?>js/editor/icons/monocons.min.js"></script>
     <script src="<?= BASE_DIR ?>js/editor/icons/material.min.js"></script>
+    <script> const PASSED='<?= $passed?>'</script>
 </head>
 <body>
 <?php include "../common/google_navbar.php"; ?>
@@ -134,7 +151,7 @@ $page = "Gestione Tirocinio - " . $a_nom;
                       </a>
                   </li>
                     <?php if ($status==1) { ?>
-                      <li class="is-active" data-tab="editor" >
+                      <li data-tab="editor" >
                           <a> <!-- TODO salvataggio -->
                               <span class="icon">
                                   <i class="fa fa-pencil" aria-hidden="true"></i>
@@ -193,15 +210,15 @@ $page = "Gestione Tirocinio - " . $a_nom;
 
                 </div>
               <?php if ($status==1) { ?>
-                <div class="control" data-tab="editor">
+                <div class="control" data-tab="editor" hidden>
                     <!-- TODO aggiungere scritta di informazione se è impossibile modificare -->
-                    <textarea id="resoconto" class="textarea" rows="20" title="resonto" <?php if ($t_vis=="azienda") echo 'readonly';?>><?= $t_desc?></textarea>
+                    <textarea id="resoconto" class="textarea" rows="20" title="resonto" <?php if ($t_vis=="azienda") echo 'readonly>'; else echo '>',$t_desc;?></textarea>
                 </div>
               <?php }
               if ($status!=0) { ?>
                 <div data-tab="preview" hidden>
                     <div class="content" id="preview_editor">
-
+                      <?php if ($t_vis=='azienda') echo $t_desc;?>
                     </div>
                 </div>
                 <div data-tab="comments" hidden>

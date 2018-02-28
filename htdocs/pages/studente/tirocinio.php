@@ -65,6 +65,7 @@ if(!$train->fetch())
 ?>
 
 <article class="tirocinio" id="tirocinio_<?= $index ?>" data-nextid="<?= $index + 1 ?>">
+  <div class='card'>
     <header class="card-header">
         <h1 class="card-header-title">
             Tirocinio a <?= $business_name ?>
@@ -104,6 +105,8 @@ if(!$train->fetch())
           <i class="fa fa-pencil-square" aria-hidden="true"></i>
         </span>
         Info
+      </a>
     </footer>
+  </div>
 </article>
 <br>

@@ -3,8 +3,9 @@ class ToggleTab
 	/**
 	 * @param selector jQuery
 	 * @param tabs_container jQuery
+	 * @param active_tab undefined | string @since 2018-02-28
 	 */
-	constructor(selector, tabs_container)
+	constructor(selector, tabs_container, active_tab)
 	{
 		let _self = this;
 
@@ -13,6 +14,14 @@ class ToggleTab
 
 		this.buttons = this.selector.find ("li[data-tab]");
 		this.tabs = this.tabs_container.find ("[data-tab]");
+
+		if (active_tab !== undefined)
+		{
+			this.buttons.removeClass("is-active");
+			this.selector.find("[data-tab=\""+active_tab+"\"]").addClass("is-active");
+			this.tabs.hide();
+			this.tabs_container.find("[data-tab=\""+active_tab+"\"]").show();
+		}
 
 		this.handler = function ()
 		{
@@ -32,7 +41,6 @@ class ToggleTab
 			_self.handler(tab);
 		})
 	}
-
 	/**
 	 *
 	 * @param f function(evento)
