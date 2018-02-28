@@ -1,3 +1,14 @@
+/**
+ * Questa classe rende interrativa una tabella in HTML.
+ * Supporta solo una modalità: a singola selezione!
+ * Tutti i tag <a></a> nella tabella vengono interpretati
+ * come "pulsanti" per cambiare riga. A virtù di ciò ricordarsi di aggiungere la
+ * proprietà tabindex='' al link. Anche gli utenti con particolari necessità potranno selezionare la riga con l'uso
+ * di tastiera e/o assistenti vocali!
+ * @example
+ * `<a tabindex=''>Seleziona riga</a>`
+ * @author Dario Pagani
+ */
 class TableSelection
 {
 	/**

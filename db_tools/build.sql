@@ -15,7 +15,7 @@ USE Tirocini;
 
 CREATE TABLE IF NOT EXISTS UnitaOrganizzativa(
   tipo                ENUM ('docente', 'studente', 'ambedue') NOT NULL,
-  unita_organizzativa VARCHAR(2083) NOT NULL
+  unita_organizzativa VARCHAR(2083) PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS UtenteGoogle (
