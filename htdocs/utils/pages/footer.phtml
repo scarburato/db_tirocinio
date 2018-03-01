@@ -25,7 +25,11 @@
                 <img src="<?= BASE_DIR ?>asset/made-with-bulma.png" alt="Made with Bulma" width="192" height="36">
             </a>
             <p class="help">
-                Un sacco di plugins JQuery!
+                <?php
+                $quotes = json_decode(file_get_contents(dirname(__FILE__) . "/quotes.json"));
+
+                echo $quotes[array_rand($quotes, 1)];
+                ?>
             </p>
         </div>
     </div>
