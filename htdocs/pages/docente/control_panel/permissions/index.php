@@ -19,6 +19,7 @@ $oauth2 = \auth\connect_token_google($google_client, $user->get_token());
 
 // Variabili pagina
 $page = "Gestione dei permessi";
+$server = new \mysqli_wrapper\mysqli();
 ?>
 <html lang="it">
 <head>
@@ -35,7 +36,7 @@ $page = "Gestione dei permessi";
             include "../../menu.php";
             ?>
         </aside>
-        <div class="column">
+        <div class="column is-fullheight">
             <div class="field">
                 <label class="label">
                     Selezionare un docente nella base di dati
@@ -81,9 +82,68 @@ $page = "Gestione dei permessi";
                     vuole modificare i permessi d'accesso.
                 </div>
             </div>
+            <div id="setting" class="columns is-fullheight">
+                <div class="column is-5 box is-fullheight" style="height: 30em">
+                    <table class="table is-narrow">
+                        <tbody id="applicati">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="column is-2">
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-fullwidth">
+                                <span class="icon">
+                                    <i class="fa fa-arrow-right is-hidden-mobile" aria-hidden="true"></i>
+                                    <i class="fa fa-arrow-down  is-hidden-tablet " aria-hidden="true"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-fullwidth">
+                                <span class="icon">
+                                    <i class="fa fa-arrow-left is-hidden-mobile" aria-hidden="true"></i>
+                                    <i class="fa fa-arrow-up   is-hidden-tablet" aria-hidden="true"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-5 box is-fullheight is-paddingless" style="height: 30em">
+                    <table class="table is-fullwidth">
+                        <tbody id="privilegi">
+                        <?php
+                        $permessi = $server->prepare(
+                                "SELECT nome, descrizione FROM Privilegio"
+                        );
+                        $permessi->execute(true);
+                        $permessi->bind_result($nome, $descrizione);
+                        while($permessi->fetch())
+                        {
+                            ?>
+                            <tr>
+                                <th style="width: 25%"><?= $nome ?></th>
+                                <td><p class="has-text-justified"><?= $descrizione ?></p></td>
+                                <td style="width: 20%">
+                                    <a tabindex="">Seleziona</a>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        $permessi->close();
+                        ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
+
+<script src="<?= BASE_DIR ?>js/tableSelection.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
