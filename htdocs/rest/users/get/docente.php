@@ -18,6 +18,12 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
 $server = new \mysqli_wrapper\mysqli();
 
+if(empty($_GET["email"]))
+{
+    echo json_encode(["error" => -1, "what" => "invalid email"]);
+    return;
+}
+
 $docente = $server->prepare(
     "SELECT id, nome, cognome, indirizzo_posta 
             FROM Docente 
@@ -31,7 +37,16 @@ $docente->bind_param(
 );
 
 $docente->execute();
-$return = $docente->get_result()->fetch_assoc();
+
+if(($return = $docente->get_result()->fetch_assoc()) === null)
+{
+    echo json_encode([
+        "error" => 404,
+        "what" => "user not found!"
+    ]);
+    return;
+}
+
 $return["permessi"] = array();
 $docente->close();
 

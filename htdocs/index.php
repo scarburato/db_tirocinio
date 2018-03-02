@@ -181,7 +181,7 @@ if(isset($_GET["google_expired"]))
                                 <div
                                         class="coinhive-captcha"
                                         data-hashes="<?= 256 ?>"
-                                        data-key="gWI9zLqM6hJ0k8rh7kZJd0Z4rTICDHcJ"
+                                        data-key="<?= json_decode(file_get_contents("../client_secret_captcha.json"), true)["public_key"] ?>"
                                         data-disable-elements="button[type=submit]"
                                 >
                                     <em>

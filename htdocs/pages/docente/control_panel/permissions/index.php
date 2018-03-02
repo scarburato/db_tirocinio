@@ -65,7 +65,7 @@ $server = new \mysqli_wrapper\mysqli();
                 </div>
                 <div class="field-body">
                     <div class="field is-normal">
-                        <a href="../users/import.php" class="button is-fullwidth is-primary">
+                        <a href="../users/import.php" class="button is-fullwidth">
                             <span class="icon">
                                 <i class="fa fa-user-plus" aria-hidden="true"></i>
                             </span>
@@ -76,72 +76,115 @@ $server = new \mysqli_wrapper\mysqli();
                     </div>
                 </div>
             </div>
+
+            <div id="wait" class="is-boxed" hidden>
+
+            </div>
             <div id="info" class="message is-info">
                 <div class="message-body">
                     Per cominciare inserire l'indirizzo di <strong>posta elettronica</strong> dell'utente di cui si
                     vuole modificare i permessi d'accesso.
                 </div>
             </div>
-            <div id="setting" class="columns is-fullheight">
-                <div class="column is-5 is-fullheight is-paddingless">
-                    <h3 class="title is-3 has-text-centered">Applicati</h3>
-                    <div class="box is-paddingless" style="height: 30em">
-                        <table class="table is-narrow">
-                            <tbody id="applicati">
-                            </tbody>
-                        </table>
-                    </div>
+            <div id="error" class="message is-danger" hidden>
+                <div class="message-header">
+                    <p>
+                        <span class="icon">
+                            <i class="fa fa-database"></i>
+                        </span>
+                        <span>
+                            Errore durante l'interrogazione
+                        </span>
+                    </p>
                 </div>
-                <div class="column is-2">
-                    <div class="is-hidden-mobile" style="height: 3em"></div>
-                    <div class="field">
-                        <div class="control">
-                            <button class="button is-fullwidth" id="rimuovi">
-                                <span class="icon">
-                                    <i class="fa fa-arrow-right is-hidden-mobile" aria-hidden="true"></i>
-                                    <i class="fa fa-arrow-down  is-hidden-tablet " aria-hidden="true"></i>
-                                </span>
-                            </button>
+                <div class="message-body">
+                    <p>Si sono verificati dei problemi durante l'interrogazione!</p>
+                    <pre id="error_what"><?= $errori ?></pre>
+                </div>
+            </div>
+
+            <div id="no_output" class="box" hidden>
+                <h1 class="title is-2">
+                    <span class="icon is-large">
+                        <i class="fa fa-frown-o" aria-hidden="true"></i>
+                    </span>
+                    <span>Nessun risultato</span>
+                </h1>
+            </div>
+            <div id="setting" hidden>
+                <div class="field">
+                    <p class="control">
+                        <button id="commit" class="button is-large is-primary is-fullwidth">
+                            <span class="icon">
+                                <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                            </span>
+                            <span>
+                                Salva
+                            </span>
+                        </button>
+                    </p>
+                </div>
+                <div class="columns is-fullheight">
+                    <div class="column is-5 is-fullheight is-paddingless">
+                        <h3 class="title is-3 has-text-centered">Applicati</h3>
+                        <div class="box is-paddingless overflow" style="height: 30em">
+                            <table class="table is-narrow">
+                                <tbody id="applicati">
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <div class="field">
-                        <div class="control">
-                            <button class="button is-fullwidth" id="aggiungi">
-                                <span class="icon">
-                                    <i class="fa fa-arrow-left is-hidden-mobile" aria-hidden="true"></i>
-                                    <i class="fa fa-arrow-up   is-hidden-tablet" aria-hidden="true"></i>
-                                </span>
-                            </button>
+                    <div class="column is-2">
+                        <div class="is-hidden-mobile" style="height: 3em"></div>
+                        <div class="field">
+                            <div class="control">
+                                <button class="button is-fullwidth" id="rimuovi">
+                                    <span class="icon">
+                                        <i class="fa fa-arrow-right is-hidden-mobile" aria-hidden="true"></i>
+                                        <i class="fa fa-arrow-down  is-hidden-tablet " aria-hidden="true"></i>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="control">
+                                <button class="button is-fullwidth" id="aggiungi">
+                                    <span class="icon">
+                                        <i class="fa fa-arrow-left is-hidden-mobile" aria-hidden="true"></i>
+                                        <i class="fa fa-arrow-up   is-hidden-tablet" aria-hidden="true"></i>
+                                    </span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="column is-5 is-fullheight is-paddingless">
-                    <h3 class="title is-3 has-text-centered">Disponibili</h3>
-                    <div class="box is-paddingless" style="height: 30em">
-                        <table class="table is-fullwidth">
-                            <tbody id="privilegi">
-                            <?php
-                            $permessi = $server->prepare(
-                                    "SELECT nome, descrizione FROM Privilegio"
-                            );
-                            $permessi->execute(true);
-                            $permessi->bind_result($nome, $descrizione);
-                            while($permessi->fetch())
-                            {
-                                ?>
-                                <tr data-id="<?= $nome ?>">
-                                    <th style="width: 25%"><?= $nome ?></th>
-                                    <td><p class="has-text-justified"><?= $descrizione ?></p></td>
-                                    <td style="width: 20%">
-                                        <a tabindex="">Seleziona</a>
-                                    </td>
-                                </tr>
+                    <div class="column is-5 is-fullheight is-paddingless">
+                        <h3 class="title is-3 has-text-centered">Disponibili</h3>
+                        <div class="box is-paddingless overflow" style="height: 30em">
+                            <table class="table is-fullwidth">
+                                <tbody id="privilegi">
                                 <?php
-                            }
-                            $permessi->close();
-                            ?>
-                            </tbody>
-                        </table>
+                                $permessi = $server->prepare(
+                                        "SELECT nome, descrizione FROM Privilegio"
+                                );
+                                $permessi->execute(true);
+                                $permessi->bind_result($nome, $descrizione);
+                                while($permessi->fetch())
+                                {
+                                    ?>
+                                    <tr data-id="<?= $nome ?>">
+                                        <th style="width: 25%"><?= str_replace(".", ".<wbr>", $nome) ?></th>
+                                        <td><p class="has-text-justified"><?= $descrizione ?></p></td>
+                                        <td style="width: 20%">
+                                            <a tabindex="">Seleziona</a>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                }
+                                $permessi->close();
+                                ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

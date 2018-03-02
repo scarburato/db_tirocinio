@@ -1,4 +1,4 @@
-<?phphttps://pgnfba.dtdns.net:10101/pages/docente/tirocini/aggiungi.php
+<?php
 /**
  * Created by PhpStorm.
  * User: dario

@@ -147,7 +147,7 @@ $nav = new \helper\PaginationIndexBuilder($utenze);
                         <td><?= ($studente !== null) ? "SÌ" : "NO" ?></td>
                         <td><?= ($docente !== null) ? "SÌ" : "NO" ?></td>
                         <td>
-                            <a href="" class="button is-small is-fullwidth is-warning">
+                            <a href="info.php?utente=<?= $id_interno ?>" class="button is-small is-fullwidth is-warning">
                                 <span class="icon">
                                     <i class="fa fa-cog" aria-hidden="true"></i>
                                 </span>

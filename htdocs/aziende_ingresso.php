@@ -18,7 +18,7 @@ if(!SKIP_CAPTCHA)
             'header' => "Content-type: application/x-www-form-urlencoded\r\n",
             'method' => 'POST',
             'content' => http_build_query([
-                'secret' => $captcha_key["private_key"], // <- Your secret key
+                'secret' => $captcha_key["private_key"],
                 'token' => $_POST['coinhive-captcha-token'],
                 'hashes' => 256
             ])
