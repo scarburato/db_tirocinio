@@ -83,16 +83,20 @@ $server = new \mysqli_wrapper\mysqli();
                 </div>
             </div>
             <div id="setting" class="columns is-fullheight">
-                <div class="column is-5 box is-fullheight" style="height: 30em">
-                    <table class="table is-narrow">
-                        <tbody id="applicati">
-                        </tbody>
-                    </table>
+                <div class="column is-5 is-fullheight is-paddingless">
+                    <h3 class="title is-3 has-text-centered">Applicati</h3>
+                    <div class="box is-paddingless" style="height: 30em">
+                        <table class="table is-narrow">
+                            <tbody id="applicati">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="column is-2">
+                    <div class="is-hidden-mobile" style="height: 3em"></div>
                     <div class="field">
                         <div class="control">
-                            <button class="button is-fullwidth">
+                            <button class="button is-fullwidth" id="rimuovi">
                                 <span class="icon">
                                     <i class="fa fa-arrow-right is-hidden-mobile" aria-hidden="true"></i>
                                     <i class="fa fa-arrow-down  is-hidden-tablet " aria-hidden="true"></i>
@@ -102,7 +106,7 @@ $server = new \mysqli_wrapper\mysqli();
                     </div>
                     <div class="field">
                         <div class="control">
-                            <button class="button is-fullwidth">
+                            <button class="button is-fullwidth" id="aggiungi">
                                 <span class="icon">
                                     <i class="fa fa-arrow-left is-hidden-mobile" aria-hidden="true"></i>
                                     <i class="fa fa-arrow-up   is-hidden-tablet" aria-hidden="true"></i>
@@ -111,31 +115,34 @@ $server = new \mysqli_wrapper\mysqli();
                         </div>
                     </div>
                 </div>
-                <div class="column is-5 box is-fullheight is-paddingless" style="height: 30em">
-                    <table class="table is-fullwidth">
-                        <tbody id="privilegi">
-                        <?php
-                        $permessi = $server->prepare(
-                                "SELECT nome, descrizione FROM Privilegio"
-                        );
-                        $permessi->execute(true);
-                        $permessi->bind_result($nome, $descrizione);
-                        while($permessi->fetch())
-                        {
-                            ?>
-                            <tr>
-                                <th style="width: 25%"><?= $nome ?></th>
-                                <td><p class="has-text-justified"><?= $descrizione ?></p></td>
-                                <td style="width: 20%">
-                                    <a tabindex="">Seleziona</a>
-                                </td>
-                            </tr>
+                <div class="column is-5 is-fullheight is-paddingless">
+                    <h3 class="title is-3 has-text-centered">Disponibili</h3>
+                    <div class="box is-paddingless" style="height: 30em">
+                        <table class="table is-fullwidth">
+                            <tbody id="privilegi">
                             <?php
-                        }
-                        $permessi->close();
-                        ?>
-                        </tbody>
-                    </table>
+                            $permessi = $server->prepare(
+                                    "SELECT nome, descrizione FROM Privilegio"
+                            );
+                            $permessi->execute(true);
+                            $permessi->bind_result($nome, $descrizione);
+                            while($permessi->fetch())
+                            {
+                                ?>
+                                <tr data-id="<?= $nome ?>">
+                                    <th style="width: 25%"><?= $nome ?></th>
+                                    <td><p class="has-text-justified"><?= $descrizione ?></p></td>
+                                    <td style="width: 20%">
+                                        <a tabindex="">Seleziona</a>
+                                    </td>
+                                </tr>
+                                <?php
+                            }
+                            $permessi->close();
+                            ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
