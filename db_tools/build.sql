@@ -183,7 +183,7 @@ CREATE TABLE IF NOT EXISTS Commento (
   testo     TEXT      NOT NULL,
   quando    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
 
-  UNIQUE (tirocinio, autore),
+  UNIQUE (tirocinio, autore, quando),
 
   FOREIGN KEY (Tirocinio)
   REFERENCES Tirocinio (id),
