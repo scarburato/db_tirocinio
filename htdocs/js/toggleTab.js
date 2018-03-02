@@ -17,10 +17,7 @@ class ToggleTab
 
 		if (active_tab !== undefined)
 		{
-			this.buttons.removeClass("is-active");
-			this.selector.find("[data-tab=\""+active_tab+"\"]").addClass("is-active");
-			this.tabs.hide();
-			this.tabs_container.find("[data-tab=\""+active_tab+"\"]").show();
+			this.setActive(active_tab);
 		}
 
 		this.handler = function ()
@@ -42,7 +39,16 @@ class ToggleTab
 		})
 	}
 	/**
-	 *
+	 * @param chTab string
+	 */
+	setActive(chTab) {
+		this.buttons.removeClass("is-active");
+		this.selector.find("[data-tab=\""+chTab+"\"]").addClass("is-active");
+		this.tabs.hide();
+		this.tabs_container.find("[data-tab=\""+chTab+"\"]").show();
+	}
+
+	/**
 	 * @param f function(evento)
 	 */
 	onChange(f)
