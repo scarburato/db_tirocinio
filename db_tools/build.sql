@@ -196,7 +196,7 @@ CREATE TABLE IF NOT EXISTS AziendeTentativiAccesso (
   ultimo_tentativo  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP()
 );
 
-/*CREATE FUNCTION aggiungiTentativoAccesso(indirizzo VARBINARY(16))
+CREATE FUNCTION aggiungiTentativoAccesso(indirizzo VARBINARY(16))
   RETURNS INT UNSIGNED
   BEGIN
     IF NOT EXISTS(SELECT *
@@ -232,4 +232,3 @@ CREATE FUNCTION successoAccesso(indirizzo VARBINARY(16))
             FROM AziendeTentativiAccesso
             WHERE indirizzo_rete = indirizzo);
   END;
-*/
