@@ -17,25 +17,22 @@ if (textarea[0] !== undefined)
 
 let x = new ToggleTab ($ ("#selector"), $ ("#contents"), PASSED);
 
+// TODO implementare visualizzazione dinamica di commenti
 x.onChange (function (e)
 {
-	console.log ("hello there, I'm " + e);
-	switch (e)
-	{
-		case "preview":
-			$ ("#preview_editor").html (
-				editor.val ()
-			);
-			break;
-		case "editor": // niente?
-			break;
-		case "comments": // TODO get dei commenti, ed editor di testo?
-			break;
-		case "info": // niente?
-			break;
+	if (e=="preview" && editor!==undefined) {
+		$ ("#preview_editor").html (
+			editor.val ()
+		);
+	}
+	if (e=="comments" && PASSED!="comments") {
+		window.location.href = window.location.href+"&page=comments";
+		//newMSG = false;
 	}
 });
 
+// Bottoni
+// Bottone per salvare modifiche alla descrizione
 $ ("#bt_save").on ("click", function ()
 {
 	let temp = $("#preview_editor").html();
@@ -51,27 +48,39 @@ $ ("#bt_save").on ("click", function ()
 }
 );
 
-let nonPigiareTroppo = false;
-// TODO setInterval per resettare il semaforo ogni qualche-secondo.
+// Per evitare lo spam di commenti
+let nonPigiareTroppo=false;
+//let newMSG = false;
+window.setInterval(function() {
+	nonPigiareTroppo=false;
+}, 1000);
 
 $("#bt_comments").on("click", function () {
 	if (nonPigiareTroppo)
-		return;
+		alert ("aspetta un secondo prima di inviare un nuovo commento!");
 	nonPigiareTroppo = true;
-	console.log("clicked");
 	let comment = $("#commento").val();
-	console.log(comment);
 	if (comment=="" || comment==undefined || comment==null)
 		return;
-	console.log("would send, this: "+comment);
 	$.post(
 		BASE+'rest/trainings/commenta.php', {contenuto: comment, tirocinio: TIR}
-	)/*.done(function (data) {
-		console
-		console.log(data);
-	}).fail(function (data) {
-		console.log("mistake!!!");
-	}).always(function(){
+	).done(function () {
+		window.location.reload();
+		//newMSG = false;
+	})/*.fail(function () {
+		console.log("errore per la post!?!");
+	}).always(function(data){
 		console.log("at least it's something...");
+		console.log(data);
 	});*/
 });
+
+/* TODO implementare questo intervallo o prendere ed implementare i pesanti WEB SOCKET
+let reloadingComments = window.setInterval(function () {
+	if (($("#commento").val())=="" || comment==undefined || comment==null) {
+		window.location.reload();
+		newMSG = false;
+	} else
+		newMSG = true;
+}, 30000)
+*/

@@ -103,10 +103,16 @@ if (!$train->fetch())
                 <?php ;
             } ?>
             <a href="tirocinio_resoconto.php?tirocinio=<?= $db_id ?>&page=info" class="card-footer-item">
-        <span class="icon">
-          <i class="fa fa-pencil-square" aria-hidden="true"></i>
-        </span>
-                Info
+              <span class="icon">
+                <i class="fa fa-info" aria-hidden="true"></i>
+              </span>
+              Info
+            </a>
+            <a href="tirocinio_resoconto.php?tirocinio=<?= $db_id ?>&page=comments" class="card-footer-item">
+              <span class="icon">
+                <i class="fa fa-comment" aria-hidden="true"></i>
+              </span>
+              Commenta
             </a>
         </footer>
     </div>

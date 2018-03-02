@@ -17,6 +17,7 @@ $user_info = ($user->get_info(new RetriveStudenteFromDatabase($server)));
 
 $oauth2 = \auth\connect_token_google($google_client, $user->get_token());
 
+
 if(!isset($_GET["tirocinio"]))
   redirect ('index.php');
 
@@ -42,6 +43,8 @@ $tirocinio_azienda->bind_result($a_nom,
 if (!$tirocinio_azienda->fetch()) // errore, utente non valido e/o tirocinio non trovatos
   redirect("/index.php");
 
+$tirocinio_azienda->close();
+
 if ($t_desc === NULL)
   $t_desc = "";
 
@@ -56,22 +59,55 @@ $status = ($t_ini > date('Y-m-d') ? 0 : ($t_vis=='azienda' ? 2 : 1));
 if (!isset($_GET['page']))
   $_GET['page']='no';
 
-switch ($status) {
-  case 0:
-  default:
-    $passed = 'info';
-  case 1:
-    $passed = ($_GET['page']=='resoconto' ? 'editor' : 'info');
-    break;
-  case 2:
-    $passed = ($_GET['page']=='resoconto' ? 'preview' : 'info');
-    break;
+if ($_GET['page']=='comments')
+  $passed = 'comments';
+else {
+  switch ($status) {
+    case 0:
+    default:
+      $passed = 'info';
+    case 1:
+      $passed = ($_GET['page']=='resoconto' ? 'editor' : 'info');
+      break;
+    case 2:
+      $passed = ($_GET['page']=='resoconto' ? 'preview' : 'info');
+      break;
+  }
+  unset($_GET['page']);
 }
-unset($_GET['page']);
+
 
 // Variabili pagina
 $page = "Gestione Tirocinio - " . $a_nom;
 $num_tir = $_GET['tirocinio'];
+
+// Preparazione dei commenti impaginabili
+$commenti = new class($server,
+  "SELECT CM.id, U.id, U.nome, U.cognome, U.fotografia, testo, quando
+  FROM Commento CM INNER JOIN UtenteGoogle U ON CM.autore = U.id
+  WHERE CM.tirocinio = ? ORDER BY quando DESC") extends \helper\Pagination
+  {
+    public function compute_rows() {
+      $row_tot=0;
+      $conta = $this->link->prepare(
+        "SELECT COUNT(id) FROM Commento WHERE tirocinio=?");
+      $conta  ->bind_param('i', $_GET['tirocinio']);
+      $conta->execute(true);
+      $conta->bind_result($row_tot);
+      $conta->fetch();
+      $conta->close();
+
+      return $row_tot;
+    }
+  };
+$commenti->set_limit(15);
+$commenti->set_current_page(isset($_GET['pagina']) ? $_GET['pagina'] : 0);
+
+$commenti->bind_param('i', $num_tir);
+$commenti->execute(true);
+$commenti->bind_result($comm_id, $autore, $comm_nome, $comm_cognome, $comm_foto, $comm_testo, $comm_tstamp);
+
+$nav = new \helper\PaginationIndexBuilder($commenti);
 ?>
 
 <html lang="it">
@@ -87,8 +123,6 @@ $num_tir = $_GET['tirocinio'];
     <script> const PASSED='<?= $passed?>';
       md5_ATT='<?=$desc_md5?>';
       const TIR ='<?=$num_tir?>' </script>
-
-
 </head>
 <body>
 <?php include "../common/google_navbar.php"; ?>
@@ -173,8 +207,8 @@ $num_tir = $_GET['tirocinio'];
                           </a>
                       </li>
                       <li data-tab="comments">
-                          <a> <!-- TODO fare tutto -->
-                              <span class="class">
+                          <a> <!-- TODO visualizzazione -->
+                              <span class="icon">
                                   <i class="fa fa-comments" aria-hidden="true"></i>
                               </span>
                               <span>
@@ -191,13 +225,14 @@ $num_tir = $_GET['tirocinio'];
                 <div data-tab="info" hidden>
                   <!-- TODO formattare -->
                   <h1> <?= $a_nom ?> </h1>
-                  <?php if (isset($c_nome)) {
-                    echo '<p> Tutore aziendale del tirocinio:', $c_nome, ' ', $c_cognome, '<br>',
-                        'email: ', $c_posta;
-                  } ?>
+                  <?php if (isset($c_nome)) { ?>
+                      <p> Tutore aziendale del tirocinio: <?=$c_nome?> <?=$c_cognome?>
+                      email: <a href=mailto:> <?=$c_posta?> </a>
+                      </p>
+                  <?php } ?>
                   <br>
                   <p> Docente tutore: <?= $doc_nome?> <?= $doc_cog?> <br>
-                    email: <?= $doc_posta ?>
+                    email: <a href=mailto:> <?= $doc_posta ?> </a>
                   </p>
 
                 </div>
@@ -207,7 +242,7 @@ $num_tir = $_GET['tirocinio'];
                 </div>
               <?php }
               if ($status!=0) { ?>
-                  <div data-tab="preview" hidden>
+                <div data-tab="preview" hidden>
                   <?php
                   if ($status==1) { /*
                     * TODO Spostare il bottone formattandolo meglio
@@ -220,22 +255,48 @@ $num_tir = $_GET['tirocinio'];
                       <?php if ($t_vis=='azienda') echo $t_desc;?>
                     </div>
                 </div>
+              <?php } ?>
                 <div data-tab="comments" hidden>
-                  <div class="control">
                     <div class="field">
-                      <textarea id="commento" class="textarea is-pulled-right" rows="4" type="text"></textarea>
+                      <div class="control">
+                        <textarea id="commento" class="textarea" rows="4" placeholder="Scrivi commento..."></textarea>
+                      </div>
+                      <p class="help">
+                        I commenti saranno visibili ai docenti!
+                      </p>
                     </div>
-                    <div class="field is-pulled-right">
+                    <div class="field">
+                      <div class="control">
                         <button class="button" id="bt_comments">Invia</button>
+                      </div>
                     </div>
-                  </div>
-                  <div id="commentiPassati"> <!-- TODO js+php che estrae i commenti necessari-->
+                  <div class="container">
+                    <div class="column">
+                     <!-- TODO js+php che estrae i commenti necessari-->
+                      <?php while ($commenti->fetch()) { ?>
+                        <div class="box column is-8">
+                          <article class="media">
+                            <div class="media-left">
+                              <figure class="image is-96x96">
+                                <img src="<?=$comm_foto?>" alt="Image">
+                              </figure>
+                            </div>
+                            <div class="media-content">
+                              <p> <strong> <?=$comm_nome?> <?=$comm_cognome?> - <?=$comm_tstamp?> </strong>
+                              <br> <?=$comm_testo?>
+                              </p>
+                            </div>
+                          </article>
+                        </div>
+                      <?php }
+                      $nav->generate_index($_GET);
+                      ?>
+                    </div>
                   </div>
                 </div>
-              <?php } ?>
             </div>
-          </div>
         </div>
+    </div>
 </section>
 
 <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
