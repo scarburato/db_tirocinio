@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS IndirizziAzienda (
 );
 
 CREATE TABLE IF NOT EXISTS Contatto (
-  id             INT(8) UNSIGNED PRIMARY KEY,
+  id             INT(8) UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   azienda        INT UNSIGNED,
   nome           VARCHAR(64) NOT NULL,
   cognome        VARCHAR(64) NOT NULL,
