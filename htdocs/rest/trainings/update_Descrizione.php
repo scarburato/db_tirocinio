@@ -19,17 +19,32 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 $server = new \mysqli_wrapper\mysqli();
 $return = [];
 $newDescription = $_POST['contenuto'];
-if (!isset($newDescription))
+
+if (empty($newDescription))
 {
-  // errore, è impossibile che un utente comune passi NULL via questa POST
+    echo json_encode([
+        "error" => -1,
+        "what" => "You have to supply something!"
+    ]);
+    return;
 }
 
-$update = $server->prepare("UPDATE Tirocinio SET descrizione=? WHERE id=? "
-  );
+if (empty($_POST['tirocinio']))
+{
+    echo json_encode([
+        "error" => -1,
+        "what" => "Invalid tirocinio ID!"
+    ]);
+    return;
+}
+
+$update = $server->prepare("UPDATE Tirocinio SET descrizione=? WHERE id=?");
 
 $update->bind_param('si', $newDescription, $_POST['tirocinio']);
 
 $update->execute();
+
+$return["success"]=$update->execute();
 $return["md5"]=md5($newDescription);
 
 echo json_encode($return, JSON_UNESCAPED_UNICODE);
