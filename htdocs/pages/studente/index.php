@@ -29,7 +29,7 @@ $page = "In corso";
 <br>
 <section class="container">
     <div class="columns">
-        <aside class="column is-3 is-fullheight" style="min-height: 20em">
+        <aside class="column is-3 is-fullheight">
             <p class="menu-label">
                 Tirocini
             </p>
@@ -65,6 +65,9 @@ $page = "In corso";
                     </a>
                 </li>
             </ul>
+            <div class="is-hidden-mobile" style="min-height: 15em">
+
+            </div>
         </aside>
         <div class="column">
             <div id="tirocinis">
