@@ -26,11 +26,12 @@ x.onChange (function (e)
 			editor.val ()
 		);
 	}
-	if (e === "comments" && PASSED !== "comments")
+
+	/*if (e === "comments" && PASSED !== "comments")
 	{
-		window.location.href = window.location.href + "&page=comments";
+		//window.location.href = window.location.href + "&page=comments";
 		//newMSG = false;
-	}
+	}*/
 });
 
 // Bottoni

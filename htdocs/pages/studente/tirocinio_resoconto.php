@@ -103,7 +103,7 @@ $commenti = new class($server,
         return $row_tot;
     }
 };
-$commenti->set_limit(15);
+$commenti->set_limit(5);
 $commenti->set_current_page(isset($_GET['pagina']) ? $_GET['pagina'] : 0);
 
 $commenti->bind_param('i', $num_tir);
@@ -304,6 +304,7 @@ $nav = new \helper\PaginationIndexBuilder($commenti);
                                 </article>
                             </div>
                         <?php }
+                        $_GET["page"] = "comments";
                         $nav->generate_index($_GET);
                         ?>
                     </div>
