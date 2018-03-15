@@ -12,7 +12,8 @@ $force_silent = true;
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-(new \auth\User())->is_authorized(\auth\LEVEL_GOOGLE_STUDENT, \auth\User::UNAUTHORIZED_THROW);
+$user = new \auth\User();
+$user->is_authorized(\auth\LEVEL_GOOGLE_STUDENT, \auth\User::UNAUTHORIZED_THROW);
 
 \auth\connect_token_google($google_client, $_SESSION["user"]["token"], false);
 
@@ -38,9 +39,9 @@ if (empty($_POST['tirocinio']))
     return;
 }
 
-$update = $server->prepare("UPDATE Tirocinio SET descrizione=? WHERE id=?");
+$update = $server->prepare("UPDATE Tirocinio SET descrizione=? WHERE id = ? AND studente = ? AND dataInizio < CURRENT_DATE AND visibilita <> 'azienda'");
 
-$update->bind_param('si', $newDescription, $_POST['tirocinio']);
+$update->bind_param('sii', $newDescription, $_POST['tirocinio'], $user->get_database_id());
 
 $update->execute();
 
