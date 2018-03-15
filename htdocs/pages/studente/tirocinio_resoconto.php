@@ -176,6 +176,11 @@ $nav = new \helper\PaginationIndexBuilder($commenti);
 
         <!-- Tab Navigation Bar -->
         <div class="column">
+            <article id="weknow" class="message is-danger" hidden>
+                <div class="message-body">
+                    Sappiamo cosa hai fatto! <span class="icon"><i class="fa fa-file-code-o" aria-hidden="true"></i></span><br>
+                </div>
+            </article>
             <div class="tabs" id="selector">
                 <ul>
                     <li data-tab="info">

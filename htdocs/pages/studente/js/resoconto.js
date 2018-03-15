@@ -5,9 +5,10 @@ let editor;
 if (textarea[0] !== undefined)
 {
 	sceditor.create (textarea[0], {
+		format: 'bbcode',
 		width: "100%",
 		style: (BASE + 'css/default.min.css'),
-		toolbarExclude: "emoticon,youtube,maximize,date,time,print,ltr,rtl",
+		toolbarExclude: "emoticon,youtube,maximize,date,time,print,ltr,rtl,image",
 		fonts: "Ubuntu, Ubuntuo Mono, Ubuntu Condensed, Arial,Arial Black,Comic Sans MS,Courier New,Georgia,Impact,Sans-serif,Serif,Times New Roman,Trebuchet MS,Verdana"
 	});
 	editor = sceditor.instance (textarea[0]);
@@ -16,6 +17,7 @@ if (textarea[0] !== undefined)
 }
 
 let x = new ToggleTab ($ ("#selector"), $ ("#contents"), PASSED);
+$("#weknow").hide();
 
 // TODO implementare visualizzazione dinamica di commenti
 x.onChange (function (e)
@@ -23,8 +25,13 @@ x.onChange (function (e)
 	if (e === "preview" && editor !== undefined)
 	{
 		$ ("#preview_editor").html (
-			editor.val ()
+			editor.fromBBCode(editor.val(), true)
 		);
+
+		if(/<[a-z][\s\S]*>/i.test(editor.val()))
+			$("#weknow").show();
+		else
+			$("#weknow").hide();
 	}
 
 	/*if (e === "comments" && PASSED !== "comments")
@@ -38,7 +45,7 @@ x.onChange (function (e)
 // Bottone per salvare modifiche alla descrizione
 $ ("#bt_save").on ("click", function ()
 	{
-		let temp = $ ("#preview_editor").html ();
+		let temp = editor.val();
 		if ($.md5 (temp) !== md5_ATT)
 		{
 			if (confirm ("Continuando modificherà la descrizione e non potrà risalire al suo precedente valore!"))
@@ -47,6 +54,7 @@ $ ("#bt_save").on ("click", function ()
 					BASE + 'rest/trainings/update_Descrizione.php', {contenuto: temp, tirocinio: TIR}
 				).done (function (data)
 				{
+					// FIXME md5 invalido perché convertito lato server
 					md5_ATT = data.md5;
 				});
 			}

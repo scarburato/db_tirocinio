@@ -30,6 +30,8 @@ if (empty($newDescription))
     return;
 }
 
+$newDescription = filter_var($newDescription, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
 if (empty($_POST['tirocinio']))
 {
     echo json_encode([
