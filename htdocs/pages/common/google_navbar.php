@@ -30,14 +30,16 @@ if(false)
 
             <div class="navbar-dropdown">
                 <div class="navbar-item">
-                    <p class="title is-4 is-capitalized">
-                        <span class="icon">
-                            <img alt="" src="<?= $user_info["picture"] ?>">
-                        </span>
-                        <span>
+                    <div class="media">
+                        <div class="media-left">
+                            <figure class="image is-48x48">
+                                <img style="max-height: none" alt="" src="<?= $user_info["picture"] ?>">
+                            </figure>
+                        </div>
+                        <p class="media-content title is-4 is-capitalized">
                             <?= $user_info->nominative ?>
-                        </span>
-                    </p>
+                        </p>
+                    </div>
                 </div>
                 <div class="navbar-item is-pulled-right">
                     <a class="button" href="<?= BASE_DIR ?>utils/logout.php">

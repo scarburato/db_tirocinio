@@ -28,13 +28,13 @@ const ERROR_MAIL = "test@example.com";
  * https://console.developers.google.com/apis/credentials
  */
 
-const GOOGLE_REDIRECT_URI = "http://localhost/test.php";
-//const GOOGLE_REDIRECT_URI = "https://pgnfba.dtdns.net:10101/test.php";
+//const GOOGLE_REDIRECT_URI = "http://localhost/test.php";
+const GOOGLE_REDIRECT_URI = "https://pgnfba.dtdns.net:10101/test.php";
 const TRUSTED_DOMAIN = "itispisa.gov.it";
 const SKIP_CAPTCHA = !true;
 
-const PROTOCOL = "http://";
-//const PROTOCOL = "https://";
+//const PROTOCOL = "http://";
+const PROTOCOL = "https://";
 
 // Base dati
 const DBMS_SERVER = null;
