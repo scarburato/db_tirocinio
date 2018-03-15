@@ -20,9 +20,23 @@ $user->is_authorized(\auth\LEVEL_GOOGLE_STUDENT, \auth\User::UNAUTHORIZED_THROW)
 $server = new \mysqli_wrapper\mysqli();
 $return = [];
 $comment_datum = $_POST['contenuto'];
-if (!isset($comment_datum))
+
+if (empty($comment_datum))
 {
-  // errore, è impossibile che un utente comune passi NULL via questa POST, è bloccato prima
+  echo json_encode([
+      "error" => -1,
+      "what" => "You have to supply a comment!"
+  ]);
+  return;
+}
+
+if (empty($_POST['tirocinio']))
+{
+    echo json_encode([
+        "error" => -1,
+        "what" => "Invalid tirocinio ID!"
+    ]);
+    return;
 }
 
 $inser = $server->prepare("INSERT INTO Commento (tirocinio, autore, testo)
