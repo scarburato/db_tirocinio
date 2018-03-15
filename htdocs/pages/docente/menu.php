@@ -33,9 +33,9 @@
             Tirocini
             </span>
         </a>
-        <ul>
+        <ul id="controls">
             <li>
-                <a class="<?= ($index_menu !== 2 ?: "is-active")?>">
+                <a data-selezione="1" href="<?= BASE_DIR ?>pages/docente/tirocini/list" class="switch <?= ($index_menu !== 2 ?: "is-active")?>">
                     <span class="icon">
                     <i class="fa fa-play" aria-hidden="true"></i>
                     </span>
@@ -45,7 +45,7 @@
                 </a>
             </li>
             <li>
-                <a class="<?= ($index_menu !== 3 ?: "is-active")?>">
+                <a data-selezione="2" href="<?= BASE_DIR ?>pages/docente/tirocini/list" class="switch <?= ($index_menu !== 3 ?: "is-active")?>">
                     <span class="icon">
                     <i class="fa fa-fast-forward" aria-hidden="true"></i>
                     </span>
@@ -55,7 +55,7 @@
                 </a>
             </li>
             <li>
-                <a class="<?= ($index_menu !== 4 ?: "is-active")?>">
+                <a data-selezione="0" href="<?= BASE_DIR ?>pages/docente/tirocini/list" class="switch <?= ($index_menu !== 4 ?: "is-active")?>">
                     <span class="icon">
                     <i class="fa fa-stop" aria-hidden="true"></i>
                     </span>

@@ -97,6 +97,6 @@ $page = "In corso";
 </section>
 <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 
-<script src="js/tirocini_builder.js"></script>
+<script src="<?= BASE_DIR ?>js/tirocini_builder.js"></script>
 </body>
 </html>
