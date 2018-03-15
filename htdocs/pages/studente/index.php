@@ -35,7 +35,7 @@ $page = "In corso";
             </p>
             <ul class="menu-list">
                 <li>
-                    <a class="is-active switch" data-selezione="1">
+                    <a class="is-active switch" data-selezione="1" tabindex="">
                         <span class="icon">
                             <i class="fa fa-play" aria-hidden="true"></i>
                         </span>
@@ -45,7 +45,7 @@ $page = "In corso";
                     </a>
                 </li>
                 <li>
-                    <a class="switch" data-selezione="2">
+                    <a class="switch" data-selezione="2" tabindex="">
                         <span class="icon">
                             <i class="fa fa-fast-forward" aria-hidden="true"></i>
                         </span>
@@ -55,7 +55,7 @@ $page = "In corso";
                     </a>
                 </li>
                 <li>
-                    <a class="switch" data-selezione="0">
+                    <a class="switch" data-selezione="0" tabindex="">
                         <span class="icon">
                             <i class="fa fa-stop" aria-hidden="true"></i>
                         </span>

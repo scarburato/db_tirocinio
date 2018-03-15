@@ -39,6 +39,12 @@ window.setInterval (function ()
 	}
 }, 250);
 
+$(".switch").on("keyup", function (e)
+{
+	if(e.which ===13)
+		$(this).click();
+});
+
 $ ('.switch').on ('click', function ()
 {
 	// TODO implementare attesa del semaforo libero

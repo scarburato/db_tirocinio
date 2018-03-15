@@ -24,6 +24,20 @@ class ToggleTab
 		{
 		};
 
+		// Accessibilità prima di tutto!
+		this.buttons.each(function (index)
+		{
+			$(this).prop("tabindex", "0");
+		});
+
+		// Emualzione pressione alla pressione di Enter
+		this.buttons.on ("keyup", function(e)
+		{
+			if(e.which === 13)
+				$(this).click();
+		});
+
+		// Evento da eseguire alla pressione del mouse
 		this.buttons.on ("click", function ()
 		{
 			// Variabili
