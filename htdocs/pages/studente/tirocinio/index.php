@@ -111,11 +111,12 @@ $commenti->execute(true);
 $commenti->bind_result($comm_id, $autore, $comm_nome, $comm_cognome, $comm_foto, $comm_testo, $comm_tstamp);
 
 $nav = new \helper\PaginationIndexBuilder($commenti);
+$nav->set_pagination_builder(new \helper\IndexJS());
 ?>
 
 <html lang="it">
 <head>
-    <?php include "../../utils/pages/head.phtml"; ?>
+    <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/head.phtml"; ?>
     <link rel="stylesheet" href="<?= BASE_DIR ?>css/editor/themes/modern.min.css" type="text/css" media="all">
 
     <script src="<?= BASE_DIR ?>js/editor/sceditor.min.js"></script>
@@ -128,7 +129,7 @@ $nav = new \helper\PaginationIndexBuilder($commenti);
 		const TIR = '<?=$num_tir?>' </script>
 </head>
 <body>
-<?php include "../common/google_navbar.php"; ?>
+<?php include "../../common/google_navbar.php"; ?>
 <br>
 <!-- Menù Laterale -->
 <section class="container">
@@ -139,7 +140,7 @@ $nav = new \helper\PaginationIndexBuilder($commenti);
             </p>
             <ul class="menu-list">
                 <li>
-                    <a href="./index.php?time=1">
+                    <a href="../index.php?time=1">
                         <span class="icon">
                             <i class="fa fa-play" aria-hidden="true"></i>
                         </span>
@@ -149,7 +150,7 @@ $nav = new \helper\PaginationIndexBuilder($commenti);
                     </a>
                 </li>
                 <li>
-                    <a href="./index.php?time=2">
+                    <a href="../index.php?time=2">
                         <span class="icon">
                             <i class="fa fa-fast-forward" aria-hidden="true"></i>
                         </span>
@@ -159,7 +160,7 @@ $nav = new \helper\PaginationIndexBuilder($commenti);
                     </a>
                 </li>
                 <li>
-                    <a href="./index.php?time=0">
+                    <a href="../index.php?time=0">
                         <span class="icon">
                             <i class="fa fa-stop" aria-hidden="true"></i>
                         </span>
@@ -234,7 +235,6 @@ $nav = new \helper\PaginationIndexBuilder($commenti);
             <!-- Contenuti -->
             <div id="contents">
                 <div data-tab="info" hidden>
-                    <!-- TODO formattare -->
                     <h1> <?= $a_nom ?> </h1>
                     <?php if (isset($c_nome)) { ?>
                         <p> Tutore aziendale del tirocinio: <?= $c_nome ?> <?= $c_cognome ?>
