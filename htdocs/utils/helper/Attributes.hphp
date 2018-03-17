@@ -55,15 +55,15 @@ class Attributes
     public function add_props(string $key, array $props)
     {
         if(array_key_exists($key, $this->attributes))
-            $this->attributes["key"] = array_merge($this->attributes["key"], $props);
+            $this->attributes[$key] = array_merge($this->attributes[$key], $props);
         else
-            $this->attributes["key"] = $props;
+            $this->attributes[$key] = $props;
     }
 
     /**
      * Merge another object
      * @param Attributes $toMerge
-     * @return itself 'cause why not
+     * @return Attributes itself 'cause why not
      */
     public function merge(Attributes $toMerge): Attributes
     {
@@ -86,7 +86,7 @@ class Attributes
             $res .= $attribute . "=\"";
 
             foreach ($props as $prop)
-                $res .= " " . $prop;
+                $res .= $prop . " ";
 
             $res .= "\" ";
         }

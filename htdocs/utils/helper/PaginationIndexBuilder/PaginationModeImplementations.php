@@ -18,14 +18,14 @@ class IndexHTTP implements PaginationMode
         if(count($this->opt_param) > 0)
             $query = "&" . http_build_query($this->opt_param);
 
-        return "?pagina={$page}" . $query;
+        return "?pagina=" . $page . $query;
     }
 
     /**
      * Sono i paramatri GET da salvarsi!
      * @param array $opt_param
      */
-    public function set_opt_param(array $opt_param): void
+    public function set_opt_param(array $opt_param)
     {
         unset($opt_param["pagina"]);
         $this->opt_param = $opt_param;

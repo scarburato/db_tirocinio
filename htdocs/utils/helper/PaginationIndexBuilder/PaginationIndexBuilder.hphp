@@ -126,12 +126,12 @@ class PaginationIndexBuilder
                 {
                     ?>
                     <li>
-                        <a <a <?= $this->pagination_builder->previus_page($this->pagination)->merge(new Attributes(
+                        <a <?= $this->pagination_builder->previus_page($this->pagination)->merge(new Attributes(
                                 [
                                     "class" => ["pagination-link"],
                                     "aria-label" => ["Pagina " . ($this->pagination->get_current_page() - 1)]
                                 ])
-                        )->build() ?>>">
+                        )->build() ?>>
                             <?= $this->pagination->get_current_page() - 1 ?>
                         </a>
                     </li>
