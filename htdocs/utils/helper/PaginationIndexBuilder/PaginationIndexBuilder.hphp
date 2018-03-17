@@ -1,0 +1,194 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 15/02/18
+ * Time: 14.26
+ */
+
+namespace helper;
+
+
+class PaginationIndexBuilder
+{
+    private $pagination;
+    private $pagination_builder;
+
+    /**
+     * @param IndexHTTP $pagination_builder
+     */
+    public function set_pagination_builder(PaginationMode $pagination_builder)
+    {
+        $this->pagination_builder = $pagination_builder;
+    }
+
+    private $buttons = true;
+    private $force_single_page = false;
+
+    /**
+     * PaginationIndexBuilder constructor.
+     * @param Pagination $pagination
+     */
+    public function __construct(Pagination $pagination)
+    {
+        $this->pagination = $pagination;
+        $this->pagination_builder = new IndexHTTP();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isButtons(): bool
+    {
+        return $this->buttons;
+    }
+
+    /**
+     * @param bool $buttons
+     */
+    public function setButtons(bool $buttons)
+    {
+        $this->buttons = $buttons;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isForceSinglePage(): bool
+    {
+        return $this->force_single_page;
+    }
+
+    /**
+     * @param bool $force_single_page
+     */
+    public function setForceSinglePage(bool $force_single_page)
+    {
+        $this->force_single_page = $force_single_page;
+    }
+
+    public function generate_index(array $get_params = [])
+    {
+        if (!$this->force_single_page && $this->pagination->get_max_page() === 0)
+            return;
+
+        // Mi vergogno di me :P
+        // TODO Implementare un interfaccia per questo
+        if(method_exists($this->pagination_builder, "set_opt_param"))
+            $this->pagination_builder->set_opt_param($get_params);
+
+        ?>
+        <nav class="pagination" role="navigation" aria-label="pagination">
+            <?php
+            if ($this->buttons)
+            {
+                ?>
+                <a <?= $this->pagination_builder->previus_page($this->pagination)->merge(new Attributes(
+                        [
+                            "class" => ["pagination-previous"]
+                        ])
+                )->build() ?>
+                    <?= !$this->pagination->has_previus_page() ? "disabled" : "" ?>>Indietro</a>
+                <a <?= $this->pagination_builder->next_page($this->pagination)->merge(new Attributes(
+                        [
+                            "class" => ["pagination-next"]
+                        ])
+                )->build() ?>
+                    <?= !$this->pagination->has_next_page() ? "disabled" : "" ?>>Avanti</a>
+                <?php
+            }
+            ?>
+
+            <ul class="pagination-list">
+                <?php
+                if ($this->pagination->get_current_page() > 1)
+                {
+                    ?>
+                    <li>
+                        <a <?= $this->pagination_builder->first_page($this->pagination)->merge(new Attributes(
+                                [
+                                    "class" => ["pagination-link"],
+                                    "aria-label" => ["Pagina 0"]
+                                ])
+                        )->build() ?>>
+                            0
+                        </a>
+                    </li>
+
+                    <li>
+                        <span class="pagination-ellipsis">&hellip;</span>
+                    </li>
+                    <?php
+                }
+                ?>
+                <?php
+                if ($this->pagination->has_previus_page())
+                {
+                    ?>
+                    <li>
+                        <a <a <?= $this->pagination_builder->previus_page($this->pagination)->merge(new Attributes(
+                                [
+                                    "class" => ["pagination-link"],
+                                    "aria-label" => ["Pagina " . ($this->pagination->get_current_page() - 1)]
+                                ])
+                        )->build() ?>>">
+                            <?= $this->pagination->get_current_page() - 1 ?>
+                        </a>
+                    </li>
+                    <?php
+                }
+                ?>
+                <li>
+                    <a <?= $this->pagination_builder->current_page($this->pagination)->merge(new Attributes(
+                            [
+                                "class" => ["pagination-link", "is-current"],
+                                "aria-label" => ["Pagina " . ($this->pagination->get_current_page())],
+                                "aria-current" => ["page"]
+                            ])
+                    )->build() ?>
+                    >
+                        <?= $this->pagination->get_current_page() ?>
+                    </a>
+                </li>
+                <?php
+                if ($this->pagination->has_next_page())
+                {
+                    ?>
+                    <li>
+                        <a <?= $this->pagination_builder->next_page($this->pagination)->merge(new Attributes(
+                                [
+                                    "class" => ["pagination-link"],
+                                    "aria-label" => ["Pagina " . ($this->pagination->get_current_page())],
+                                ])
+                        )->build() ?>
+                        >
+                            <?= $this->pagination->get_current_page() + 1 ?>
+                        </a>
+                    </li>
+                    <?php
+                }
+                ?>
+
+                <?php
+                if ($this->pagination->get_current_page() < ($this->pagination->get_max_page() - 1))
+                {
+                    ?>
+                    <li><span class="pagination-ellipsis">&hellip;</span></li>
+                    <li>
+                        <a <?= $this->pagination_builder->next_page($this->pagination)->merge(new Attributes(
+                                [
+                                    "class" => ["pagination-link"],
+                                    "aria-label" => ["Pagina " . ($this->pagination->get_current_page())],
+                                ])
+                        )->build() ?>>
+                            <?= $this->pagination->get_max_page() ?>
+                        </a>
+                    </li>
+                    <?php
+                }
+                ?>
+            </ul>
+        </nav>
+        <?php
+    }
+}

@@ -1,0 +1,19 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 17/03/18
+ * Time: 18.23
+ */
+
+namespace helper;
+
+interface PaginationMode
+{
+    public function last_page(Pagination $current): Attributes;
+    public function first_page(Pagination $current): Attributes;
+    public function next_page(Pagination $current): Attributes;
+    public function current_page(Pagination $current): Attributes;
+    public function previus_page(Pagination $current): Attributes;
+    public function offset_page(Pagination $current, int $offset): Attributes;
+}

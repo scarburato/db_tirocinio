@@ -1,0 +1,96 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 17/03/18
+ * Time: 18.02
+ */
+
+namespace helper;
+
+/**
+ * Class Attributes
+ * This class helps build attr and props for HTML tags
+ *
+ * @author Dario Pagani
+ */
+class Attributes
+{
+    private $attributes = [];
+
+    /**
+     * Attributes constructor.
+     * You have to pass an associative array of arrays of strings like
+     * [
+     *  "class" => ["is-red", "is-centered"],
+     *  "data-weirdo-js" => ["44"],
+     *  "id" => ["2012432543"]
+     * ]
+     * @param array $attributes
+     */
+    public function __construct(array $attributes)
+    {
+        foreach ($attributes as $attribute)
+            if(!is_array($attribute))
+                throw new \LogicException("Pls give me array of strings");
+
+        $this->attributes = $attributes;
+    }
+
+    /**
+     * Returns the arrays of prop
+     * @param string $key
+     * @return array
+     */
+    public function get_props(string $key): array
+    {
+        return $this->attributes[$key];
+    }
+
+    /**
+     * Add props
+     * @param string $key
+     * @param array $props
+     */
+    public function add_props(string $key, array $props)
+    {
+        if(array_key_exists($key, $this->attributes))
+            $this->attributes["key"] = array_merge($this->attributes["key"], $props);
+        else
+            $this->attributes["key"] = $props;
+    }
+
+    /**
+     * Merge another object
+     * @param Attributes $toMerge
+     * @return itself 'cause why not
+     */
+    public function merge(Attributes $toMerge): Attributes
+    {
+        foreach($toMerge->attributes as $attribute => $props)
+            $this->add_props($attribute, $props);
+
+        return $this;
+    }
+
+    /**
+     * Build the string to use within html tags
+     * @return string
+     */
+    public function build(): string
+    {
+        $res = "";
+
+        foreach($this->attributes as $attribute => $props)
+        {
+            $res .= $attribute . "=\"";
+
+            foreach ($props as $prop)
+                $res .= " " . $prop;
+
+            $res .= "\" ";
+        }
+
+        return $res;
+    }
+}
