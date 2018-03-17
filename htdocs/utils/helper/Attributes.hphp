@@ -86,7 +86,11 @@ class Attributes
             $res .= $attribute . "=\"";
 
             foreach ($props as $prop)
-                $res .= $prop . " ";
+            {
+                $res .= $prop;
+                if($prop !== end($props))
+                    $res .= " ";
+            }
 
             $res .= "\" ";
         }
