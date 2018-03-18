@@ -179,7 +179,8 @@ $nav->set_pagination_builder(new \helper\IndexJS());
         <div class="column">
             <article id="weknow" class="message is-danger" hidden>
                 <div class="message-body">
-                    Sappiamo cosa hai fatto! <span class="icon"><i class="fa fa-file-code-o" aria-hidden="true"></i></span><br>
+                    Sappiamo cosa hai fatto! <span class="icon"><i class="fa fa-file-code-o"
+                                                                   aria-hidden="true"></i></span><br>
                 </div>
             </article>
             <div class="tabs" id="selector">
@@ -238,12 +239,12 @@ $nav->set_pagination_builder(new \helper\IndexJS());
                     <h1> <?= $a_nom ?> </h1>
                     <?php if (isset($c_nome)) { ?>
                         <p> Tutore aziendale del tirocinio: <?= $c_nome ?> <?= $c_cognome ?>
-                            email: <a href=mailto:> <?= $c_posta ?> </a>
+                            email: <a href=mailto:<?= $c_posta ?>> <?= $c_posta ?> </a>
                         </p>
                     <?php } ?>
                     <br>
                     <p> Docente tutore: <?= $doc_nome ?> <?= $doc_cog ?> <br>
-                        email: <a href=mailto:> <?= $doc_posta ?> </a>
+                        email: <a href=mailto:<?= $doc_posta ?>> <?= $doc_posta ?> </a>
                     </p>
 
                 </div>
@@ -262,7 +263,14 @@ $nav->set_pagination_builder(new \helper\IndexJS());
                     * TODO Spostare il bottone formattandolo meglio
                     */ ?>
                             <div class="field">
-                                <button class="button" id="bt_save">Salva Modifiche</button>
+                                <button class="button" id="bt_save">
+                                    <span class="icon">
+                                        <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                    </span>
+                                    <span>
+                                        Salva Modifiche
+                                    </span>
+                                </button>
                             </div>
                         <?php } ?>
                         <div class="content" id="preview_editor">
