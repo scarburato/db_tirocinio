@@ -81,6 +81,7 @@ class IndexJS implements PaginationMode
     {
         return new Attributes(
             [
+                "class" => ["js-page-nav"],
                 "data-page" => [$current->get_current_page() + $offset],
                 "tabindex" => ["0"]
             ]
@@ -91,6 +92,7 @@ class IndexJS implements PaginationMode
     {
         return new Attributes(
             [
+                "class" => ["js-page-nav"],
                 "data-page" => [$current->get_max_page()],
                 "tabindex" => ["0"]
             ]
@@ -101,6 +103,7 @@ class IndexJS implements PaginationMode
     {
         return new Attributes(
             [
+                "class" => ["js-page-nav"],
                 "data-page" => [0],
                 "tabindex" => ["0"]
             ]
