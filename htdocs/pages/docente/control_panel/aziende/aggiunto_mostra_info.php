@@ -47,6 +47,8 @@ $azienda->close();
 <html lang="it" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
     <?php include ($_SERVER["DOCUMENT_ROOT"]) ."/utils/pages/head.phtml"; ?>
+    <?php // Necessario per migrare la stampa ?>
+    <script src="https://code.jquery.com/jquery-migrate-1.0.0.js"></script>
     <script src="<?= BASE_DIR ?>js/jquery.printElement.min.js"></script>
 </head>
 <body>
@@ -66,10 +68,10 @@ $azienda->close();
                     <p class="has-text-justified">
                         Questo è il riepilogo contente le informazioni relative all'azienda appena inserita.<br>
                         Sarà anche l'unico momento in cui sarà possibile osservare la parola d'ordine scritta in chiaro:
-                        <strong>sulla macchina remota la parola d'ordine è stata eliminata con il completamento del processo di creazione di questa pagina. Ricaricare quest'ultima causerà la perdita dalla parola d'ordine!<br></strong>
+                        <strong>sulla macchina remota la parola d'ordine in chiaro è stata eliminata con il completamento del processo di creazione di questa pagina. Ricaricare quest'ultima causerà la perdita dalla parola d'ordine!<br></strong>
                         Stampare questo documento e consegnarlo all'interessato.<br>
                         All'interessato sarà richiesto di cambiare parola d'ordine appena effettuato il primo accesso.<br>
-                        <strong>Rammentarsi che in caso di smarrimento di questo documento solo un docente con privilegi sufficientemente elevati potrà modificare manuale la parola d'ordine.</strong>
+                        <strong>Rammentarsi che in caso di smarrimento di questo documento solo un docente con privilegi sufficientemente elevati potrà inserire una nuova parola d'ordine.</strong>
                     </p>
                 </div>
             </article>
