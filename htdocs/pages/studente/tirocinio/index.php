@@ -126,7 +126,7 @@ $nav->set_pagination_builder(new \helper\IndexJS());
     <script src="<?= BASE_DIR ?>js/lib/jquery.md5.js"></script>
     <script> const PASSED = '<?= $passed?>';
 		md5_ATT = '<?=$desc_md5?>';
-		const TIR = '<?=$num_tir?>' </script>
+		const TIR = '<?=$num_tir?>'; </script>
 </head>
 <body>
 <?php include "../../common/google_navbar.php"; ?>
@@ -282,36 +282,32 @@ $nav->set_pagination_builder(new \helper\IndexJS());
                     </div>
                     <div class="field">
                         <div class="control">
-                            <button class="button" id="bt_comments">Invia</button>
+                            <button class="button" id="bt_comments">
+                                <span>Invia</span>
+                                <span class="icon">
+                                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                </span>
+                            </button>
+                            <button class="button" id="bt_comments_reload">
+                                <span>Aggiorna</span>
+                                <span class="icon">
+                                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                                </span>
+                            </button>
                         </div>
                     </div>
-                    <div class="">
-                        <!-- TODO js+php che estrae i commenti necessari-->
-                        <?php while ($commenti->fetch()) { ?>
-                            <div class="box">
-                                <article class="media">
-                                    <div class="media-left">
-                                        <figure class="image is-96x96">
-                                            <img src="<?= $comm_foto ?>" alt="">
-                                        </figure>
-                                    </div>
-                                    <div class="media-content">
-                                        <p>
-                                            <strong>
-                                                <?= $comm_nome . " " . $comm_cognome ?>
-                                                -
-                                                <time datetime="<?= $comm_tstamp ?>"><?= $comm_tstamp ?></time>
-                                            </strong>
-                                            <br>
-                                            <?= $comm_testo ?>
-                                        </p>
-                                    </div>
-                                </article>
-                            </div>
-                        <?php }
-                        $_GET["page"] = "comments";
-                        $nav->generate_index($_GET);
-                        ?>
+                    <div id="dynamic_comments_loading" class="has-text-centered">
+                        <p>
+                            <span class="icon">
+                                <i class="fa fa-circle-o-notch fa-spin fa-fw"></i>
+                            </span>
+                            <span>
+                                Interrogazione in corso...
+                            </span>
+                        </p>
+                    </div>
+                    <div id="dynamic_comments">
+
                     </div>
                 </div>
             </div>
@@ -324,4 +320,5 @@ $nav->set_pagination_builder(new \helper\IndexJS());
 
 <script src="<?= BASE_DIR ?>js/toggleTab.js"></script>
 <script src="js/resoconto.js"></script>
+<script src="js/comments.js"></script>
 </html>

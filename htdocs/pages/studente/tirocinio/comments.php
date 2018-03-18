@@ -64,7 +64,7 @@ $commenti->bind_result($comm_id, $autore, $comm_nome, $comm_cognome, $comm_foto,
 $nav = new \helper\PaginationIndexBuilder($commenti);
 $nav->set_pagination_builder(new \helper\IndexJS());
 ?>
-<div>
+<div class="ajax_comment" data-current-page="<?= $commenti->get_current_page() ?>">
 <?php while ($commenti->fetch()) { ?>
     <div class="box">
         <article class="media">
@@ -81,7 +81,7 @@ $nav->set_pagination_builder(new \helper\IndexJS());
                         <time datetime="<?= $comm_tstamp ?>"><?= $comm_tstamp ?></time>
                     </strong>
                     <br>
-                    <?= $comm_testo ?>
+                    <?= filter_var($comm_testo, FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?>
                 </p>
             </div>
         </article>
