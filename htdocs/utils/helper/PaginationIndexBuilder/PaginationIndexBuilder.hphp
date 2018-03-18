@@ -175,7 +175,7 @@ class PaginationIndexBuilder
                     ?>
                     <li><span class="pagination-ellipsis">&hellip;</span></li>
                     <li>
-                        <a <?= $this->pagination_builder->next_page($this->pagination)->merge(new Attributes(
+                        <a <?= $this->pagination_builder->last_page($this->pagination)->merge(new Attributes(
                                 [
                                     "class" => ["pagination-link"],
                                     "aria-label" => ["Pagina " . ($this->pagination->get_current_page())],
