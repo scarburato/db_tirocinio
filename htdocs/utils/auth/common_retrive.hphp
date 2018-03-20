@@ -87,7 +87,7 @@ class RetriveAziendaFromDatabase implements \auth\RetriveInformations
     public function retrive(\auth\User $user): \auth\UserInfo
     {
         $retrive = $this->link->prepare(
-            "SELECT id, nominativo, IVA, codiceFiscale, NULL AS 'picture' FROM Azienda");
+            "SELECT id, nominativo, IVA, codiceFiscale, NULL AS 'picture' FROM Azienda WHERE id = ?");
 
         $retrive->bind_param(
             "i",
