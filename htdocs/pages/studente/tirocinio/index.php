@@ -83,35 +83,7 @@ else
 $page = "Gestione Tirocinio - " . $a_nom;
 $num_tir = $_GET['tirocinio'];
 
-// Preparazione dei commenti impaginabili
-$commenti = new class($server,
-    "SELECT CM.id, U.id, U.nome, U.cognome, U.fotografia, testo, quando
-  FROM Commento CM INNER JOIN UtenteGoogle U ON CM.autore = U.id
-  WHERE CM.tirocinio = ? ORDER BY quando DESC") extends \helper\Pagination
-{
-    public function compute_rows()
-    {
-        $row_tot = 0;
-        $conta = $this->link->prepare(
-            "SELECT COUNT(id) FROM Commento WHERE tirocinio=?");
-        $conta->bind_param('i', $_GET['tirocinio']);
-        $conta->execute(true);
-        $conta->bind_result($row_tot);
-        $conta->fetch();
-        $conta->close();
 
-        return $row_tot;
-    }
-};
-$commenti->set_limit(5);
-$commenti->set_current_page(isset($_GET['pagina']) ? $_GET['pagina'] : 0);
-
-$commenti->bind_param('i', $num_tir);
-$commenti->execute(true);
-$commenti->bind_result($comm_id, $autore, $comm_nome, $comm_cognome, $comm_foto, $comm_testo, $comm_tstamp);
-
-$nav = new \helper\PaginationIndexBuilder($commenti);
-$nav->set_pagination_builder(new \helper\IndexJS());
 ?>
 
 <html lang="it">
@@ -251,7 +223,7 @@ $nav->set_pagination_builder(new \helper\IndexJS());
                 <?php if ($status == 1) { ?>
                     <div class="control" data-tab="editor" hidden>
                         <textarea id="resoconto" class="textarea" rows="30"
-                                  title="resonto" <?php if ($t_vis == "azienda") echo 'readonly'; ?> ><?= $t_desc ?></textarea>
+                                  title="resonto" <?php if ($t_vis == "azienda") echo 'readonly'; ?> ><?= filter_var($t_desc, FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?></textarea>
                     </div>
                 <?php }
                 if ($status != 0)
