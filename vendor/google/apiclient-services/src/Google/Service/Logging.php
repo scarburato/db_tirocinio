@@ -73,7 +73,7 @@ class Google_Service_Logging extends Google_Service
   public function __construct(Google_Client $client)
   {
     parent::__construct($client);
-    $this->rootUrl = 'https://logging.googleapis.com/';
+    $this->rootUrl = 'https://content-logging.googleapis.com/';
     $this->servicePath = '';
     $this->version = 'v2';
     $this->serviceName = 'logging';
@@ -632,13 +632,13 @@ class Google_Service_Logging extends Google_Service
               'path' => 'v2/monitoredResourceDescriptors',
               'httpMethod' => 'GET',
               'parameters' => array(
-                'pageSize' => array(
-                  'location' => 'query',
-                  'type' => 'integer',
-                ),
                 'pageToken' => array(
                   'location' => 'query',
                   'type' => 'string',
+                ),
+                'pageSize' => array(
+                  'location' => 'query',
+                  'type' => 'integer',
                 ),
               ),
             ),

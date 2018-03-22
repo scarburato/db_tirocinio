@@ -92,7 +92,7 @@
         </a>
     </li>
     <li>
-        <a class="<?= ($index_menu !== 7 ?: "is-active")?>">
+        <a href="<?= BASE_DIR ?>pages/docente/aziende/contacts.php" class="<?= ($index_menu !== 7 ?: "is-active")?>">
             <span class="icon">
             <i class="fa fa-address-card" aria-hidden="true"></i>
             </span>

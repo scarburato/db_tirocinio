@@ -34,6 +34,7 @@ class ComposerStaticInitf4bfffa99371336ac50dca14644fb835
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
             'Google\\Auth\\' => 12,
+            'Genert\\BBCode\\' => 14,
         ),
         'F' => 
         array (
@@ -77,6 +78,10 @@ class ComposerStaticInitf4bfffa99371336ac50dca14644fb835
         'Google\\Auth\\' => 
         array (
             0 => __DIR__ . '/..' . '/google/auth/src',
+        ),
+        'Genert\\BBCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/genert/bbcode/src',
         ),
         'Firebase\\JWT\\' => 
         array (

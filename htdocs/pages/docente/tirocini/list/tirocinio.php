@@ -13,17 +13,23 @@ $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW)
 
 $tempo = (isset($_GET['chTrain']) ? $_GET['chTrain'] : 1);
 $index = (isset($_GET["index"]) && $_GET["index"] >= 0 ? $_GET["index"] : 0);
+$docente_all = (isset($_GET["docente"]) && $_GET["docente"] === "all");
+$docente_id = $user->get_database_id();
+if(isset($_GET["docente"]) && is_numeric($_GET["docente"]))
+    $docente_id = $_GET["docente"];
+
 $server = new \mysqli_wrapper\mysqli();
 
 switch ($tempo)
 {
     case 0: // Tirocini passati
         $train = $server->prepare(
-            "SELECT Tirocinio.id, A.nominativo, dataInizio, dataTermine, visibilita, S.indirizzo_posta FROM Tirocinio
+            "SELECT Tirocinio.id, A.nominativo, dataInizio, dataTermine, visibilita, S.indirizzo_posta, D.indirizzo_posta FROM Tirocinio
               LEFT JOIN Azienda A ON Tirocinio.azienda = A.id
               LEFT JOIN UtenteGoogle S ON Tirocinio.studente = S.id
+              LEFT JOIN UtenteGoogle D ON Tirocinio.docenteTutore = D.id
               LEFT JOIN Contatto C ON Tirocinio.tutoreAziendale = C.id
-              WHERE docenteTutore = ?
+              WHERE (docenteTutore = ? OR ?)
                 AND (dataTermine<CURRENT_DATE() AND dataTermine IS NOT NULL)
               ORDER BY dataInizio ASC
               LIMIT 1 OFFSET ?");
@@ -31,35 +37,39 @@ switch ($tempo)
     case 1: // Presenti
     default:
         $train = $server->prepare(
-            "SELECT Tirocinio.id, A.nominativo, dataInizio, dataTermine, visibilita, S.indirizzo_posta FROM Tirocinio
+            "SELECT Tirocinio.id, A.nominativo, dataInizio, dataTermine, visibilita, S.indirizzo_posta, D.indirizzo_posta FROM Tirocinio
               LEFT JOIN Azienda A ON Tirocinio.azienda = A.id
               LEFT JOIN UtenteGoogle S ON Tirocinio.studente = S.id
+              LEFT JOIN UtenteGoogle D ON Tirocinio.docenteTutore = D.id
               LEFT JOIN Contatto C ON Tirocinio.tutoreAziendale = C.id
-              WHERE docenteTutore = ?
+              WHERE (docenteTutore = ? OR ?)
                 AND (CURRENT_DATE()>=dataInizio AND (dataTermine IS NULL OR CURRENT_DATE()<=dataTermine))
               ORDER BY dataInizio ASC
               LIMIT 1 OFFSET ?");
         break;
     case 2: // Futuri
         $train = $server->prepare(
-            "SELECT Tirocinio.id, A.nominativo, dataInizio, dataTermine, visibilita, S.indirizzo_posta FROM Tirocinio
+            "SELECT Tirocinio.id, A.nominativo, dataInizio, dataTermine, visibilita, S.indirizzo_posta, D.indirizzo_posta FROM Tirocinio
               LEFT JOIN Azienda A ON Tirocinio.azienda = A.id
               LEFT JOIN UtenteGoogle S ON Tirocinio.studente = S.id
+              LEFT JOIN UtenteGoogle D ON Tirocinio.docenteTutore = D.id
               LEFT JOIN Contatto C ON Tirocinio.tutoreAziendale = C.id
-              WHERE docenteTutore = ? AND CURRENT_DATE()<dataInizio
+              WHERE (docenteTutore = ? OR ?)
+                AND CURRENT_DATE()<dataInizio
               ORDER BY dataInizio ASC
               LIMIT 1 OFFSET ?");
         break;
 }
 
 $train->bind_param(
-    "ii",
-    $_SESSION["user"]["id"],
+    "iii",
+    $docente_id,
+    $docente_all,
     $index
 );
 
 $train->execute(false);
-$train->bind_result($db_id, $business_name, $data_inizio, $data_termine, $visibilita, $studente_posta);
+$train->bind_result($db_id, $business_name, $data_inizio, $data_termine, $visibilita, $studente_posta, $docente_posta);
 
 if (!$train->fetch())
     return;
@@ -79,6 +89,11 @@ if (!$train->fetch())
                     <?= $studente_posta ?>
                 </a>
                 <br>
+                <strong>Docente: </strong>
+                <a href="mailto:<?= $docente_posta ?>">
+                    <?= $docente_posta ?>
+                </a>
+                <br>
                 <?php if ($data_termine === null)
                 {
                     ?>
@@ -96,7 +111,7 @@ if (!$train->fetch())
         </div>
         <footer class="card-footer">
             <?php if ($tempo != 2) { ?>
-                <a href="tirocinio_resoconto.php?tirocinio=<?= $db_id ?>&page=resoconto" class="card-footer-item">
+                <a href="../tirocinio/?tirocinio=<?= $db_id ?>&page=resoconto" class="card-footer-item">
         <span class="icon">
           <i class="fa fa-book" aria-hidden="true"></i>
         </span>
@@ -104,13 +119,13 @@ if (!$train->fetch())
                 </a>
                 <?php ;
             } ?>
-            <a href="tirocinio_resoconto.php?tirocinio=<?= $db_id ?>&page=info" class="card-footer-item">
+            <a href="../tirocinio/?tirocinio=<?= $db_id ?>&page=info" class="card-footer-item">
               <span class="icon">
                 <i class="fa fa-info" aria-hidden="true"></i>
               </span>
                 Info
             </a>
-            <a href="tirocinio_resoconto.php?tirocinio=<?= $db_id ?>&page=comments" class="card-footer-item">
+            <a href="../tirocinio/?tirocinio=<?= $db_id ?>&page=comments" class="card-footer-item">
               <span class="icon">
                 <i class="fa fa-comment" aria-hidden="true"></i>
               </span>

@@ -8,6 +8,9 @@ $.fn.isOnScreen = function ()
 let index = 0;
 let semaforo = false;
 let selezione = 1;
+if(typeof (docente) == "undefined")
+	docente = undefined;
+
 window.setInterval (function ()
 {
 	if (semaforo)
@@ -22,6 +25,11 @@ window.setInterval (function ()
 			{
 				index: index++,
 				chTrain: selezione,
+				/**
+				 * È undefined eccuttato nella pagina dei docenti!
+				 * @see ../pages/docente/tirocini/list/js/tirocini_filter.js
+				 */
+				docente: docente
 			}
 		).done (function (data)
 		{
@@ -41,7 +49,7 @@ window.setInterval (function ()
 
 $(".switch").on("keyup", function (e)
 {
-	if(e.which ===13)
+	if(e.which === 13)
 		$(this).click();
 });
 

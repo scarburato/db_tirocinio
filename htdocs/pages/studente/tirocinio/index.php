@@ -96,9 +96,11 @@ $num_tir = $_GET['tirocinio'];
     <script src="<?= BASE_DIR ?>js/editor/icons/monocons.min.js"></script>
     <script src="<?= BASE_DIR ?>js/editor/icons/material.min.js"></script>
     <script src="<?= BASE_DIR ?>js/lib/jquery.md5.js"></script>
-    <script> const PASSED = '<?= $passed?>';
+    <script>
+        const PASSED = '<?= $passed?>';
 		md5_ATT = '<?=$desc_md5?>';
-		const TIR = '<?=$num_tir?>'; </script>
+		const TIR = '<?=$num_tir?>';
+    </script>
 </head>
 <body>
 <?php include "../../common/google_navbar.php"; ?>
