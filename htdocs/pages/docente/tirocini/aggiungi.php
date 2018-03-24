@@ -55,7 +55,7 @@ $page = "Creazione tirocinio";
                     </div>
                     <div class="message-body">
                         <p>Si sono verificati dei problemi durante il processo dei dati!</p>
-                        <pre><?= $errori ?></pre>
+                        <pre><?= sanitize_html($errori) ?></pre>
                     </div>
                     <script>
 						$("#errore_db_delete").on("click", function ()

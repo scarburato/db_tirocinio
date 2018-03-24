@@ -16,7 +16,7 @@
         echo SITE_NAME;
 
         if(isset($page))
-            echo " - {$page}";
+            echo " - " . sanitize_html($page);
     ?>
 </title>
 

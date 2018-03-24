@@ -25,7 +25,7 @@ if(false)
     <div class="navbar-end">
         <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
-                <?= $user_info->username ?>
+                <?= sanitize_html($user_info->username) ?>
             </a>
 
             <div class="navbar-dropdown">
@@ -33,11 +33,11 @@ if(false)
                     <div class="media">
                         <div class="media-left">
                             <figure class="image is-48x48">
-                                <img style="max-height: none" alt="" src="<?= $user_info["picture"] ?>">
+                                <img style="max-height: none" alt="" src="<?= sanitize_html($user_info["picture"]) ?>">
                             </figure>
                         </div>
                         <p class="media-content title is-4 is-capitalized">
-                            <?= $user_info->nominative ?>
+                            <?= sanitize_html($user_info->nominative) ?>
                         </p>
                     </div>
                 </div>

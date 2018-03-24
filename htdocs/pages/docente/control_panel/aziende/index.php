@@ -90,12 +90,12 @@ $aziende->bind_result($nome, $cf, $iva, $id);
                     {
                         ?>
                         <tr>
-                            <td><?= $nome ?></td>
+                            <td><?= sanitize_html($nome) ?></td>
                             <td>
-                                <samp><?= $cf ?></samp>
+                                <samp><?= sanitize_html($cf) ?></samp>
                             </td>
                             <td>
-                                <samp><?= $iva ?></samp>
+                                <samp><?= sanitize_html($iva) ?></samp>
                             </td>
                             <td>
                                 <a class="button is-warning is-small is-fullwidth" href="./info.php?id=<?= $id ?>">

@@ -43,3 +43,8 @@ function compute_hashes($tries)
 {
     return ((int)($tries/2) + 1)*2048;
 }
+
+function sanitize_html($string = "")
+{
+    return filter_var($string, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+}

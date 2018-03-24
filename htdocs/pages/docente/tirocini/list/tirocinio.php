@@ -79,19 +79,19 @@ if (!$train->fetch())
     <div class='card'>
         <header class="card-header">
             <h1 class="card-header-title">
-                Tirocinio a <?= $business_name ?>
+                Tirocinio a <?= sanitize_html($business_name) ?>
             </h1>
         </header>
         <div class="card-content">
             <div class="content">
                 <strong>Studente: </strong>
-                <a href="mailto:<?= $studente_posta ?>">
-                    <?= $studente_posta ?>
+                <a href="mailto:<?= sanitize_html($studente_posta) ?>">
+                    <?= sanitize_html($studente_posta) ?>
                 </a>
                 <br>
                 <strong>Docente: </strong>
-                <a href="mailto:<?= $docente_posta ?>">
-                    <?= $docente_posta ?>
+                <a href="mailto:<?= sanitize_html($docente_posta) ?>">
+                    <?= sanitize_html($docente_posta) ?>
                 </a>
                 <br>
                 <?php if ($data_termine === null)

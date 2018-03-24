@@ -87,7 +87,7 @@ function edit_button()
                     <tr>
                         <th>Nominativo</th>
                         <td>
-                            <?= $nome ?>
+                            <?= sanitize_html($nome) ?>
                         </td>
                         <td class="edit-button" data-edit="nominativo">
                             <?php edit_button() ?>
@@ -96,7 +96,7 @@ function edit_button()
                     <tr>
                         <th>Parita IVA</th>
                         <td>
-                            <?= $iva ?>
+                            <?= sanitize_html($iva)?>
                         </td>
                         <td class="edit-button" data-edit="iva">
                             <?php edit_button() ?>
@@ -105,7 +105,7 @@ function edit_button()
                     <tr>
                         <th>Codice Fiscale</th>
                         <td>
-                            <?= $cf ?>
+                            <?= sanitize_html($cf) ?>
                         </td>
                         <td class="edit-button" data-edit="cf">
                             <?php edit_button() ?>
@@ -114,7 +114,7 @@ function edit_button()
                     <tr>
                         <th>Classificazione</th>
                         <td>
-                            <?= $classificazione ?>
+                            <?= sanitize_html($classificazione) ?>
                         </td>
                         <td class="edit-button" data-edit="classificazione">
                             <?php edit_button() ?>
@@ -123,7 +123,7 @@ function edit_button()
                     <tr>
                         <th>Ateco</th>
                         <td>
-                            <?= $ateco_c ?>
+                            <?= sanitize_html($ateco_c) ?>
                         </td>
                         <td class="edit-button" data-edit="ateco">
                             <?php edit_button() ?>
@@ -132,7 +132,7 @@ function edit_button()
                     <tr>
                         <th>Dimensione</th>
                         <td>
-                            <?= $dimensione ?>
+                            <?= sanitize_html($dimensione) ?>
                         </td>
                         <td class="edit-button" data-edit="dimensione">
                             <?php edit_button() ?>
@@ -141,7 +141,7 @@ function edit_button()
                     <tr>
                         <th>Tipologia gestione</th>
                         <td>
-                            <?= $gestione ?>
+                            <?= sanitize_html($gestione) ?>
                         </td>
                         <td class="edit-button" data-edit="gestione">
                             <?php edit_button() ?>
@@ -150,7 +150,7 @@ function edit_button()
                     <tr>
                         <th>Già stato acceduto?</th>
                         <td>
-                            <?= $no_accesso ?>
+                            <?= sanitize_html($no_accesso) ?>
                         </td>
                         <td class="edit-button" data-edit="access">
                             <?php edit_button() ?>

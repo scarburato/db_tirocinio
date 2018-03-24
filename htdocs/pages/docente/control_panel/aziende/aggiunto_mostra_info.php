@@ -83,7 +83,7 @@ $azienda->close();
                 <table class="table is-fullwidth is-bordered">
                     <tr>
                         <th style="width: 45%;">Codice univco d'accesso</th>
-                        <td><?= $id ?></td>
+                        <td><?= sanitize_html($id) ?></td>
                     </tr>
                     <tr>
                         <th>Parola d'ordine impostata</th>
@@ -91,7 +91,7 @@ $azienda->close();
                             <?php
                             if(isset($_SESSION["last_passwd"]))
                             {
-                                echo $_SESSION["last_passwd"]["passwd"];
+                                echo sanitize_html($_SESSION["last_passwd"]["passwd"]);
                                 unset($_SESSION["last_passwd"]);
                             }
                             else
@@ -109,27 +109,27 @@ $azienda->close();
                 <table class="table is-fullwidth is-bordered">
                     <tr>
                         <th style="width: 45%">Nominativo</th>
-                        <td><?= $nome ?></td>
+                        <td><?= sanitize_html($nome) ?></td>
                     </tr>
                     <tr>
                         <th>Partita IVA</th>
-                        <td><?= $iva ?></td>
+                        <td><?= sanitize_html($iva) ?></td>
                     </tr>
                     <tr>
                         <th>Codice Fiscale</th>
-                        <td><?= $cf ?></td>
+                        <td><?= sanitize_html($cf) ?></td>
                     </tr>
                     <tr>
                         <th>Tipo Gestione</th>
-                        <td><?= $gestione ?></td>
+                        <td><?= sanitize_html($gestione) ?></td>
                     </tr>
                     <tr>
                         <th>Tipo Classificazione</th>
-                        <td><?= $classificazione ?></td>
+                        <td><?= sanitize_html($classificazione) ?></td>
                     </tr>
                     <tr>
                         <th>Codice ATECO 2007</th>
-                        <td><?= $ateco ?></td>
+                        <td><?= sanitize_html($ateco) ?></td>
                     </tr>
                 </table>
 
@@ -155,9 +155,9 @@ $azienda->close();
                     {
                         ?>
                         <tr>
-                            <td><?= $nome ?></td>
-                            <td><?= $indirizzo ?></td>
-                            <td><?= $cap ?></td>
+                            <td><?= sanitize_html($nome) ?></td>
+                            <td><?= sanitize_html($indirizzo) ?></td>
+                            <td><?= sanitize_html($cap) ?></td>
                         </tr>
                         <?php
                     }

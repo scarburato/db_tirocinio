@@ -47,11 +47,11 @@ $from = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "sconosciut
             <p>Errore lato server!</p>
         </div>
         <div class="message-body content">
-            <h1><?= $errore["name"] ?></h1>
-            <p><em><?= $errore["code"] ?></em></p>
+            <h1><?= sanitize_html($errore["name"]) ?></h1>
+            <p><em><?= sanitize_html($errore["code"]) ?></em></p>
             <blockquote><?= $from ?></blockquote>
             <pre style="height: 80%; overflow-y: scroll; font-size: 60%">
-                <?= $errore["what"] ?>
+                <?= sanitize_html($errore["what"]) ?>
             </pre>
             <a class="button is-warning" href="mailto:<?= ERROR_MAIL ?>?subject=Problema&body=<?= urlencode($from)?>%0A%0A<?= urlencode($_GET["error"]) ?>">
                 <span class="icon">

@@ -107,9 +107,9 @@ $nav = new \helper\PaginationIndexBuilder($utenze);
                         <div class="level-item">
                             <div class="field has-addons">
                                 <p class="control">
-                                    <input class="input" name="filtro" type="text" value="<?= $_GET["filtro"] ?>" placeholder="Filtra persone">
+                                    <input class="input" name="filtro" type="text" value="<?= sanitize_html($_GET["filtro"]) ?>" placeholder="Filtra persone">
                                 </p>
-                                <input title="limite" hidden type="number" name="limite" value="<?= $utenze->get_limit() ?>">
+                                <input title="limite" hidden type="number" name="limite" value="<?= sanitize_html($utenze->get_limit()) ?>">
                                 <p class="control">
                                     <button type="submit" class="button">
                                         Filtra
@@ -137,11 +137,11 @@ $nav = new \helper\PaginationIndexBuilder($utenze);
                 {
                     ?>
                     <tr>
-                        <td><?= $nome ?></td>
-                        <td><?= $cognome ?></td>
+                        <td><?= sanitize_html($nome) ?></td>
+                        <td><?= sanitize_html($cognome) ?></td>
                         <td>
-                            <a href="mailto:<?= $posta ?>">
-                                <?= $posta ?>
+                            <a href="mailto:<?= sanitize_html($posta) ?>">
+                                <?= sanitize_html($posta) ?>
                             </a>
                         </td>
                         <td><?= ($studente !== null) ? "SÌ" : "NO" ?></td>

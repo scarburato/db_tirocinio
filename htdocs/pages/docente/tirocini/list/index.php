@@ -67,7 +67,7 @@ $page = "Tirocini";
                                                 {
                                                     ?>
                                                     <option value="<?= $id ?>">
-                                                        <?= $nome ?> <?= $cognome ?> &lt;<?= $email ?>&gt;
+                                                        <?= sanitize_html($nome) ?> <?= sanitize_html($cognome) ?> &lt;<?= sanitize_html($email) ?>&gt;
                                                     </option>
                                                     <?php
                                                 }

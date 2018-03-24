@@ -69,7 +69,7 @@ if (!$train->fetch())
     <div class='card'>
         <header class="card-header">
             <h1 class="card-header-title">
-                Tirocinio a <?= $business_name ?>
+                Tirocinio a <?= sanitize_html($business_name) ?>
             </h1>
         </header>
         <div class="card-content">

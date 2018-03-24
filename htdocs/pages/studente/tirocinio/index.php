@@ -210,15 +210,15 @@ $num_tir = $_GET['tirocinio'];
             <!-- Contenuti -->
             <div id="contents">
                 <div data-tab="info" hidden>
-                    <h1> <?= $a_nom ?> </h1>
+                    <h1> <?= sanitize_html($a_nom) ?> </h1>
                     <?php if (isset($c_nome)) { ?>
-                        <p> Tutore aziendale del tirocinio: <?= $c_nome ?> <?= $c_cognome ?>
-                            email: <a href=mailto:<?= $c_posta ?>> <?= $c_posta ?> </a>
+                        <p> Tutore aziendale del tirocinio: <?= sanitize_html($c_nome) ?> <?= sanitize_html($c_cognome) ?>
+                            email: <a href=mailto:<?= sanitize_html($c_posta) ?>> <?= sanitize_html($c_posta) ?> </a>
                         </p>
                     <?php } ?>
                     <br>
-                    <p> Docente tutore: <?= $doc_nome ?> <?= $doc_cog ?> <br>
-                        email: <a href=mailto:<?= $doc_posta ?>> <?= $doc_posta ?> </a>
+                    <p> Docente tutore: <?= sanitize_html($doc_nome) ?> <?= sanitize_html($doc_cog) ?> <br>
+                        email: <a href=mailto:<?= sanitize_html($doc_posta) ?>> <?= sanitize_html($doc_posta) ?> </a>
                     </p>
 
                 </div>
@@ -248,7 +248,7 @@ $num_tir = $_GET['tirocinio'];
                             </div>
                         <?php } ?>
                         <div class="content" id="preview_editor">
-                            <?php if ($t_vis == 'azienda') echo $t_desc; ?>
+                            <?php if ($t_vis == 'azienda') echo sanitize_html($t_desc); ?>
                         </div>
                     </div>
                 <?php } ?>

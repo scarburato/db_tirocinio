@@ -70,23 +70,10 @@ if (!isset($_GET['page']))
 
 if ($_GET['page'] == 'comments')
     $passed = 'comments';
+elseif ($_GET['page'] == 'resoconto' && $status > 0)
+    $passed = "preview";
 else
-{
-    switch ($status)
-    {
-        case 0:
-        default:
-            $passed = 'info';
-        case 1:
-            $passed = ($_GET['page'] == 'resoconto' ? 'editor' : 'info');
-            break;
-        case 2:
-            $passed = ($_GET['page'] == 'resoconto' ? 'preview' : 'info');
-            break;
-    }
-    unset($_GET['page']);
-}
-
+    $passed = 'info';
 
 // Variabili pagina
 $page = "Gestione Tirocinio - " . $a_nom;
@@ -159,15 +146,15 @@ $num_tir = $_GET['tirocinio'];
             <!-- Contenuti -->
             <div id="contents">
                 <div data-tab="info" hidden>
-                    <h1> <?= $a_nom ?> </h1>
+                    <h1> <?= sanitize_html($a_nom) ?> </h1>
                     <?php if (isset($c_nome)) { ?>
-                        <p> Tutore aziendale del tirocinio: <?= $c_nome ?> <?= $c_cognome ?>
-                            email: <a href=mailto:<?= $c_posta ?>> <?= $c_posta ?> </a>
+                        <p> Tutore aziendale del tirocinio: <?= sanitize_html($c_nome) ?> <?= sanitize_html($c_cognome) ?>
+                            email: <a href=mailto:<?= sanitize_html($c_posta) ?>> <?= sanitize_html($c_posta) ?> </a>
                         </p>
                     <?php } ?>
                     <br>
-                    <p> Docente tutore: <?= $doc_nome ?> <?= $doc_cog ?> <br>
-                        email: <a href=mailto:<?= $doc_posta ?>> <?= $doc_posta ?> </a>
+                    <p> Docente tutore: <?= sanitize_html($doc_nome) ?> <?= sanitize_html($doc_cog) ?> <br>
+                        email: <a href=mailto:<?= sanitize_html($doc_posta) ?>> <?= sanitize_html($doc_posta) ?> </a>
                     </p>
 
                 </div>
@@ -175,7 +162,7 @@ $num_tir = $_GET['tirocinio'];
                 if ($status != 0)
                 { ?>
                     <div data-tab="preview" hidden>
-                        <div class="content" id="preview_editor"><?= $t_desc ?></div>
+                        <div class="content" id="preview_editor"><?= sanitize_html($t_desc) ?></div>
                     </div>
                 <?php } ?>
                 <div data-tab="comments" hidden>

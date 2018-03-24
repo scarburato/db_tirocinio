@@ -83,11 +83,11 @@ class Attributes
 
         foreach($this->attributes as $attribute => $props)
         {
-            $res .= $attribute . "=\"";
+            $res .= sanitize_html($attribute) . "=\"";
 
             foreach ($props as $prop)
             {
-                $res .= $prop;
+                $res .= sanitize_html($prop);
                 if($prop !== end($props))
                     $res .= " ";
             }

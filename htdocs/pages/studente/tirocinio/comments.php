@@ -70,18 +70,18 @@ $nav->set_pagination_builder(new \helper\IndexJS());
         <article class="media">
             <div class="media-left">
                 <figure class="image is-96x96">
-                    <img src="<?= $comm_foto ?>" alt="">
+                    <img src="<?= sanitize_html($comm_foto) ?>" alt="">
                 </figure>
             </div>
             <div class="media-content">
                 <p>
                     <strong>
-                        <?= $comm_nome . " " . $comm_cognome ?>
+                        <?= sanitize_html($comm_nome) . " " . sanitize_html($comm_cognome) ?>
                         -
                         <time datetime="<?= $comm_tstamp ?>"><?= $comm_tstamp ?></time>
                     </strong>
                     <br>
-                    <?= filter_var($comm_testo, FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?>
+                    <?= sanitize_html($comm_testo) ?>
                 </p>
             </div>
         </article>

@@ -29,7 +29,7 @@ const ERROR_MAIL = "test@example.com";
  */
 
 //const GOOGLE_REDIRECT_URI = "http://localhost/test.php";
-const GOOGLE_REDIRECT_URI = "https://pgnfba.dtdns.net:10101/test.php";
+const GOOGLE_REDIRECT_URI = "https://casa.dariopagani.online:10101/test.php";
 const TRUSTED_DOMAIN = "itispisa.gov.it";
 const SKIP_CAPTCHA = !true;
 

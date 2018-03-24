@@ -79,8 +79,8 @@ $page = "Imposta Unità Organizzative";
                     while($unita_studente->fetch())
                     {
                         ?>
-                        <tr data-raw="<?= $path ?>">
-                            <td><?= $path ?></td>
+                        <tr data-raw="<?= sanitize_html($path) ?>">
+                            <td><?= sanitize_html($path) ?></td>
                             <td style="width: 20%">
                                 <a tabindex=''>Seleziona</a>
                             </td>
@@ -112,8 +112,8 @@ $page = "Imposta Unità Organizzative";
                     while($unita_docente->fetch())
                     {
                         ?>
-                        <tr data-raw="<?= $path ?>">
-                            <td><?= $path ?></td>
+                        <tr data-raw="<?= sanitize_html($path) ?>">
+                            <td><?= sanitize_html($path) ?></td>
                             <td style="width: 20%">
                                 <a tabindex=''>Seleziona</a>
                             </td>
@@ -145,8 +145,8 @@ $page = "Imposta Unità Organizzative";
                     while($unita_ambigue->fetch())
                     {
                         ?>
-                        <tr data-raw="<?= $path ?>">
-                            <td><?= $path ?></td>
+                        <tr data-raw="<?= sanitize_html($path) ?>">
+                            <td><?= sanitize_html($path) ?></td>
                             <td style="width: 20%">
                                 <a tabindex=''>Seleziona</a>
                             </td>

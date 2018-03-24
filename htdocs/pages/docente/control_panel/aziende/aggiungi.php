@@ -55,7 +55,7 @@ $page = "Gestione Aziende - Aggiungi";
                     </div>
                     <div class="message-body">
                         <p>Si sono verificati dei problemi durante il processo dei dati!</p>
-                        <pre><?= $errori ?></pre>
+                        <pre><?= sanitize_html($errori) ?></pre>
                     </div>
                     <script>
                         $("#errore_db_delete").on("click", function ()
@@ -172,8 +172,8 @@ $page = "Gestione Aziende - Aggiungi";
                                         foreach ($opzioni as $opzione)
                                         {
                                             ?>
-                                            <option value="<?= $opzione ?>">
-                                                <?= $opzione ?>
+                                            <option value="<?= sanitize_html($opzione) ?>">
+                                                <?= sanitize_html($opzione) ?>
                                             </option>
                                             <?php
                                         }
@@ -201,8 +201,8 @@ $page = "Gestione Aziende - Aggiungi";
                                         foreach ($opzioni as $opzione)
                                         {
                                             ?>
-                                            <option value="<?= $opzione ?>">
-                                                <?= $opzione ?>
+                                            <option value="<?= sanitize_html($opzione) ?>">
+                                                <?= sanitize_html($opzione) ?>
                                             </option>
                                             <?php
                                         }
@@ -233,7 +233,7 @@ $page = "Gestione Aziende - Aggiungi";
                                         {
                                             ?>
                                                 <option value="<?= $id ?>">
-                                                    <?= $descrizione ?>
+                                                    <?= sanitize_html($descrizione) ?>
                                                 </option>
                                             <?php
                                         }
@@ -390,7 +390,7 @@ $page = "Gestione Aziende - Aggiungi";
                     while ($stati->fetch())
                     {
                         ?>
-                        <option value="<?= $stato ?>">
+                        <option value="<?= sanitize_html($stato) ?>">
                         <?php
                     }
                     ?>
@@ -449,8 +449,8 @@ $page = "Gestione Aziende - Aggiungi";
                         ?>
                         <tr style="cursor: pointer">
 
-                            <td class="codice_ateco_value" data-dbid="<?= $id ?>"><?= $codice?></td>
-                            <td><?= $descrizione?></td>
+                            <td class="codice_ateco_value" data-dbid="<?= $id ?>"><?= sanitize_html($codice)?></td>
+                            <td><?= sanitize_html($descrizione) ?></td>
                             <td>
                                 <a class="is-link" tabindex="">Seleziona</a>
                             </td>

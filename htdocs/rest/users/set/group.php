@@ -28,9 +28,9 @@ if(empty($_POST["email"]) && empty($_POST["id"]))
     return;
 }
 
-if(!is_array($_POST["permissions"]))
+if(!is_array($_POST["groups"]) && $_POST["groups"] != 0)
 {
-    echo json_encode(["error" => -1, "what" => "You have to supply an array!"]);
+    echo json_encode(["error" => -1, "what" => "You have to supply an array! Send number 0 for empty array :("]);
     return;
 }
 
@@ -56,7 +56,7 @@ else
     $id = $_POST["id"];
 
 $server->autocommit(false);
-$drop = $server->prepare("DELETE FROM PrivilegiApplicati WHERE utente = ?");
+$drop = $server->prepare("DELETE FROM GruppiApplicati WHERE utente = ?");
 $drop->bind_param(
     "i",
     $id
@@ -65,15 +65,17 @@ $drop->bind_param(
 $drop->execute();
 $drop->close();
 
-$insert = $server->prepare("INSERT INTO PrivilegiApplicati (utente, privilegio) VALUES (?, ?)");
+$insert = $server->prepare("INSERT INTO GruppiApplicati (utente, gruppo) VALUES (?, ?)");
 
 $gao = [];
+$id = (int)$id;
+$privilegio = "control.google.permissions";
 $insert->bind_param(
     "is",
     $id,
     $privilegio
 );
-foreach ($_POST["permissions"] as $privilegio)
+foreach ($_POST["groups"] as $privilegio)
 {
     // TODO Controllare perché non funziona l'insert
     $insert->execute();
@@ -84,4 +86,4 @@ $insert->close();
 
 $server->commit();
 
-echo json_encode($gao);
+echo json_encode([$gao, $id]);

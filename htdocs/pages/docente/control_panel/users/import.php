@@ -82,7 +82,7 @@ $page = "Importa utente da Google";
                 </div>
                 <div class="message-body">
                     <p>Si sono verificati dei problemi durante l'interrogazione!</p>
-                    <pre id="error_what"><?= $errori ?></pre>
+                    <pre id="error_what"><?= sanitize_html($errori) ?></pre>
                 </div>
             </div>
 

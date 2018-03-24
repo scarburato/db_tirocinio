@@ -47,12 +47,11 @@ if(($return = $docente->get_result()->fetch_assoc()) === null)
     return;
 }
 
-$return["permessi"] = array();
 $docente->close();
 
 $permessi = $server->prepare("SELECT nome, descrizione 
-                                      FROM PrivilegiApplicati
-                                      INNER JOIN Privilegio P ON PrivilegiApplicati.privilegio = P.nome
+                                      FROM GruppiApplicati
+                                      INNER JOIN Gruppo P ON GruppiApplicati.gruppo = P.nome
                                     WHERE utente = ?");
 
 $permessi->bind_param(
@@ -63,7 +62,8 @@ $permessi->bind_param(
 $permessi->execute();
 $result = $permessi->get_result();
 
+$return["gruppi"] = [];
 while($data = $result->fetch_assoc())
-    array_push($return["permessi"], $data);
+    array_push($return["gruppi"], $data);
 
 echo json_encode($return);
