@@ -108,7 +108,7 @@ if(isset($_GET["google_expired"]))
                     <a
                             class="button is-info is-fullwidth is-large"
                             id="login_google"
-                            href="<?= filter_var($login_url,FILTER_SANITIZE_URL) ?>"
+                            href="<?=($login_url) ?>"
                     >
                         <span class="icon">
                             <i class="fa fa-google" aria-hidden="true"></i>

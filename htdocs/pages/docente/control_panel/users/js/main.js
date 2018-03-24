@@ -57,7 +57,7 @@ function ricerca()
 		{
 			if(data.error !== null)
 			{
-				$("#error_what").html(data["what"]);
+				$("#error_what").text(data["what"]);
 				$("#error").show();
 			}
 			else if(!data.found)
@@ -67,11 +67,11 @@ function ricerca()
 			else if(data.found)
 			{
 				$("#output_img").html("<img src=\"" + data.thumbnailPhotoUrl + "\">");
-				$("#output_nominative").html(data.name.fullName);
+				$("#output_nominative").text(data.name.fullName);
 				let mail = $("#output_email");
-				mail.html(data.email);
+				mail.text(data.email);
 				mail.attr("href", "mailto:" + data.email);
-				$("#output_orgunit").html(data.orgUnitPath);
+				$("#output_orgunit").text(data.orgUnitPath);
 
 				$("#add_user").prop("disabled", !data.no_db);
 
