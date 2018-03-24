@@ -18,10 +18,17 @@ INSERT INTO UnitaOrganizzativa(tipo, unita_organizzativa) VALUES
   ('docente', '/Docenti IPSIA');
 
 INSERT INTO Privilegio(nome, descrizione) VALUES
-  ('control.google.users.readonly', 'Consente la lettura delle utenze che accedono al programma.'),
-  ('control.google.users', 'Consente la gestione delle utenze che accedono al programma.'),
-  ('control.business.users', 'Consente la gestione delle utenze aziendali.'),
-  ('control.network.list', 'Consente di visualizzare gli indirizzi di rete dei tentativi d\'accesso.'),
-  ('control.network.forgive', 'Consente di "perdonare" gli indirizzi di rete che hanno effettuato eccessi tentativi di autenticazione senza successo.'),
-  ('control.google.permissions', 'Consente di modificare i permessi degli utenti Google.')
-;
+  ('user.google.add', 'Consente di aggiungere utenti alla base dati'),
+  ('user.factory.add', 'Consente di creare aziende'),
+  ('user.factory.resetpasswd', 'Consente di cambiare la parola d\'ordine delle aziende'),
+  ('train.add', 'Consente di creare tirocini'),
+  ('train.import', 'Consente di importare tirocini dal CSV esoterico'),
+  ('train.pubblish', 'Consente di pubblicare tirocini'),
+  ('train.readall', 'Consente di leggere i tirocini non propri'),
+  ('control.forgive', 'Consente di perdonare gli indirizzi che hanno tentato troppi accessi'),
+  ('control.groups', 'COnsente di modificare i gruppi'),
+  ('user.groups', 'Consente di assegnare gruppi agli utenti'),
+  ('root', 'Accesso totale a tutto, nessuna domanda');
+
+INSERT INTO Gruppo(nome, descrizione) VALUES ('root', 'Accesso totale e globale al programma');
+INSERT INTO PermessiGruppo(gruppo, privilegio) VALUES ('root', 'root');

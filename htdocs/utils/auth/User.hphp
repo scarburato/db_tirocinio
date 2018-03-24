@@ -168,11 +168,3 @@ class User
         $this->write_to_session();
     }
 }
-
-class Unauthorized extends \Exception
-{
-    public function __construct($required_level, $acutal_level)
-    {
-        parent::__construct("Tried to visit a page which requires $required_level level but current user has $acutal_level !", 403);
-    }
-}

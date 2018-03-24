@@ -18,8 +18,10 @@ const LEVEL_GOOGLE_BOTH             = 3;
 const LEVEL_GOOGLE_UNAUTHORIZED     = 4;
 const LEVEL_FACTORY                 = 5;
 
+require_once dirname(__FILE__) . "/Unauthorized.hphp";
 require_once dirname(__FILE__) . "/User.hphp";
 require_once dirname(__FILE__) . "/UserInfo.hphp";
 require_once dirname(__FILE__) . "/RetriveInformations.hphp";
 require_once dirname(__FILE__) . "/common_retrive.hphp";
 require_once dirname(__FILE__) . "/google_utils.hphp";
+require_once dirname(__FILE__) . "/PermissionManager.hphp";

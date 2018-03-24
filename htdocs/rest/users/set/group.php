@@ -67,9 +67,7 @@ $drop->close();
 
 $insert = $server->prepare("INSERT INTO GruppiApplicati (utente, gruppo) VALUES (?, ?)");
 
-$gao = [];
-$id = (int)$id;
-$privilegio = "control.google.permissions";
+
 $insert->bind_param(
     "is",
     $id,
@@ -77,13 +75,11 @@ $insert->bind_param(
 );
 foreach ($_POST["groups"] as $privilegio)
 {
-    // TODO Controllare perché non funziona l'insert
     $insert->execute();
-    array_push($gao, $privilegio);
 }
 
 $insert->close();
 
 $server->commit();
 
-echo json_encode([$gao, $id]);
+echo json_encode("TODO");

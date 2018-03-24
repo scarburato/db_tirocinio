@@ -53,15 +53,29 @@ CREATE TABLE IF NOT EXISTS Privilegio (
   descrizione TINYTEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS PrivilegiApplicati (
-  utente     SMALLINT UNSIGNED,
-  privilegio VARCHAR(10),
+CREATE TABLE IF NOT EXISTS Gruppo (
+  nome        VARCHAR(126) PRIMARY KEY,
+  descrizione TINYTEXT NOT NULL
+);
 
-  PRIMARY KEY (utente, privilegio),
+CREATE TABLE IF NOT EXISTS PermessiGruppo (
+  gruppo      VARCHAR(126),
+  privilegio  VARCHAR(126),
+
+  PRIMARY KEY (gruppo, privilegio),
+  FOREIGN KEY (gruppo) REFERENCES Gruppo(nome),
+  FOREIGN KEY (privilegio) REFERENCES Privilegio(nome)
+);
+
+CREATE TABLE IF NOT EXISTS GruppiApplicati (
+  utente     SMALLINT UNSIGNED,
+  gruppo     VARCHAR(126),
+
+  PRIMARY KEY (utente, gruppo),
   FOREIGN KEY (utente)
   REFERENCES Docente (utente),
-  FOREIGN KEY (privilegio)
-  REFERENCES Privilegio (nome)
+  FOREIGN KEY (gruppo)
+  REFERENCES Gruppo (nome)
 );
 
 CREATE TABLE IF NOT EXISTS Classificazioni (

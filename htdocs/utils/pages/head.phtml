@@ -16,7 +16,7 @@
         echo SITE_NAME;
 
         if(isset($page))
-            echo " - " . sanitize_html($page);
+            echo " - " . filter_var($page, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     ?>
 </title>
 

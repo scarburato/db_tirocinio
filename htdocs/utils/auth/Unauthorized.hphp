@@ -1,0 +1,18 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 24/03/18
+ * Time: 18.17
+ */
+
+namespace auth;
+
+
+class Unauthorized extends \RuntimeException
+{
+    public function __construct($required_level, $acutal_level)
+    {
+        parent::__construct("Tried to visit a page which requires $required_level level but current user has $acutal_level !", 403);
+    }
+}

@@ -18,7 +18,7 @@ $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 $oauth2 = \auth\connect_token_google($google_client, $user->get_token());
 
 // Variabili pagina
-$page = "Gestione dei permessi";
+$page = "Gestione dei gruppi";
 $server = new \mysqli_wrapper\mysqli();
 ?>
 <html lang="it">
@@ -83,7 +83,7 @@ $server = new \mysqli_wrapper\mysqli();
             <div id="info" class="message is-info">
                 <div class="message-body">
                     Per cominciare inserire l'indirizzo di <strong>posta elettronica</strong> dell'utente di cui si
-                    vuole modificare i permessi d'accesso.
+                    vuole modificare i gruppi.
                 </div>
             </div>
             <div id="error" class="message is-danger" hidden>
@@ -99,7 +99,7 @@ $server = new \mysqli_wrapper\mysqli();
                 </div>
                 <div class="message-body">
                     <p>Si sono verificati dei problemi durante l'interrogazione!</p>
-                    <pre id="error_what"><?= $errori ?></pre>
+                    <pre id="error_what"><?= sanitize_html($errori) ?></pre>
                 </div>
             </div>
 
@@ -163,24 +163,24 @@ $server = new \mysqli_wrapper\mysqli();
                             <table class="table is-fullwidth">
                                 <tbody id="privilegi">
                                 <?php
-                                $permessi = $server->prepare(
-                                        "SELECT nome, descrizione FROM Privilegio"
+                                $gruppi = $server->prepare(
+                                        "SELECT nome, descrizione FROM Gruppo"
                                 );
-                                $permessi->execute(true);
-                                $permessi->bind_result($nome, $descrizione);
-                                while($permessi->fetch())
+                                $gruppi->execute(true);
+                                $gruppi->bind_result($nome, $descrizione);
+                                while($gruppi->fetch())
                                 {
                                     ?>
-                                    <tr data-id="<?= $nome ?>">
-                                        <th style="width: 25%"><?= str_replace(".", ".<wbr>", $nome) ?></th>
-                                        <td><p class="has-text-justified"><?= $descrizione ?></p></td>
+                                    <tr data-id="<?= sanitize_html($nome) ?>">
+                                        <th style="width: 25%"><?= str_replace(".", ".<wbr>", sanitize_html($nome)) ?></th>
+                                        <td><p class="has-text-justified"><?= sanitize_html($descrizione) ?></p></td>
                                         <td style="width: 20%">
                                             <a tabindex="">Seleziona</a>
                                         </td>
                                     </tr>
                                     <?php
                                 }
-                                $permessi->close();
+                                $gruppi->close();
                                 ?>
                                 </tbody>
                             </table>
@@ -194,6 +194,7 @@ $server = new \mysqli_wrapper\mysqli();
 <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 
 <script src="<?= BASE_DIR ?>js/tableSelection.js"></script>
-<script src="js/main.js"></script>
+<script src="<?= BASE_DIR ?>js/tableChooser.js"></script>
+<script src="js/imposta_gruppi_degli_utenti_di_google.js"></script>
 </body>
 </html>
