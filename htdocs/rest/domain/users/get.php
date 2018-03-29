@@ -13,6 +13,7 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/fakeService/init.php";
 
 (new \auth\User())->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
+\auth\connect_token_google($google_client, $_SESSION["user"]["token"], false);
 
 $server = new \mysqli_wrapper\mysqli();
 if(!\auth\check_permission($server, "control.google.users.readonly"))
