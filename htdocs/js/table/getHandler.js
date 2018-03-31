@@ -34,6 +34,10 @@ class GetHandler
 			forward: {
 				elements: [],
 				handler: self.forward
+			},
+			reload: {
+				elements: [],
+				handler: self.get
 			}
 		}
 	}
@@ -121,6 +125,11 @@ class GetHandler
 				this.buttons.backward.elements.forEach(function (e)
 				{
 					e.prop ("disabled", comp);
+				});
+
+				this.buttons.reload.elements.forEach(function (e)
+				{
+					e.prop("disabled", false);
 				});
 		})
 			.always(() =>
