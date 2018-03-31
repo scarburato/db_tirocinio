@@ -1,3 +1,8 @@
+/**
+ * Classe che permette la gestione dinamica delle tabelle
+ * Ad esempio sfogliare le utenze nella selezione dello studente, docente o azienda nella
+ * creazione del tirocinio.
+ */
 class GetHandler
 {
 	/**

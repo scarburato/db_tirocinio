@@ -393,8 +393,8 @@ $page = "Creazione tirocinio";
 <script>
 	let main_form = $ ("#main_form");
 </script>
-<script src="<?= BASE_DIR ?>js/getHandler.js"></script>
-<script src="<?= BASE_DIR ?>js/tableSelection.js"></script>
+<script src="<?= BASE_DIR ?>js/table/getHandler.js"></script>
+<script src="<?= BASE_DIR ?>js/table/tableSelection.js"></script>
 <script src="<?= BASE_DIR ?>js/togglePanel.js"></script>
 
 

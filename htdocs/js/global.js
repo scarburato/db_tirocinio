@@ -7,5 +7,4 @@ $.ajaxSetup
 			window.location.href = BASE + "index.php";
 		}
 	}
-
 });

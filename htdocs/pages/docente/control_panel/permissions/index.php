@@ -193,8 +193,8 @@ $server = new \mysqli_wrapper\mysqli();
 </section>
 <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 
-<script src="<?= BASE_DIR ?>js/tableSelection.js"></script>
-<script src="<?= BASE_DIR ?>js/tableChooser.js"></script>
+<script src="<?= BASE_DIR ?>js/table/tableSelection.js"></script>
+<script src="<?= BASE_DIR ?>js/table/tableChooser.js"></script>
 <script src="js/imposta_gruppi_degli_utenti_di_google.js"></script>
 </body>
 </html>

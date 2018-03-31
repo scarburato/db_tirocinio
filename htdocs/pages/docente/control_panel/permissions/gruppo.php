@@ -174,8 +174,8 @@ $gruppo->close();
 </section>
 <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 
-<script src="<?= BASE_DIR ?>js/tableSelection.js"></script>
-<script src="<?= BASE_DIR ?>js/tableChooser.js"></script>
+<script src="<?= BASE_DIR ?>js/table/tableSelection.js"></script>
+<script src="<?= BASE_DIR ?>js/table/tableChooser.js"></script>
 
 <script src="js/impostazione_privilegi_dei_gruppi.js"></script>
 </body>

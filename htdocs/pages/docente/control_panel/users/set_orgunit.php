@@ -192,7 +192,7 @@ $page = "Imposta Unità Organizzative";
     </div>
 </div>
 <script src="<?= BASE_DIR ?>js/togglePanel.js"></script>
-<script src="<?= BASE_DIR ?>js/tableSelection.js"></script>
+<script src="<?= BASE_DIR ?>js/table/tableSelection.js"></script>
 <script src="js/set_orgunit.js"></script>
 </body>
 </html>

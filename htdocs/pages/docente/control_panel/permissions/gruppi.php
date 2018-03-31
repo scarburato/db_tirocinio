@@ -137,7 +137,7 @@ $server = new \mysqli_wrapper\mysqli();
 </section>
 <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 
-<script src="<?= BASE_DIR ?>js/tableSelection.js"></script>
+<script src="<?= BASE_DIR ?>js/table/tableSelection.js"></script>
 <script src="js/creazione_modifica_ed_eliminazione_dei_gruppi.js"></script>
 </body>
 </html>
