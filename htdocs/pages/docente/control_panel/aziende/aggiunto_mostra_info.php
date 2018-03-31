@@ -49,7 +49,7 @@ $azienda->close();
     <?php include ($_SERVER["DOCUMENT_ROOT"]) ."/utils/pages/head.phtml"; ?>
     <?php // Necessario per migrare la stampa ?>
     <script src="https://code.jquery.com/jquery-migrate-1.0.0.js"></script>
-    <script src="<?= BASE_DIR ?>js/jquery.printElement.min.js"></script>
+    <script src="<?= BASE_DIR ?>js/lib/jquery.printElement.min.js"></script>
 </head>
 <body>
 <?php include "../../../common/google_navbar.php"; ?>
