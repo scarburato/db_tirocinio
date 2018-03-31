@@ -21,25 +21,26 @@ CREATE TABLE IF NOT EXISTS UnitaOrganizzativa(
 CREATE TABLE IF NOT EXISTS UtenteGoogle (
   id              SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   SUB_GOOGLE      VARCHAR(64) UNIQUE,
-  nome            VARCHAR(32) NOT NULL,
-  cognome         VARCHAR(48) NOT NULL,
-  indirizzo_posta VARCHAR(64) NOT NULL,
+  nome            VARCHAR(128) NOT NULL,
+  cognome         VARCHAR(128) NOT NULL,
+  indirizzo_posta VARCHAR(2083) NOT NULL,
   fotografia      VARCHAR(2083)
 );
 
 CREATE TABLE IF NOT EXISTS Indirizzo (
-  indirizzo VARCHAR(20) PRIMARY KEY
+  id        INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  indirizzo VARCHAR(1024) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Studente (
   utente    SMALLINT UNSIGNED PRIMARY KEY,
-  indirizzo VARCHAR(20),
+  indirizzo INT UNSIGNED,
   matricola VARCHAR(10) UNIQUE,
 
   FOREIGN KEY (utente)
   REFERENCES UtenteGoogle (id),
   FOREIGN KEY (indirizzo)
-  REFERENCES Indirizzo (indirizzo)
+  REFERENCES Indirizzo (id)
 );
 
 CREATE TABLE IF NOT EXISTS Docente (
@@ -124,14 +125,18 @@ CREATE TABLE IF NOT EXISTS Sede (
   REFERENCES Azienda (ID)
 );
 
+/**
+Gli indirizzi di una azienda sono quelli della scuola (Info, tlc, cma ecc)
+non quelli di casa!
+ */
 CREATE TABLE IF NOT EXISTS IndirizziAzienda (
-  indirizzo   VARCHAR(20),
+  indirizzo   INT UNSIGNED,
   azienda     INT UNSIGNED,
   motivazioni TEXT NOT NULL,
 
   PRIMARY KEY (Indirizzo, Azienda),
   FOREIGN KEY (Indirizzo)
-  REFERENCES Indirizzo (Indirizzo),
+  REFERENCES Indirizzo (id),
   FOREIGN KEY (Azienda)
   REFERENCES Azienda (ID)
 );
