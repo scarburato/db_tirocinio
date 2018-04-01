@@ -18,11 +18,11 @@ class RetriveStudenteFromDatabase implements \auth\RetriveInformations
     public function retrive(\auth\User $user): \auth\UserInfo
     {
         $retrive = $this->link->prepare(
-            "SELECT id, nome, cognome, indirizzo_posta, SUB_GOOGLE AS 'id_google', matricola, fotografia AS 'picture', I.indirizzo
-                      FROM UtenteGoogle 
-                      INNER JOIN Studente S ON UtenteGoogle.id = S.utente
+            "SELECT U.id, nome, cognome, indirizzo_posta, SUB_GOOGLE AS 'id_google', matricola, fotografia AS 'picture', I.indirizzo
+                      FROM UtenteGoogle U 
+                      INNER JOIN Studente S ON U.id = S.utente
                       LEFT JOIN Indirizzo I ON S.indirizzo = I.indirizzo
-                    WHERE id = ?");
+                    WHERE U.id = ?");
 
         $retrive->bind_param(
             "i",
