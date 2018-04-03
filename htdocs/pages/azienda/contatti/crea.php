@@ -40,7 +40,7 @@ $page = "Creazione Contatto"
                     <div class="field-body">
                         <div class="field">
                             <input name="nome" class="input" type="text" required
-                                   placeholder="Nome" maxlength="64">
+                                   placeholder="Nome" maxlength="128">
                             <p class="help">
                                 Campo obbligatorio
                             </p>
@@ -48,7 +48,7 @@ $page = "Creazione Contatto"
                         <div class="field">
                             <div class="field">
                                 <input name="cognome" class="input" type="text" required
-                                       placeholder="Cognome" maxlength="64">
+                                       placeholder="Cognome" maxlength="128">
                                 <p class="help">
                                     Campo obbligatorio
                                 </p>
@@ -112,7 +112,7 @@ $page = "Creazione Contatto"
                     <div class="field-body">
                         <div class="field">
                             <input name="qualifica" class="input" type="text"
-                                   placeholder="Qualifica" maxlength="64">
+                                   placeholder="Qualifica" maxlength="128">
                         </div>
                     </div>
                 </div>

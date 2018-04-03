@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS UtenteGoogle (
 
 CREATE TABLE IF NOT EXISTS Indirizzo (
   id        INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-  indirizzo VARCHAR(1024) NOT NULL
+  indirizzo VARCHAR(128) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Studente (
@@ -144,12 +144,12 @@ CREATE TABLE IF NOT EXISTS IndirizziAzienda (
 CREATE TABLE IF NOT EXISTS Contatto (
   id             INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   azienda        INT UNSIGNED,
-  nome           VARCHAR(64) NOT NULL,
-  cognome        VARCHAR(64) NOT NULL,
-  email          VARCHAR(64),
+  nome           VARCHAR(128) NOT NULL,
+  cognome        VARCHAR(128) NOT NULL,
+  email          VARCHAR(2083),
   telefono       CHAR(35) CHECK (telefono REGEXP '\\+[0-9]{1,3}-[0-9()+\\-]{1,30}'), /* In conformità a ISO 20022 */
   FAX            CHAR(35) CHECK (FAX REGEXP '\\+[0-9]{1,3}-[0-9()+\\-]{1,30}'),
-  qualifica      VARCHAR(64),
+  qualifica      VARCHAR(128),
   ruoloAziendale TEXT    NOT NULL,
 
   FOREIGN KEY (Azienda)
