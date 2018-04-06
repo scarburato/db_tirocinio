@@ -67,6 +67,9 @@ class User
         if($auth_level === LEVEL_ALL || $auth_level === $_SESSION[$this->session_index]["type"])
             return true;
 
+        if($auth_level === LEVEL_GOOGLE_BOTH && ($_SESSION[$this->session_index]["type"] === LEVEL_GOOGLE_TEACHER || $_SESSION[$this->session_index]["type"] === LEVEL_GOOGLE_STUDENT))
+            return true;
+
         if($on_fail === User::UNAUTHORIZED_REDIRECT)
         {
             switch ($_SESSION["user"]["type"])
