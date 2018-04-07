@@ -22,7 +22,7 @@ $page = "Accessi";
 $server = new \mysqli_wrapper\mysqli();
 $indirizzi  = new class(
         $server,
-        "SELECT indirizzo_rete, ultimo_accesso, tentativi_falliti, ultimo_tentativo FROM AziendeTentativiAccesso ORDER BY ultimo_tentativo DESC "
+        "SELECT indirizzo_rete, ultimo_accesso, tentativi_falliti, ultimo_tentativo FROM AziendeTentativiAccesso ORDER BY ultimo_tentativo DESC, indirizzo_rete"
 ) extends helper\Pagination
 {
     public  function compute_rows()
