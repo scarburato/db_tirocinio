@@ -13,7 +13,7 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
 $user = new \auth\User();
-$user->is_authorized(\auth\LEVEL_GOOGLE_STUDENT, \auth\User::UNAUTHORIZED_THROW);
+$user->is_authorized(\auth\LEVEL_GOOGLE_BOTH, \auth\User::UNAUTHORIZED_THROW);
 
 \auth\connect_token_google($google_client, $_SESSION["user"]["token"], false);
 
@@ -38,6 +38,39 @@ if (empty($_POST['tirocinio']))
     ]);
     return;
 }
+
+if($user->is_authorized(\auth\LEVEL_GOOGLE_STUDENT))
+{
+    $autorizzato = $server->prepare("SELECT id FROM Tirocinio 
+  WHERE studente = ?");
+    $autorizzato->bind_param(
+        "i",
+        $user->get_database_id()
+    );
+}
+elseif($user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER))
+{
+    $permissions = new \auth\PermissionManager($server, $user);
+    $tutto_puo = $permissions->check("train.readall");
+
+    $autorizzato = $server->prepare("SELECT id FROM Tirocinio 
+  WHERE ? OR docenteTutore = ?");
+    $autorizzato->bind_param(
+        "ii",
+        $tutto_puo,
+        $user->get_database_id()
+    );
+}
+else
+    throw new RuntimeException("Invalid user", -1);
+
+if(!$autorizzato->execute())
+    throw new mysqli_sql_exception($autorizzato->error, $autorizzato->errno);
+
+if(!($autorizzato->fetch()))
+    throw new RuntimeException("Non possiedi questo robo", -56);
+
+$autorizzato->close();
 
 $inser = $server->prepare("INSERT INTO Commento (tirocinio, autore, testo)
   VALUES (?,?,?)");
