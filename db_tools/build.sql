@@ -24,7 +24,9 @@ CREATE TABLE IF NOT EXISTS UtenteGoogle (
   nome            VARCHAR(128) NOT NULL,
   cognome         VARCHAR(128) NOT NULL,
   indirizzo_posta VARCHAR(2083) NOT NULL,
-  fotografia      VARCHAR(2083)
+  fotografia      VARCHAR(2083),
+
+  INDEX (indirizzo_posta)
 );
 
 CREATE TABLE IF NOT EXISTS Indirizzo (
