@@ -87,6 +87,7 @@ $num_tir = $_GET['tirocinio'];
     <script src="<?= BASE_DIR ?>js/editor/bbcode.min.js"></script>
     <script>
         const PASSED = '<?= $passed?>';
+		const TIR = '<?=$num_tir?>';
     </script>
 </head>
 <body>
@@ -215,4 +216,5 @@ $num_tir = $_GET['tirocinio'];
 
 <script src="<?= BASE_DIR ?>js/toggleTab.js"></script>
 <script src="js/main.js"></script>
+<script src="js/comments.js"></script>
 </html>
