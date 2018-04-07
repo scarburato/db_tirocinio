@@ -25,7 +25,7 @@ switch ($tempo)
               LEFT JOIN Contatto C ON Tirocinio.tutoreAziendale = C.id
               WHERE studente = ?
                 AND (dataTermine<CURRENT_DATE() AND dataTermine IS NOT NULL)
-              ORDER BY dataInizio ASC
+              ORDER BY dataInizio ASC, id
               LIMIT 1 OFFSET ?");
         break;
     case 1: // Presenti
@@ -37,7 +37,7 @@ switch ($tempo)
               LEFT JOIN Contatto C ON Tirocinio.tutoreAziendale = C.id
               WHERE studente = ?
                 AND (CURRENT_DATE()>=dataInizio AND (dataTermine IS NULL OR CURRENT_DATE()<=dataTermine))
-              ORDER BY dataInizio ASC
+              ORDER BY dataInizio ASC, id
               LIMIT 1 OFFSET ?");
         break;
     case 2: // Futuri
@@ -47,7 +47,7 @@ switch ($tempo)
               LEFT JOIN Docente D ON Tirocinio.docenteTutore = D.utente
               LEFT JOIN Contatto C ON Tirocinio.tutoreAziendale = C.id
               WHERE studente = ? AND CURRENT_DATE()<dataInizio
-              ORDER BY dataInizio ASC
+              ORDER BY dataInizio ASC, id
               LIMIT 1 OFFSET ?");
         break;
 }

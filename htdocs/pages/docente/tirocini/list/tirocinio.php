@@ -15,6 +15,7 @@ $tempo = (isset($_GET['chTrain']) ? $_GET['chTrain'] : 1);
 $index = (isset($_GET["index"]) && $_GET["index"] >= 0 ? $_GET["index"] : 0);
 $docente_all = (isset($_GET["docente"]) && $_GET["docente"] === "all");
 $docente_id = $user->get_database_id();
+
 if(isset($_GET["docente"]) && is_numeric($_GET["docente"]))
     $docente_id = $_GET["docente"];
 
@@ -29,9 +30,9 @@ switch ($tempo)
               LEFT JOIN UtenteGoogle S ON Tirocinio.studente = S.id
               LEFT JOIN UtenteGoogle D ON Tirocinio.docenteTutore = D.id
               LEFT JOIN Contatto C ON Tirocinio.tutoreAziendale = C.id
-              WHERE (docenteTutore = ? OR ?)
+              WHERE (? OR docenteTutore = ?)
                 AND (dataTermine<CURRENT_DATE() AND dataTermine IS NOT NULL)
-              ORDER BY dataInizio ASC
+              ORDER BY dataInizio ASC, id
               LIMIT 1 OFFSET ?");
         break;
     case 1: // Presenti
@@ -42,9 +43,9 @@ switch ($tempo)
               LEFT JOIN UtenteGoogle S ON Tirocinio.studente = S.id
               LEFT JOIN UtenteGoogle D ON Tirocinio.docenteTutore = D.id
               LEFT JOIN Contatto C ON Tirocinio.tutoreAziendale = C.id
-              WHERE (docenteTutore = ? OR ?)
+              WHERE (? OR docenteTutore = ?)
                 AND (CURRENT_DATE()>=dataInizio AND (dataTermine IS NULL OR CURRENT_DATE()<=dataTermine))
-              ORDER BY dataInizio ASC
+              ORDER BY dataInizio ASC, id
               LIMIT 1 OFFSET ?");
         break;
     case 2: // Futuri
@@ -54,17 +55,17 @@ switch ($tempo)
               LEFT JOIN UtenteGoogle S ON Tirocinio.studente = S.id
               LEFT JOIN UtenteGoogle D ON Tirocinio.docenteTutore = D.id
               LEFT JOIN Contatto C ON Tirocinio.tutoreAziendale = C.id
-              WHERE (docenteTutore = ? OR ?)
+              WHERE (? OR docenteTutore = ?)
                 AND CURRENT_DATE()<dataInizio
-              ORDER BY dataInizio ASC
+              ORDER BY dataInizio ASC, id
               LIMIT 1 OFFSET ?");
         break;
 }
 
 $train->bind_param(
     "iii",
-    $docente_id,
     $docente_all,
+    $docente_id,
     $index
 );
 
