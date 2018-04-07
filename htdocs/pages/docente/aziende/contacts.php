@@ -18,7 +18,41 @@ $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 $oauth2 = \auth\connect_token_google($google_client, $user->get_token());
 
 // Variabili pagina
-$page = "Cassetta degli strumenti";
+$page = "Contatti";
+
+$contatti = new class($server,
+    "SELECT A.id, A.nominativo, COUNT(*)
+      FROM EntratoInContatto
+      INNER JOIN Contatto C on EntratoInContatto.contatto = C.id
+      INNER JOIN Azienda A on C.azienda = A.id
+    GROUP BY A.id
+  ") extends \helper\Pagination
+{
+    public function compute_rows()
+    {
+        $row_tot = 0;
+
+        $conta = $this->link->prepare(
+            "SELECT COUNT(*)
+                    FROM Azienda A
+                   WHERE EXISTS(
+                      SELECT contatto
+                        FROM EntratoInContatto
+                        INNER JOIN Contatto C on EntratoInContatto.contatto = C.id
+                      WHERE C.azienda = A.id)");
+
+        $conta->execute(true);
+        $conta->bind_result($row_tot);
+        $conta->fetch();
+        $conta->close();
+
+        return $row_tot;
+    }
+};
+$nav = new \helper\PaginationIndexBuilder($contatti);
+
+$contatti->execute(true);
+$contatti->bind_result($id,$nome, $numero_contatti);
 ?>
 <html lang="it">
 <head>
@@ -36,6 +70,34 @@ $page = "Cassetta degli strumenti";
             ?>
         </aside>
         <div class="column">
+            <?php
+            while($contatti->fetch())
+            {
+                ?>
+                <article class="box">
+                    <h3 class="title is-3"><?= sanitize_html($nome) ?></h3>
+                    <p>
+                        <span class="icon"><i class="fa fa-handshake-o" aria-hidden="true"></i></span>
+                        <span><?= $numero_contatti ?> docenti in contatto con altrettanti referenti aziendali</span>
+                    </p>
+                    <div class="field">
+                        <p class="control has-text-right">
+                            <a class="button is-info" href="contatti/?azienda=<?= $id ?>">
+                                <span class="icon">
+                                    <i class="fa fa-list" aria-hidden="true"></i>
+                                </span>
+                                <span>
+                                    Guarda
+                                </span>
+                            </a>
+                        </p>
+                    </div>
+                </article>
+                <?php
+            }
+            $contatti->close();
+            ?>
+            <?php $nav->generate_index($_GET); ?>
         </div>
     </div>
 </section>
