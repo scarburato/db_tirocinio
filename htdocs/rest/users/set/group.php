@@ -12,21 +12,14 @@ $force_silent = true;
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
+require_once dirname(__FILE__) . "/../functions.hphp";
 
-(new \auth\User())->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
+$user = new \auth\User();
+$user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
 
 $server = new \mysqli_wrapper\mysqli();
-if(!\auth\check_permission($server, "control.google.users"))
-{
-    echo json_encode(["error" => 401, "what" => "unauthorized"]);
-    return;
-};
-
-if(empty($_POST["email"]) && empty($_POST["id"]))
-{
-    echo json_encode(["error" => -1, "what" => "invalid email or id"]);
-    return;
-}
+$permission_manager = new \auth\PermissionManager($server, $user);
+$permission_manager->check("user.groups", \auth\PermissionManager::UNAUTHORIZED_THROW);
 
 if(!is_array($_POST["groups"]) && $_POST["groups"] != 0)
 {
@@ -34,26 +27,7 @@ if(!is_array($_POST["groups"]) && $_POST["groups"] != 0)
     return;
 }
 
-if(empty($_POST["id"]))
-{
-    $id_stm = $server->prepare("SELECT id FROM UtenteGoogle INNER JOIN Docente D ON UtenteGoogle.id = D.utente
-                                  WHERE indirizzo_posta = ?");
-    $id_stm->bind_param(
-        "i",
-        $_POST["email"]
-    );
-
-    $id_stm->execute(false);
-    $id_stm->bind_result($id);
-    if(!$id_stm->fetch())
-    {
-        echo json_encode("404", "invalid email!");
-        return;
-    }
-    $id_stm->close();
-}
-else
-    $id = $_POST["id"];
+$id = get_id($server, $_POST);
 
 $server->autocommit(false);
 $drop = $server->prepare("DELETE FROM GruppiApplicati WHERE utente = ?");

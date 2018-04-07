@@ -100,3 +100,6 @@ $("#commit").on("click", function ()
 $("#error").hide();
 $("#no_output").hide();
 $("#setting").hide();
+
+if($("#query").val() !== "")
+	ricerca();

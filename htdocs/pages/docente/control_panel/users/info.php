@@ -54,7 +54,87 @@ $page = "Informazioni su " . $posta;
             ?>
         </aside>
         <div class="column">
-
+            <table class="table is-fullwidth">
+                <tr>
+                    <th>È studente?</th>
+                    <td><?= $isStudente ? "SÌ" : "NO" ?></td>
+                </tr>
+                <tr>
+                    <th>È docente?</th>
+                    <td><?= $isDocente ? "SÌ" : "NO" ?></td>
+                </tr>
+            </table>
+            <?php
+            if($isStudente)
+            {
+                ?>
+                <h2 class="title is-2">Configura Studente</h2>
+                <div class="field">
+                    <label class="label">Imposta matricola</label>
+                </div>
+                <div class="field has-addons">
+                    <div class="control is-expanded">
+                        <input class="input" type="text" maxlength="10" placeholder="matricola...">
+                    </div>
+                    <div class="control">
+                        <button class="button is-link">
+                            Salva
+                        </button>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Imposta indirizzo</label>
+                </div>
+                <div class="field has-addons">
+                    <div class="control is-expanded">
+                        <div class="select is-fullwidth">
+                            <select title="indirizzi" id="indirizzo">
+                                <option>Lascia vuoto</option>
+                                <optgroup label="Indirizzi">
+                                    <?php
+                                    $indirizzi = $server->prepare("SELECT id, indirizzo FROM Indirizzo");
+                                    $indirizzi->execute(true);
+                                    $indirizzi->bind_result(
+                                            $id, $indirizzo
+                                    );
+                                    while($indirizzi->fetch())
+                                    {
+                                        ?>
+                                        <option value="<?= $id ?>"><?= sanitize_html($indirizzo) ?></option>
+                                        <?php
+                                    }
+                                    ?>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control">
+                        <button class="button is-link">
+                            Salva
+                        </button>
+                    </div>
+                </div>
+                <?php
+            }
+            if($isDocente)
+            {
+                ?>
+                <h2 class="title is-2">Configura Docente</h2>
+                <div class="buttons">
+                    <?php
+                    if(\auth\check_permission($server, "user.groups", false))
+                    {
+                        ?>
+                        <a class="button" href="../permissions/?user=<?= urlencode($posta) ?>">
+                            Configura permessi
+                        </a>
+                        <?php
+                    }
+                    ?>
+                </div>
+                <?php
+            }
+            ?>
         </div>
     </div>
 </section>

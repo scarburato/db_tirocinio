@@ -44,7 +44,7 @@ $server = new \mysqli_wrapper\mysqli();
             </div>
             <div class="field has-addons">
                 <div class="control is-expanded">
-                    <input id="query" class="input" type="email" placeholder="Indirizzo di posta elettronica">
+                    <input id="query" class="input" type="email" placeholder="Indirizzo di posta elettronica" value="<?= sanitize_html($_GET["user"]) ?>">
                 </div>
                 <div class="control">
                     <button id="search" class="button is-link">

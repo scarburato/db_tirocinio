@@ -119,26 +119,30 @@ $page = "Cassetta degli strumenti";
                     <div class="media-content">
                         <div class="content">
                             <h1>Gestione permessi docenti</h1>
-                            <p class="has-text-right">
+                            <div class="field is-grouped is-grouped-right">
                                 <?php
                                 if($gruppi)
                                 {
                                     ?>
-                                    <a href="permissions/gruppi.php" class="button is-link">
-                                        Configura Gruppi
-                                    </a>
+                                    <p class="control">
+                                        <a href="permissions/gruppi.php" class="button is-link">
+                                            Configura Gruppi
+                                        </a>
+                                    </p>
                                     <?php
                                 }
 
                                 if($assegnazione_gruppi)
                                 {
                                     ?>
-                                    <a href="permissions" class="button is-link">
-                                        Configura Utenti
-                                    </a>
+                                    <p class="control">
+                                        <a href="permissions" class="button is-link">
+                                            Configura Utenti
+                                        </a>
+                                    </p>
                                     <?php
                                 }?>
-                            </p>
+                            </div>
                         </div>
                     </div>
                 </article>
