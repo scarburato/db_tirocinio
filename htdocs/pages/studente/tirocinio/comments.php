@@ -38,7 +38,7 @@ $valid->close();
 $commenti = new class($server,
     "SELECT CM.id, U.id, U.nome, U.cognome, U.fotografia, testo, quando
   FROM Commento CM INNER JOIN UtenteGoogle U ON CM.autore = U.id
-  WHERE CM.tirocinio = ? ORDER BY quando DESC") extends \helper\Pagination
+  WHERE CM.tirocinio = ? ORDER BY quando DESC, CM.id") extends \helper\Pagination
 {
     public function compute_rows()
     {
