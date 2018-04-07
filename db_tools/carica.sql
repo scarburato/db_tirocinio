@@ -25,6 +25,7 @@ INSERT INTO Privilegio(nome, descrizione) VALUES
   ('train.import', 'Consente di importare tirocini dal CSV esoterico'),
   ('train.pubblish', 'Consente di pubblicare tirocini'),
   ('train.readall', 'Consente di leggere i tirocini non propri'),
+  ('train.comments.delete', 'Consente di elimare i commenti'),
   ('control.forgive', 'Consente di perdonare gli indirizzi che hanno tentato troppi accessi'),
   ('control.groups', 'COnsente di modificare i gruppi'),
   ('user.groups', 'Consente di assegnare gruppi agli utenti'),

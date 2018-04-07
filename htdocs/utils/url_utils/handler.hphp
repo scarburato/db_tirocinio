@@ -15,14 +15,16 @@ function trowh_handler(Throwable $e)
 
 function trowh_json_handler(Throwable $e)
 {
+    header("exception: " . get_class($e));
     if($e instanceof Unauthorized)
-        header("HTTP/1.0 403 Forbidden");
-
-    if($e instanceof Google_Exception && $e->getCode() == 401)
+        header("{$_SERVER['SERVER_PROTOCOL']} 403 Forbidden", true, 403);
+    elseif($e instanceof Google_Exception && $e->getCode() == 401)
     {
-        header("HTTP/1.0 403 Forbidden");
-        header("google_expired: true");
+        header("{$_SERVER['SERVER_PROTOCOL']} 403 Forbidden", true, 403);
+        header("google_expired: true", true);
     }
+    else
+        header("{$_SERVER['SERVER_PROTOCOL']} 500 Internal Server Error", true, 500);
 
     echo json_encode(
         [

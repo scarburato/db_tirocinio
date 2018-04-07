@@ -35,9 +35,15 @@ class PermissionManager
     }
 
     /**
-     * Controlla la presenza del permesso!
+     * Controlla la presenza del permesso
+     *
+     * A seconda del metodo usato cambia il comportamento della funzione
+     *  - PermissionManager::UNAUTHORIZED_THROW
+     *  - PermissionManager::UNAUTHORIZED_REDIRECT
+     *  - PermissionManager::UNAUTHORIZED_RETURN_FALSE
+     *
      * @param string $permission
-     * @param $method
+     * @param int $method
      * @return boolean
      */
     public function check(string $permission, int $method = PermissionManager::UNAUTHORIZED_RETURN_FALSE): bool

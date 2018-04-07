@@ -42,4 +42,4 @@ $_SESSION["user"]["id"] = $info["id"];
 $_SESSION["user"]["token"] = $token;
 $_SESSION["user"]["type"] = $info["type"];
 
-header("Location: ambiguita.php");
+redirect("ambiguita.php");

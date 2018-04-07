@@ -11,6 +11,12 @@ namespace auth;
 
 class Unauthorized extends \RuntimeException
 {
+    /**
+     * Unauthorized constructor.
+     * @param $required_level
+     * @param $acutal_level
+     * @see \RuntimeException
+     */
     public function __construct($required_level, $acutal_level)
     {
         parent::__construct("Tried to visit a page which requires $required_level level but current user has $acutal_level !", 403);

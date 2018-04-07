@@ -158,6 +158,7 @@ namespace auth
      * @param string $permission
      * @param bool $redirect
      * @return bool
+     * @deprecated ***RITORNA SEMPRE TRUE AHAHAHA***
      */
     function check_permission(mysqli $link, string $permission, bool $redirect = true): bool
     {
