@@ -16,6 +16,7 @@ $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRE
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
 $oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$permission_manager = new \auth\PermissionManager($server, $user);
 
 // Variabili pagina
 $page = "Tirocini";
@@ -39,7 +40,7 @@ $page = "Tirocini";
         <div class="column">
             <?php
             // permessi here
-            if(true)
+            if($permission_manager->check("train.readall"))
             {
                 ?>
                 <div class="box">
@@ -60,6 +61,55 @@ $page = "Tirocini";
                                                     "SELECT id, nome, cognome, indirizzo_posta FROM Docente
                                                               INNER JOIN UtenteGoogle G ON Docente.utente = G.id"
                                                 );
+
+                                                $docenti->execute(true);
+                                                $docenti->bind_result($id, $nome, $cognome, $email);
+                                                while ($docenti->fetch())
+                                                {
+                                                    ?>
+                                                    <option value="<?= $id ?>">
+                                                        <?= sanitize_html($nome) ?> <?= sanitize_html($cognome) ?> &lt;<?= sanitize_html($email) ?>&gt;
+                                                    </option>
+                                                    <?php
+                                                }
+                                                ?>
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="control">
+                                    <button class="button is-info" id="filter_go">
+                                        <span class="icon">
+                                            <i class="fa fa-filter" aria-hidden="true"></i>
+                                        </span>
+                                        <span>Filtra</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                            <label class="label">Filtra studente</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field has-addons">
+                                <div class="control is-expanded">
+                                    <div class="select is-fullwidth">
+                                        <select title="docente" id="filter_values">
+                                            <option value="all" selected>Tutti</option>
+                                            <optgroup label="Studenti">
+                                                <?php
+                                                $docenti = $server->prepare(
+                                                    "SELECT DISTINCT G.id, nome, cognome, indirizzo_posta 
+                                                              FROM Studente S
+                                                              INNER JOIN Tirocinio T on S.utente = T.studente
+                                                              INNER JOIN UtenteGoogle G ON S.utente = G.id
+                                                            WHERE T.docenteTutore = ?"
+                                                );
+
+                                                $docenti->bind_param("i", $user->get_database_id());
 
                                                 $docenti->execute(true);
                                                 $docenti->bind_result($id, $nome, $cognome, $email);

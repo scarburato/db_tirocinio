@@ -11,6 +11,7 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
 
+
 $tempo = (isset($_GET['chTrain']) ? $_GET['chTrain'] : 1);
 $index = (isset($_GET["index"]) && $_GET["index"] >= 0 ? $_GET["index"] : 0);
 $docente_all = (isset($_GET["docente"]) && $_GET["docente"] === "all");
@@ -20,6 +21,10 @@ if(isset($_GET["docente"]) && is_numeric($_GET["docente"]))
     $docente_id = $_GET["docente"];
 
 $server = new \mysqli_wrapper\mysqli();
+$permission_manager = new \auth\PermissionManager($server, $user);
+
+if($docente_id !== $user->get_database_id())
+    $permission_manager->check("train.readall", \auth\PermissionManager::UNAUTHORIZED_THROW);
 
 switch ($tempo)
 {
