@@ -78,7 +78,7 @@ $inser = $server->prepare("INSERT INTO Commento (tirocinio, autore, testo)
 $inser->bind_param('iis', $_POST['tirocinio'], $user->get_database_id(), $comment_datum);
 $inser->execute();
 
-$return["errore"]=$inser->error ? $inser->error : NULL;
+$return["error"]=$inser->error ? $inser->error : NULL;
 $return['tir']=$_POST['tirocinio'];
 $return['user']=$user->get_database_id();
 $return['datum']=$comment_datum;
