@@ -51,7 +51,11 @@ $return["previus_page"] = $users->has_previus_page() ? $users->get_current_page(
 $return["next_page"] = $users->has_next_page() ? $users->get_current_page() + 1 : null;
 $return["last_page"] = null;
 $return["data_rows"] = $result->num_rows;
+$return["data_fields"] = [];
 $return["data"] = array();
+
+foreach ($result->fetch_fields() as $field)
+    array_push($return["data_fields"], $field->name);
 
 while($data = $result->fetch_assoc())
     array_push($return["data"], $data);
