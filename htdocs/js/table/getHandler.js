@@ -10,10 +10,16 @@ class GetHandler
 	 * @param table_body jQuery
 	 * @param resource string
 	 * @param on_get function(Object datum, jQuery table)
-	 * @param table_head
+	 * @param table_head jQuery | undefined
 	 */
 	constructor(table_body, resource, on_get, table_head)
 	{
+		if(!(table_body instanceof jQuery))
+			throw "table_body must be jQuery";
+
+		if(table_head !== undefined && !(table_head instanceof jQuery))
+			throw "table_body must be jQuery";
+
 		let self = this;
 
 		this.current_page = 0;
