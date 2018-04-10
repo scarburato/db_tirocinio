@@ -10,8 +10,9 @@ class GetHandler
 	 * @param table_body jQuery
 	 * @param resource string
 	 * @param on_get function(Object datum, jQuery table)
+	 * @param table_head
 	 */
-	constructor(table_body, resource, on_get)
+	constructor(table_body, resource, on_get, table_head)
 	{
 		let self = this;
 
@@ -21,6 +22,8 @@ class GetHandler
 		this.query = "";
 
 		this.tbody = table_body;
+		this.thead = table_head;
+
 		this.remote = resource;
 		this.on_get = on_get;
 
@@ -107,7 +110,7 @@ class GetHandler
 				this.tbody.html ("");
 				res.data.forEach ((datum) =>
 				{
-					this.on_get(datum, this.tbody);
+					this.on_get(datum, this.tbody, this.thead);
 				});
 
 
