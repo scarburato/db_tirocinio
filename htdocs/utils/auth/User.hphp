@@ -64,10 +64,7 @@ class User
      */
     public function is_authorized(int $auth_level, int $on_fail = User::UNAUTHORIZED_RETURN_FALSE): bool
     {
-        if($auth_level === LEVEL_ALL || $auth_level === $_SESSION[$this->session_index]["type"])
-            return true;
-
-        if($auth_level === LEVEL_GOOGLE_BOTH && ($_SESSION[$this->session_index]["type"] === LEVEL_GOOGLE_TEACHER || $_SESSION[$this->session_index]["type"] === LEVEL_GOOGLE_STUDENT))
+        if($auth_level & $this->type)
             return true;
 
         if($on_fail === User::UNAUTHORIZED_REDIRECT)
@@ -132,9 +129,9 @@ class User
     }
 
     /**
-     * @param mixed
+     * @param
      */
-    public function set_token(mixed $token)
+    public function set_token($token)
     {
         $this->token = $token;
 
@@ -154,6 +151,11 @@ class User
      */
     public function set_type(int $type)
     {
+        // Controllo che l'utente che si vuole settare abbia solo un BIT di maschera!
+        if(($type & ($type - 1)) || $type === 0b0)
+            throw new \RuntimeException(
+                "User access level MUST have a signle bit to 1!", 50);
+
         $this->type = $type;
 
         $this->write_to_session();

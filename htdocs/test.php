@@ -38,8 +38,11 @@ $servizi = new Google_Service_Directory($google_client_2);
 
 $info = \auth\aggiungi_utente_database($server, $user, $servizi);
 
-$_SESSION["user"]["id"] = $info["id"];
-$_SESSION["user"]["token"] = $token;
-$_SESSION["user"]["type"] = $info["type"];
+$db_user = new \auth\User();
+$db_user->set_database_id($info["id"]);
+$db_user->set_token($token);
+$db_user->set_type($info["type"]);
 
-redirect("ambiguita.php");
+redirect("ambiguita.php", [
+    "tipo" => $info["type"]
+]);

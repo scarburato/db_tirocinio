@@ -13,7 +13,7 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
 $user = new \auth\User();
-$user->is_authorized(\auth\LEVEL_GOOGLE_BOTH, \auth\User::UNAUTHORIZED_THROW);
+$user->is_authorized(\auth\LEVEL_GOOGLE_STUDENT | \auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
 
 \auth\connect_token_google($google_client, $_SESSION["user"]["token"], false);
 
