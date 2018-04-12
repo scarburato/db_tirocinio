@@ -12,20 +12,16 @@ $force_silent = true;
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-(new \auth\User())->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
+$user = new \auth\User();
+$user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
 
 $server = new \mysqli_wrapper\mysqli();
-if(!\auth\check_permission($server, "control.training.create"))
-{
-    echo json_encode(["error" => 401, "what" => "unauthorized"]);
-    return;
-};
+$permissions = new \auth\PermissionManager($server, $user);
+
+$permissions->check("user.google.orgunits", \auth\PermissionManager::UNAUTHORIZED_THROW);
 
 if(!is_array($_POST["orgunits"]))
-{
-    echo json_encode(["error" => -1, "what" => "You have to supply an array!"]);
-    return;
-}
+    throw new RuntimeException("You have to provide an array of orguinits!", -1);
 
 $server->autocommit(false);
 $drop = $server->prepare("DELETE FROM UnitaOrganizzativa WHERE TRUE ");
