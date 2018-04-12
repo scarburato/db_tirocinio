@@ -19,10 +19,8 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 $server = new \mysqli_wrapper\mysqli();
 
 if(empty($_GET["email"]))
-{
-    echo json_encode(["error" => -1, "what" => "invalid email"]);
-    return;
-}
+    throw new RuntimeException("Empty email!", -1);
+
 
 $docente = $server->prepare(
     "SELECT id, nome, cognome, indirizzo_posta, S.indirizzo
@@ -39,13 +37,7 @@ $docente->bind_param(
 $docente->execute();
 
 if(($return = $docente->get_result()->fetch_assoc()) === null)
-{
-    echo json_encode([
-        "error" => 404,
-        "what" => "user not found!"
-    ]);
-    return;
-}
+    throw new RuntimeException("User not found in database!", -1);
 
 $docente->close();
 

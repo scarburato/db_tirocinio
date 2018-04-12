@@ -22,10 +22,7 @@ $permission_manager = new \auth\PermissionManager($server, $user);
 $permission_manager->check("user.groups", \auth\PermissionManager::UNAUTHORIZED_THROW);
 
 if(!is_array($_POST["groups"]) && $_POST["groups"] != 0)
-{
-    echo json_encode(["error" => -1, "what" => "You have to supply an array! Send number 0 for empty array :("]);
-    return;
-}
+    throw new RuntimeException("You have to supply an array! Send number 0 for empty array :( (Thanks for that PHP)", -1);
 
 $id = get_id($server, $_POST);
 

@@ -22,22 +22,10 @@ $return = [];
 $newDescription = $_POST['contenuto'];
 
 if (empty($newDescription))
-{
-    echo json_encode([
-        "error" => -1,
-        "what" => "You have to supply something!"
-    ]);
-    return;
-}
+    throw new RuntimeException("Missing contenuto!", -1);
 
 if (empty($_POST['tirocinio']))
-{
-    echo json_encode([
-        "error" => -1,
-        "what" => "Invalid tirocinio ID!"
-    ]);
-    return;
-}
+    throw new RuntimeException("Missing tirocinio ID!", -1);
 
 $update = $server->prepare("UPDATE Tirocinio SET descrizione=? WHERE id = ? AND studente = ? AND dataInizio < CURRENT_DATE AND visibilita <> 'azienda'");
 
@@ -45,7 +33,7 @@ $update->bind_param('sii', $newDescription, $_POST['tirocinio'], $user->get_data
 
 $update->execute();
 
-$return["success"]=$update->execute();
+$return["success"]=true;
 $return["md5"]=md5($newDescription);
 
 echo json_encode($return, JSON_UNESCAPED_UNICODE);

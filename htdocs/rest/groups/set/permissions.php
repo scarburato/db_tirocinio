@@ -13,34 +13,24 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
 
-(new \auth\User())->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
+$user = new \auth\User();
+$user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
 
 $server = new \mysqli_wrapper\mysqli();
+$permissions = new \auth\PermissionManager($server, $user);
+
 $gruppo = $_POST["group"];
 
-if(!\auth\check_permission($server, "control.google.users"))
-{
-    echo json_encode(["error" => 401, "what" => "unauthorized"]);
-    return;
-};
+$permissions->check("user.groups", \auth\PermissionManager::UNAUTHORIZED_THROW);
 
 if(empty($_POST["group"]))
-{
-    echo json_encode(["error" => -1, "what" => "empty group name!"]);
-    return;
-}
+    throw new RuntimeException("empty group name", -1);
 
 if($gruppo === "root")
-{
-    echo json_encode(["error" => -1, "what" => "Sorry ma'am you can't"]);
-    return;
-}
+    throw new RuntimeException("You can't do this, please do not try anymore to edit root's proprieties!", -1);
 
 if(!is_array($_POST["permissions"]) && $_POST["permissions"] != 0)
-{
-    echo json_encode(["error" => -1, "what" => "You have to supply an array! Send number 0 for empty array :("]);
-    return;
-}
+    throw new RuntimeException("You have to supply an array! Send number 0 for empty array :( (Thanks for that PHP)", -1);
 
 $server->autocommit(false);
 $drop = $server->prepare("DELETE FROM PermessiGruppo WHERE gruppo = ?");

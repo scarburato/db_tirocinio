@@ -35,7 +35,7 @@ if(!is_integer($factory))
 
 $contacts = new class(
     $server,
-    "SELECT C.nome, C.cognome, C.email, C.telefono, C.FAX, C.qualifica, C.ruoloAziendale, A.id AS 'Azienda', A.nominativo AS 'AziendaNome'
+    "SELECT C.id AS 'id', C.nome, C.cognome, C.email, C.telefono, C.FAX, C.qualifica, C.ruoloAziendale, A.id AS 'Azienda', A.nominativo AS 'AziendaNome'
       FROM Contatto C
       INNER JOIN Azienda A on C.azienda = A.id
     WHERE ? OR A.id = ?"

@@ -12,40 +12,32 @@ $force_silent = true;
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
+require_once dirname(__FILE__) . "/../functions.hphp";
+
 (new \auth\User())->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
 
 \auth\connect_token_google($google_client, $_SESSION["user"]["token"], false);
 
 $server = new \mysqli_wrapper\mysqli();
 
-if(empty($_GET["email"]))
-{
-    echo json_encode(["error" => -1, "what" => "invalid email"]);
-    return;
-}
+$id = get_id($server, $_GET);
 
 $docente = $server->prepare(
     "SELECT id, nome, cognome, indirizzo_posta 
             FROM Docente 
             INNER JOIN UtenteGoogle G ON Docente.utente = G.id
-           WHERE indirizzo_posta = ?"
+           WHERE G.id = ?"
 );
 
 $docente->bind_param(
     "s",
-    $_GET["email"]
+    $id
 );
 
 $docente->execute();
 
 if(($return = $docente->get_result()->fetch_assoc()) === null)
-{
-    echo json_encode([
-        "error" => 404,
-        "what" => "user not found!"
-    ]);
-    return;
-}
+    throw new RuntimeException("User not found in database!", -1);
 
 $docente->close();
 
@@ -56,7 +48,7 @@ $permessi = $server->prepare("SELECT nome, descrizione
 
 $permessi->bind_param(
     "i",
-    $return["id"]
+    $id
 );
 
 $permessi->execute();

@@ -22,22 +22,10 @@ $return = [];
 $comment_datum = $_POST['contenuto'];
 
 if (empty($comment_datum))
-{
-  echo json_encode([
-      "error" => -1,
-      "what" => "You have to supply a comment!"
-  ]);
-  return;
-}
+    throw new RuntimeException("You have to supply a comment!", -1);
 
 if (empty($_POST['tirocinio']))
-{
-    echo json_encode([
-        "error" => -1,
-        "what" => "Invalid tirocinio ID!"
-    ]);
-    return;
-}
+    throw new RuntimeException("You have to supply a tirocinio ID!", -1);
 
 if($user->is_authorized(\auth\LEVEL_GOOGLE_STUDENT))
 {
@@ -64,8 +52,7 @@ elseif($user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER))
 else
     throw new RuntimeException("Invalid user", -1);
 
-if(!$autorizzato->execute())
-    throw new mysqli_sql_exception($autorizzato->error, $autorizzato->errno);
+$autorizzato->execute();
 
 if(!($autorizzato->fetch()))
     throw new RuntimeException("Non possiedi questo robo", -56);
@@ -78,7 +65,6 @@ $inser = $server->prepare("INSERT INTO Commento (tirocinio, autore, testo)
 $inser->bind_param('iis', $_POST['tirocinio'], $user->get_database_id(), $comment_datum);
 $inser->execute();
 
-$return["error"]=$inser->error ? $inser->error : NULL;
 $return['tir']=$_POST['tirocinio'];
 $return['user']=$user->get_database_id();
 $return['datum']=$comment_datum;
