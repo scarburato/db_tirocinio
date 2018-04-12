@@ -55,7 +55,7 @@ function ricerca()
 	)
 		.done (function (data)
 		{
-			if(data.error !== null)
+			if(data.error !== undefined)
 			{
 				$("#error_what").text(data["what"]);
 				$("#error").show();
