@@ -12,20 +12,18 @@ $force_silent = true;
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/fakeService/init.php";
 
-(new \auth\User())->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
+$user = new \auth\User();
+$user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
+
+\auth\connect_token_google($google_client, $_SESSION["user"]["token"], false);
 
 $server = new \mysqli_wrapper\mysqli();
-if(!\auth\check_permission($server, "control.google.users"))
-{
-    echo json_encode(["error" => 401, "what" => "unauthorized"]);
-    return;
-};
+$permessions = new \auth\PermissionManager($server, $user);
+
+$permessions->check("user.google.add", \auth\PermissionManager::UNAUTHORIZED_THROW);
 
 if(empty($_GET["email"]))
-{
-    echo json_encode(["error" => -1, "what" => "invalid email"]);
-    return;
-}
+    throw new RuntimeException("Email was not provided!", -1);
 
 build($google_client_2);
 
@@ -38,7 +36,7 @@ try
 catch (Google_Exception $e)
 {
     if ($e->getCode() == 404)
-        echo json_encode(["error" => null, "found" => false]);
+        echo json_encode(["found" => false]);
     else
         throw $e;
 
@@ -51,7 +49,7 @@ $id_stm->bind_param(
     $utente->id
 );
 
-$id_stm->execute(false);
+$id_stm->execute();
 $id_stm->store_result();
 $id_stm->bind_result($id);
 // Se c'è una riga allora aggiorno i dati altrimenti creo
@@ -71,7 +69,7 @@ $operazione->bind_param(
     $utente->id
 );
 
-$operazione->execute(false);
+$operazione->execute();
 $operazione->bind_result($id);
 $operazione->fetch();
 
@@ -96,7 +94,7 @@ $controllo->bind_param(
     $utente->orgUnitPath
 );
 
-$controllo->execute(true);
+$controllo->execute();
 $controllo->bind_result($tipo);
 
 while($controllo->fetch())
@@ -123,7 +121,7 @@ if($utente_docente)
         "i",
         $id
     );
-    $operazione->execute(false);
+    $operazione->execute();
     $operazione->close();
 }
 
@@ -134,7 +132,7 @@ if($utente_studente)
         "i",
         $id
     );
-    $operazione->execute(false);
+    $operazione->execute();
     $operazione->close();
 }
 

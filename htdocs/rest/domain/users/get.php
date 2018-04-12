@@ -12,21 +12,18 @@ $force_silent = true;
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/fakeService/init.php";
 
-(new \auth\User())->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
+$user = new \auth\User();
+$user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
+
 \auth\connect_token_google($google_client, $_SESSION["user"]["token"], false);
 
 $server = new \mysqli_wrapper\mysqli();
-if(!\auth\check_permission($server, "control.google.users.readonly"))
-{
-    echo json_encode(["error" => 401, "what" => "unauthorized"]);
-    return;
-};
+$permessions = new \auth\PermissionManager($server, $user);
+
+$permessions->check("user.google.add", \auth\PermissionManager::UNAUTHORIZED_THROW);
 
 if(empty($_GET["email"]))
-{
-    echo json_encode(["error" => -1, "what" => "invalid email"]);
-    return;
-}
+    throw new RuntimeException("Email was not provided!", -1);
 
 build($google_client_2);
 $servizi = new Google_Service_Directory($google_client_2);
@@ -38,7 +35,7 @@ try
 catch (Google_Exception $e)
 {
     if($e->getCode() == 404)
-        echo json_encode(["error" => null, "found" => false]);
+        echo json_encode(["found" => false]);
     else
         throw $e;
 
@@ -50,10 +47,9 @@ $esiste_db->bind_param(
     "s",
     $utente->id
 );
-$esiste_db->execute(false);
+$esiste_db->execute();
 
 echo  json_encode([
-    "error" => null,
     "found" => true,
     "no_db" => $esiste_db->fetch() === null,
     "email" => $utente->primaryEmail,
