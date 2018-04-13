@@ -74,7 +74,11 @@ $ ("#bt_comments").on ("click", function ()
 
 	jcomment.val ("");
 	$.post (
-		BASE + 'rest/trainings/commenta.php', {contenuto: comment, tirocinio: TIR}
+		BASE + 'rest/trainings/comments/post.php',
+		{
+			contenuto: comment,
+			tirocinio: TIR
+		}
 	)
 		.always(function (data)
 		{

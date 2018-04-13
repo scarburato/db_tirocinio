@@ -33,7 +33,7 @@ $tirocinio_azienda = $server->prepare(
 
 $tirocinio_azienda->bind_param('ii', $_GET['tirocinio'], $user_info['id']);
 
-$tirocinio_azienda->execute(true);
+$tirocinio_azienda->execute();
 
 $tirocinio_azienda->bind_result($a_nom,
     $c_nome, $c_secNom, $c_cognome, $c_posta, $c_tel, $c_fax,

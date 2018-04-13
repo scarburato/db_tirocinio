@@ -62,7 +62,7 @@ $page = "Tirocini";
                                                               INNER JOIN UtenteGoogle G ON Docente.utente = G.id"
                                                 );
 
-                                                $docenti->execute(true);
+                                                $docenti->execute();
                                                 $docenti->bind_result($id, $nome, $cognome, $email);
                                                 while ($docenti->fetch())
                                                 {
@@ -111,7 +111,7 @@ $page = "Tirocini";
 
                                                 $docenti->bind_param("i", $user->get_database_id());
 
-                                                $docenti->execute(true);
+                                                $docenti->execute();
                                                 $docenti->bind_result($id, $nome, $cognome, $email);
                                                 while ($docenti->fetch())
                                                 {

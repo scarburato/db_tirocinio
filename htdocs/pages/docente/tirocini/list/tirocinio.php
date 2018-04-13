@@ -74,7 +74,7 @@ $train->bind_param(
     $index
 );
 
-$train->execute(false);
+$train->execute();
 $train->bind_result($db_id, $business_name, $data_inizio, $data_termine, $visibilita, $studente_posta, $docente_posta);
 
 if (!$train->fetch())
