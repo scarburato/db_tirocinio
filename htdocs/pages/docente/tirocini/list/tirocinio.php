@@ -12,13 +12,20 @@ $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
 
 
-$tempo = (isset($_GET['chTrain']) ? $_GET['chTrain'] : 1);
-$index = (isset($_GET["index"]) && $_GET["index"] >= 0 ? $_GET["index"] : 0);
-$docente_all = (isset($_GET["docente"]) && $_GET["docente"] === "all");
-$docente_id = $user->get_database_id();
+$tempo = (isset($_GET['chTrain']) ? $_GET['chTrain'] : 1);                      // Se ho ottenuto il tempo lo uso, altrimenti imposto 1
 
-if(isset($_GET["docente"]) && is_numeric($_GET["docente"]))
-    $docente_id = $_GET["docente"];
+$index = (isset($_GET["index"]) && $_GET["index"] >= 0 ? $_GET["index"] : 0);   // Se ho ricevuto un indice lo uso, altrimenti pagina 0
+
+$docente_all = (isset($_GET["docente"]) && $_GET["docente"] === "all");         // Se non ho ricevuto uno specifico docente metto a TRUE la codizione di fuga
+
+$docente_id = $user->get_database_id();                                         // Se ho ricevuto un id da filtrare lo metto
+if(isset($_GET["docente"]) && is_numeric($_GET["docente"]))                     // Uso l'id della sessione come riserva se
+    $docente_id = $_GET["docente"];                                             // è stato passato un id di formato non valido
+
+$studenti_all = (isset($_GET["studente"]) && $_GET["studente"] === "all");
+$studente_filter = -1;                                                          // Uso un id non valido :P
+if(isset($_GET["studente"]) && is_numeric($_GET["studente"]))
+    $studente_filter = $_GET["studente"];
 
 $server = new \mysqli_wrapper\mysqli();
 $permission_manager = new \auth\PermissionManager($server, $user);
@@ -36,6 +43,7 @@ switch ($tempo)
               LEFT JOIN UtenteGoogle D ON Tirocinio.docenteTutore = D.id
               LEFT JOIN Contatto C ON Tirocinio.tutoreAziendale = C.id
               WHERE (? OR docenteTutore = ?)
+                AND (? OR Tirocinio.studente = ?)
                 AND (dataTermine<CURRENT_DATE() AND dataTermine IS NOT NULL)
               ORDER BY dataInizio ASC, id
               LIMIT 1 OFFSET ?");
@@ -49,6 +57,7 @@ switch ($tempo)
               LEFT JOIN UtenteGoogle D ON Tirocinio.docenteTutore = D.id
               LEFT JOIN Contatto C ON Tirocinio.tutoreAziendale = C.id
               WHERE (? OR docenteTutore = ?)
+                AND (? OR Tirocinio.studente = ?)
                 AND (CURRENT_DATE()>=dataInizio AND (dataTermine IS NULL OR CURRENT_DATE()<=dataTermine))
               ORDER BY dataInizio ASC, id
               LIMIT 1 OFFSET ?");
@@ -61,6 +70,7 @@ switch ($tempo)
               LEFT JOIN UtenteGoogle D ON Tirocinio.docenteTutore = D.id
               LEFT JOIN Contatto C ON Tirocinio.tutoreAziendale = C.id
               WHERE (? OR docenteTutore = ?)
+                AND (? OR Tirocinio.studente = ?)
                 AND CURRENT_DATE()<dataInizio
               ORDER BY dataInizio ASC, id
               LIMIT 1 OFFSET ?");
@@ -68,9 +78,11 @@ switch ($tempo)
 }
 
 $train->bind_param(
-    "iii",
+    "iiiii",
     $docente_all,
     $docente_id,
+    $studenti_all,
+    $studente_filter,
     $index
 );
 

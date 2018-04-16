@@ -18,6 +18,8 @@ $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 $oauth2 = \auth\connect_token_google($google_client, $user->get_token());
 $permission_manager = new \auth\PermissionManager($server, $user);
 
+$tutti_tir = $permission_manager->check("train.readall");
+
 // Variabili pagina
 $page = "Tirocini";
 
@@ -38,12 +40,11 @@ $page = "Tirocini";
             ?>
         </aside>
         <div class="column">
-            <?php
-            // permessi here
-            if($permission_manager->check("train.readall"))
-            {
-                ?>
-                <div class="box">
+            <div class="box">
+                <?php
+                if ($tutti_tir)
+                {
+                    ?>
                     <div class="field is-horizontal">
                         <div class="field-label is-normal">
                             <label class="label">Filtra insegnante</label>
@@ -68,7 +69,8 @@ $page = "Tirocini";
                                                 {
                                                     ?>
                                                     <option value="<?= $id ?>">
-                                                        <?= sanitize_html($nome) ?> <?= sanitize_html($cognome) ?> &lt;<?= sanitize_html($email) ?>&gt;
+                                                        <?= sanitize_html($nome) ?> <?= sanitize_html($cognome) ?>
+                                                        &lt;<?= sanitize_html($email) ?>&gt;
                                                     </option>
                                                     <?php
                                                 }
@@ -88,59 +90,63 @@ $page = "Tirocini";
                             </div>
                         </div>
                     </div>
-
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal">
-                            <label class="label">Filtra studente</label>
-                        </div>
-                        <div class="field-body">
-                            <div class="field has-addons">
-                                <div class="control is-expanded">
-                                    <div class="select is-fullwidth">
-                                        <select title="docente" id="filter_values">
-                                            <option value="all" selected>Tutti</option>
-                                            <optgroup label="Studenti">
-                                                <?php
-                                                $docenti = $server->prepare(
-                                                    "SELECT DISTINCT G.id, nome, cognome, indirizzo_posta 
+                    <?php
+                }
+                ?>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Filtra studente</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field has-addons">
+                            <div class="control is-expanded">
+                                <div class="select is-fullwidth">
+                                    <select title="docente" id="filter_values_stu">
+                                        <option value="all" selected>Tutti</option>
+                                        <optgroup label="Studenti">
+                                            <?php
+                                            $docenti = $server->prepare(
+                                                "SELECT DISTINCT G.id, nome, cognome, indirizzo_posta 
                                                               FROM Studente S
                                                               INNER JOIN Tirocinio T on S.utente = T.studente
                                                               INNER JOIN UtenteGoogle G ON S.utente = G.id
-                                                            WHERE T.docenteTutore = ?"
-                                                );
+                                                            WHERE T.docenteTutore = ? OR ?"
+                                            );
 
-                                                $docenti->bind_param("i", $user->get_database_id());
+                                            $docenti->bind_param(
+                                                "ii",
+                                                $user->get_database_id(),
+                                                $tutti_tir
+                                            );
 
-                                                $docenti->execute();
-                                                $docenti->bind_result($id, $nome, $cognome, $email);
-                                                while ($docenti->fetch())
-                                                {
-                                                    ?>
-                                                    <option value="<?= $id ?>">
-                                                        <?= sanitize_html($nome) ?> <?= sanitize_html($cognome) ?> &lt;<?= sanitize_html($email) ?>&gt;
-                                                    </option>
-                                                    <?php
-                                                }
+                                            $docenti->execute();
+                                            $docenti->bind_result($id, $nome, $cognome, $email);
+                                            while ($docenti->fetch())
+                                            {
                                                 ?>
-                                            </optgroup>
-                                        </select>
-                                    </div>
+                                                <option value="<?= $id ?>">
+                                                    <?= sanitize_html($nome) ?> <?= sanitize_html($cognome) ?>
+                                                    &lt;<?= sanitize_html($email) ?>&gt;
+                                                </option>
+                                                <?php
+                                            }
+                                            ?>
+                                        </optgroup>
+                                    </select>
                                 </div>
-                                <div class="control">
-                                    <button class="button is-info" id="filter_go">
+                            </div>
+                            <div class="control">
+                                <button class="button is-info" id="filter_go_stu">
                                         <span class="icon">
                                             <i class="fa fa-filter" aria-hidden="true"></i>
                                         </span>
-                                        <span>Filtra</span>
-                                    </button>
-                                </div>
+                                    <span>Filtra</span>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <?php
-            }
-            ?>
+            </div>
             <div id="tirocinis">
             </div>
             <div id="loading_go_on" data-nextid="0">
@@ -169,7 +175,7 @@ $page = "Tirocini";
 <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 <?php
 // TODO Controllo permessi
-if(true)
+if (true)
 {
     ?>
     <script src="js/tirocini_filter.js"></script>
@@ -178,7 +184,7 @@ if(true)
 ?>
 <script src="<?= BASE_DIR ?>js/tirocini_builder.js"></script>
 <script>
-    $("#controls").find("a").removeAttr("href");
+	$ ("#controls").find ("a").removeAttr ("href");
 </script>
 </body>
 </html>
