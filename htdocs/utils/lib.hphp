@@ -41,7 +41,7 @@ catch (Google_Exception $e)
  */
 function compute_hashes($tries)
 {
-    return ((int)($tries/2) + 1)*2048;
+    return ((int)($tries/2) + 1)*768;
 }
 
 function sanitize_html($string = "")

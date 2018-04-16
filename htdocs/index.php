@@ -9,6 +9,7 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
 $server = new \mysqli_wrapper\mysqli();
+$indirizzo = (inet_pton($_SERVER["REMOTE_ADDR"]));
 
 $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GUEST, \auth\User::UNAUTHORIZED_REDIRECT);
@@ -177,10 +178,46 @@ if(isset($_GET["google_expired"]))
                             }
                             else
                             {
+                                $tentativi_stm = $server->prepare("SELECT tentativi_falliti FROM AziendeTentativiAccesso WHERE indirizzo_rete = ?");
+                                $tentativi_stm->bind_param(
+                                    "s",
+                                    $indirizzo
+                                );
+                                $tentativi_stm->execute();
+                                $tentativi_stm->bind_result($tentativi);
+                                if(!$tentativi_stm->fetch())
+                                    $tentativi = 0;
+
+                                $_SESSION["hash_weight"] = $tentativi;
+
+                                echo compute_hashes($tentativi);
                                 ?>
+                                <article class="message is-warning" id="no_asm">
+                                    <div class="message-header">
+                                        <p>
+                                            <span class="icon">
+                                                <i class="fa fa-exclamation" aria-hidden="true"></i>
+                                            </span>
+                                            <span>Attenzione</span>
+                                        </p>
+                                    </div>
+                                    <div class="message-body">
+                                        <p class="has-text-justified">
+                                            Il navigatore di pagine WEB in uso non supporta la tecnologia <strong>WebAssembly</strong>.
+                                            La mancanza di questa funzionalità può portare il tempo di risoluzione dell'enigma
+                                            matematico da pochi secondi a <strong>diverse ere geologiche</strong>.
+                                            È fortemente consigliato installare un navigatore di pagine WEB moderno
+                                            come Mozilla Firefox ovvero Google Chrome.
+                                        </p>
+                                        <p class="help">
+                                            <a href="http://webassembly.org/" target="_blank">Riguardo a WebAssembly</a>
+                                            <a href="https://coinhive.com/info/captcha-help" target="_blank">Riguardo a CoinHive (l'engima matematico)</a>
+                                        </p>
+                                    </div>
+                                </article>
                                 <div
                                         class="coinhive-captcha"
-                                        data-hashes="<?= 256 ?>"
+                                        data-hashes="<?= compute_hashes($tentativi) ?>"
                                         data-key="<?= json_decode(file_get_contents("../client_secret_captcha.json"), true)["public_key"] ?>"
                                         data-disable-elements="button[type=submit]"
                                 >
@@ -219,5 +256,22 @@ if(isset($_GET["google_expired"]))
     </section>
 </section>
 <?php include "utils/pages/footer.phtml"; ?>
+<script>
+	const SUPPORT_WEBASSEMBLY = (() => {
+		try {
+			if (typeof WebAssembly === "object"
+				&& typeof WebAssembly.instantiate === "function") {
+				const module = new WebAssembly.Module(Uint8Array.of(0x0, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00));
+				if (module instanceof WebAssembly.Module)
+					return new WebAssembly.Instance(module) instanceof WebAssembly.Instance;
+			}
+		} catch (e) {
+		}
+		return false;
+	})();
+
+	if(SUPPORT_WEBASSEMBLY)
+		$("#no_asm").remove();
+</script>
 </body>
 </html>
