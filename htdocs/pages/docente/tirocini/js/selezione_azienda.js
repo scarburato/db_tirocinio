@@ -10,6 +10,7 @@ let azienda = new GetHandler(azienda_tbody, BASE + "rest/users/list/aziende.php"
 		"</tr>"
 	);
 });
+
 let azienda_listener = new TableSelection(azienda_tbody);
 
 let azienda_panel = new TogglePanel("#azienda_modal");

@@ -34,6 +34,9 @@ if(!$valid->fetch())
 
 $valid->close();
 
+// L'utente ha il privilegio di distruggere i commenti?
+$can_delete = $permit->check("train.comments.delete");
+
 $commenti = new class($server,
     "SELECT CM.id, U.id, U.nome, U.cognome, U.fotografia, testo, quando
   FROM Commento CM 
@@ -46,7 +49,7 @@ $commenti = new class($server,
         $conta = $this->link->prepare(
             "SELECT COUNT(id) FROM Commento WHERE tirocinio=?");
         $conta->bind_param('i', $_GET['tirocinio']);
-        $conta->execute(false);
+        $conta->execute();
         $conta->bind_result($row_tot);
         $conta->fetch();
         $conta->close();
@@ -58,14 +61,16 @@ $commenti->set_limit(isset($_GET['limite']) ? $_GET['limite'] : 5);
 $commenti->set_current_page(isset($_GET['pagina']) ? $_GET['pagina'] : 0);
 
 $commenti->bind_param('i', $_GET["tirocinio"]);
-$commenti->execute(false);
+$commenti->execute();
 $commenti->bind_result($comm_id, $autore, $comm_nome, $comm_cognome, $comm_foto, $comm_testo, $comm_tstamp);
 
 $nav = new \helper\PaginationIndexBuilder($commenti);
 $nav->set_pagination_builder(new \helper\IndexJS());
 ?>
 <div class="ajax_comment" data-current-page="<?= $commenti->get_current_page() ?>">
-    <?php while ($commenti->fetch()) { ?>
+    <?php while ($commenti->fetch())
+    {
+        ?>
         <div class="box">
             <article class="media">
                 <div class="media-left">
@@ -85,11 +90,11 @@ $nav->set_pagination_builder(new \helper\IndexJS());
                     </p>
                 </div>
                 <?php
-                if($permit->check("train.comments.delete"))
+                if($can_delete)
                 {
                     ?>
                     <div class="media-right">
-                        <button class="button is-danger is-small delete-comment" title="Elimina il commento">
+                        <button data-dbid="<?= $comm_id ?>" class="button is-danger is-small delete-comment" title="Elimina il commento">
                             <i class="fa fa-trash" aria-hidden="true"></i>
                         </button>
                     </div>

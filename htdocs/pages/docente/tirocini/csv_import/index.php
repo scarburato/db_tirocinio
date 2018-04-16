@@ -311,7 +311,7 @@ $page = "Tirocini";
                                                               INNER JOIN UtenteGoogle G ON Docente.utente = G.id"
                                                 );
 
-                                                $docenti->execute(true);
+                                                $docenti->execute();
                                                 $docenti->bind_result($id, $nome, $cognome, $email);
                                                 while ($docenti->fetch())
                                                 {

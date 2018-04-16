@@ -22,6 +22,8 @@ $("#weknow").hide();
 
 x.onChange (function (e)
 {
+	$.urlParam.set("page", e);
+
 	if (e === "preview" && editor !== undefined)
 	{
 		$ ("#preview_editor").html (

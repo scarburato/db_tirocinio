@@ -26,13 +26,16 @@ if (!isset($_GET["tirocinio"]))
 $can_see_all = true;
 
 $tirocinio_azienda = $server->prepare(
-    'SELECT A.nominativo,
-    C.nome, C.secondoNome, C.cognome, C.email, C.telefono, C.FAX,
-    D.nome, D.cognome, D.indirizzo_posta,
+    'SELECT A.nominativo, A.IVA, A.codiceFiscale,
+    S.nome, S.cognome, S.indirizzo_posta, S.fotografia,
+    C.nome, C.cognome, C.email, C.telefono, C.FAX,
+    D.nome, D.cognome, D.indirizzo_posta, D.fotografia,
     T.dataInizio, T.dataTermine, T.giudizio, T.descrizione, T.visibilita, MD5(T.descrizione)
-    FROM Tirocinio T LEFT JOIN Azienda A ON T.azienda = A.id
+    FROM Tirocinio T 
+        LEFT JOIN Azienda A ON T.azienda = A.id
         LEFT JOIN UtenteGoogle D ON T.docenteTutore = D.id
         LEFT JOIN Contatto C ON T.tutoreAziendale = C.id
+        LEFT JOIN UtenteGoogle S ON T.studente = S.id
     WHERE T.id = ? AND (T.docenteTutore = ? OR ?);');
 
 $tirocinio_azienda->bind_param(
@@ -42,15 +45,16 @@ $tirocinio_azienda->bind_param(
     $can_see_all
 );
 
-$tirocinio_azienda->execute(true);
+$tirocinio_azienda->execute();
 
-$tirocinio_azienda->bind_result($a_nom,
-    $c_nome, $c_secNom, $c_cognome, $c_posta, $c_tel, $c_fax,
-    $doc_nome, $doc_cog, $doc_posta,
+$tirocinio_azienda->bind_result($a_nom, $a_iva, $a_cf,
+    $studente_nome, $studente_cognome, $studente_posta, $studente_fotografia,
+    $c_nome, $c_cognome, $c_posta, $c_tel, $c_fax,
+    $doc_nome, $doc_cog, $doc_posta, $doc_fotografia,
     $t_ini, $t_end, $t_giud, $t_desc, $t_vis, $desc_md5);
 
 if (!$tirocinio_azienda->fetch()) // errore, utente non valido e/o tirocinio non trovatos
-    die("unautharized!");
+    throw new RuntimeException("Non si è autorizzati ad accedere questo tirocinio!");
 
 $tirocinio_azienda->close();
 
@@ -70,7 +74,7 @@ if (!isset($_GET['page']))
 
 if ($_GET['page'] == 'comments')
     $passed = 'comments';
-elseif ($_GET['page'] == 'resoconto' && $status > 0)
+elseif (($_GET['page'] == 'resoconto' || $_GET['page'] == 'preview' ) && $status > 0)
     $passed = "preview";
 else
     $passed = 'info';
@@ -83,6 +87,8 @@ $num_tir = $_GET['tirocinio'];
 <html lang="it">
 <head>
     <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/head.phtml"; ?>
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Condensed|Ubuntu+Mono" rel="stylesheet">
+
     <script src="<?= BASE_DIR ?>js/editor/sceditor.min.js"></script>
     <script src="<?= BASE_DIR ?>js/editor/bbcode.min.js"></script>
     <script>
@@ -103,8 +109,8 @@ $num_tir = $_GET['tirocinio'];
             ?>
         </aside>
 
-        <!-- Tab Navigation Bar -->
         <div class="column">
+            <!-- Tab Navigation Bar -->
             <div class="tabs" id="selector">
                 <ul>
                     <li data-tab="info">
@@ -119,7 +125,8 @@ $num_tir = $_GET['tirocinio'];
                     </li>
                     <?php
                     if ($status != 0)
-                    { ?>
+                    {
+                        ?>
                         <li data-tab="preview">
                             <a>
                                 <span class="icon">
@@ -147,34 +154,118 @@ $num_tir = $_GET['tirocinio'];
             <!-- Contenuti -->
             <div id="contents">
                 <div data-tab="info" hidden>
-                    <h1> <?= sanitize_html($a_nom) ?> </h1>
-                    <?php if (isset($c_nome)) { ?>
-                        <p> Tutore aziendale del tirocinio: <?= sanitize_html($c_nome) ?> <?= sanitize_html($c_cognome) ?>
-                            email: <a href=mailto:<?= sanitize_html($c_posta) ?>> <?= sanitize_html($c_posta) ?> </a>
-                        </p>
-                    <?php } ?>
-                    <br>
-                    <p> Docente tutore: <?= sanitize_html($doc_nome) ?> <?= sanitize_html($doc_cog) ?> <br>
-                        email: <a href=mailto:<?= sanitize_html($doc_posta) ?>> <?= sanitize_html($doc_posta) ?> </a>
-                    </p>
+                    <div class="media">
+                        <figure class="media-left">
+                            <p>
+                                <span class="icon is-large" style="width: 96px;">
+                                    <i class="fa fa-calendar fa-3x" aria-hidden="true"></i>
+                                </span>
+                            </p>
+                        </figure>
+                        <div class="media-content">
+                            <p><strong>Inizio:&#9;</strong><time datetime="<?= $t_ini ?>"><?= $t_ini ?></time></p>
+                            <p><strong>Termine:&#9;</strong>
+                                <?php if($t_end !== null)
+                                {
+                                    ?>
+                                    <time datetime="<?= $t_end ?>"><?= $t_end ?></time>
+                                    <?php
+                                }
+                                else
+                                {
+                                    ?>
+                                    <span>indeterminato</span>
+                                    <?php
+                                }?>
+                            </p>
+                        </div>
+                    </div>
 
+                    <div class="media">
+                        <figure class="media-left">
+                            <p>
+                                <span class="icon is-large" style="width: 96px;">
+                                    <i class="fa fa-building fa-3x" aria-hidden="true"></i>
+                                </span>
+                            </p>
+                        </figure>
+                        <div class="media-content">
+                            <h4 class="title is-4">Azienda ospitante</h4>
+                            <h4 class="subtitle is-4"><?= sanitize_html($a_nom)?></h4>
+                            <p><strong>Codice fiscale: </strong><?= sanitize_html($a_cf) ?></p>
+                            <p><strong>Partita IVA: </strong><?= sanitize_html($a_iva) ?></p>
+                        </div>
+                    </div>
+
+                    <?php if (isset($c_nome))
+                    { ?>
+                        <div class="media">
+                            <figure class="media-left">
+                                <p>
+                                <span class="icon is-large" style="width: 96px;">
+                                    <i class="fa fa-id-badge fa-3x" aria-hidden="true"></i>
+                                </span>
+                                </p>
+                            </figure>
+                            <div class="media-content">
+                                <h4 class="title is-4">Tutore aziendale</h4>
+                                <p><?= sanitize_html($c_nome . " " . $c_cognome) ?></p>
+                                <p>
+                                    <a href="mailto:<?= sanitize_html($c_posta) ?>"><?= sanitize_html($c_posta) ?></a>
+                                </p>
+                                <p>
+                                    <a href="tel:<?= sanitize_html($c_tel) ?>"><?= sanitize_html($c_tel) ?></a>
+                                </p>
+                            </div>
+                        </div>
+                    <?php } ?>
+
+                    <div class="media">
+                        <figure class="media-left">
+                            <p class="image is-96x96">
+                                <img src="<?= $studente_fotografia ?>">
+                            </p>
+                        </figure>
+                        <div class="media-content">
+                            <h4 class="title is-4">Studente</h4>
+                            <p><?= sanitize_html($studente_nome . " " . $studente_cognome) ?></p>
+                            <p>
+                                <a href="mailto:<?= sanitize_html($studente_posta) ?>"><?= sanitize_html($studente_posta) ?></a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="media">
+                        <figure class="media-left">
+                            <p class="image is-96x96">
+                                <img src="<?= $doc_fotografia ?>">
+                            </p>
+                        </figure>
+                        <div class="media-content">
+                            <h4 class="title is-4">Docente responsabile</h4>
+                            <p><?= sanitize_html($doc_nome . " " . $doc_cog) ?></p>
+                            <p>
+                                <a href="mailto:<?= sanitize_html($doc_posta) ?>"><?= sanitize_html($doc_posta) ?></a>
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 <?php
                 if ($status != 0)
-                { ?>
+                {
+                    ?>
                     <div data-tab="preview" hidden>
-                        <div class="content" id="preview_editor"><?= sanitize_html($t_desc) ?></div>
+                        <p class="content" id="preview_editor"><?= sanitize_html($t_desc) ?></p>
                     </div>
-                <?php } ?>
+                    <?php
+                }
+                ?>
                 <div data-tab="comments" hidden>
                     <div class="field">
                         <div class="control">
                             <textarea id="commento" class="textarea" rows="4"
                                       placeholder="Scrivi commento..."></textarea>
                         </div>
-                        <p class="help">
-                            I commenti saranno visibili ai docenti!
-                        </p>
                     </div>
                     <div class="field">
                         <div class="control">

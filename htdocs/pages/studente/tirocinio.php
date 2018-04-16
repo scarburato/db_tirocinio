@@ -74,9 +74,6 @@ if (!$train->fetch())
         </header>
         <div class="card-content">
             <div class="content">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
-                <a href="#">@bulmaio</a>. <a href="#">#css</a> <a href="#">#responsive</a>
-                <br>
                 <?php if ($data_termine === null)
                 {
                     ?>

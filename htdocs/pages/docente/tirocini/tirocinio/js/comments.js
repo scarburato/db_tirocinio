@@ -74,7 +74,11 @@ $ ("#bt_comments").on ("click", function ()
 
 	jcomment.val ("");
 	$.post (
-		BASE + 'rest/trainings/commenta.php', {contenuto: comment, tirocinio: TIR}
+		BASE + 'rest/trainings/comments/post.php',
+		{
+			contenuto: comment,
+			tirocinio: TIR
+		}
 	)
 		.always(function (data)
 		{
@@ -87,4 +91,23 @@ $ ("#bt_comments_reload").on("click", function ()
 	page_nav.goto(page_nav.current_page, true);
 });
 
-// TODO Eliminazione commenti
+// Eliminazione commenti
+$("#dynamic_comments").on("click", ".delete-comment", function ()
+{
+	let id = $(this).data("dbid");
+
+	if(!confirm("Eliminare per davvero il commento? Non sarà possibile recuperarlo in nessun modo!"))
+		return;
+
+	$.get (
+		BASE + 'rest/trainings/comments/delete.php',
+		{
+			comment: id
+		}
+	)
+		.done(function (data)
+		{
+			if(data.rows > 0)
+				page_nav.goto(page_nav.current_page, true);
+		});
+});

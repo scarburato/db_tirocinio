@@ -78,7 +78,7 @@ $page = "Tirocini";
                                     "i",
                                     $user->get_database_id()
                             );
-                            $info->execute(true);
+                            $info->execute();
                             $info->bind_result($numero);
                             $info->fetch();
                             echo $numero;
@@ -98,7 +98,7 @@ $page = "Tirocini";
                                 "i",
                                 $user->get_database_id()
                             );
-                            $info->execute(true);
+                            $info->execute();
                             $info->bind_result($numero);
                             $info->fetch();
                             echo $numero;
@@ -118,7 +118,7 @@ $page = "Tirocini";
                                 "i",
                                 $user->get_database_id()
                             );
-                            $info->execute(true);
+                            $info->execute();
                             $info->bind_result($numero);
                             $info->fetch();
                             echo $numero;
