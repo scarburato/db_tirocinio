@@ -54,7 +54,7 @@ abstract class Pagination extends mysqli_stmt
         return parent::bind_param($types,$var1,  ...$_);
     }
 
-    public function execute(bool $redirect_on_error = false)
+    public function execute()
     {
         if(!$this->bind_param_r)
         {
@@ -62,7 +62,7 @@ abstract class Pagination extends mysqli_stmt
             parent::bind_param("ii", $this->limit, $tmp);
         }
 
-        return parent::execute($redirect_on_error);
+        return parent::execute();
     }
 
     /**
