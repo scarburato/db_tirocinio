@@ -23,17 +23,23 @@ class mysqli_stmt extends \mysqli_stmt
         parent::__construct($link, $query);
     }
 
+    public function __destruct()
+    {
+        if(parent::close() === false)
+            throw new sql_exception($this->error_list, $this->errno);
+    }
+
     /**
      * @see mysqli_stmt::execute()
-     * @param bool $redirect_on_error
      * @return bool
+     * @throws sql_exception
      */
-    public function execute(bool $redirect_on_error = false)
+    public function execute()
     {
         $success = parent::execute();
 
-        if(!$success && $redirect_on_error)
-            redirect_error("Errore interrogazione DB", $this->errno, $this->error_list);
+        if($success === false)
+            throw new sql_exception($this->error_list, $this->errno);
 
         return $success;
     }

@@ -1,0 +1,31 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 11/04/18
+ * Time: 16.07
+ */
+
+namespace mysqli_wrapper;
+
+class sql_exception extends \RuntimeException
+{
+    private $error_list = [];
+
+    public function __construct(array $error_list, int $errno = 0)
+    {
+        $this->error_list = $error_list;
+
+        parent::__construct($this->get_error_list_as_json(), $errno);
+    }
+
+    public function get_error_list(): array
+    {
+        return $this->error_list;
+    }
+
+    public function get_error_list_as_json(): string
+    {
+        return json_encode($this->error_list, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+}
