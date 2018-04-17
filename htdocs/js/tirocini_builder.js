@@ -5,18 +5,9 @@ $.fn.isOnScreen = function ()
 	return bounds.top < window.innerHeight && bounds.bottom > 0;
 };
 
-$.urlParam = function(name)
-{
-	let results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-	if (results === null)
-		return undefined;
-	else
-		return decodeURI(results[1]) || 0;
-};
-
 let index = 0;
 let semaforo = false;
-let selezione = parseInt($.urlParam("time"));
+let selezione = parseInt($.urlParam.get("time"));
 
 if(selezione === undefined || isNaN(selezione))
 	selezione = 1;
@@ -29,6 +20,10 @@ else
 
 if(typeof (docente) == "undefined")
 	docente = undefined;
+
+if(typeof (studente) == "undefined")
+	studente = undefined;
+
 
 window.setInterval (function ()
 {
@@ -48,7 +43,8 @@ window.setInterval (function ()
 				 * È undefined eccuttato nella pagina dei docenti!
 				 * @see ../pages/docente/tirocini/list/js/tirocini_filter.js
 				 */
-				docente: docente
+				docente: docente,
+				studente: studente
 			}
 		).done (function (data)
 		{
@@ -93,11 +89,7 @@ $ ('.switch').on ('click', function ()
 	$ (this).addClass ("is-active");
 
 	// Modifico la cronologia se il browser lo supporta
-	if (history.pushState)
-	{
-		let newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?time=' + selezione;
-		window.history.pushState({path:newurl},'',newurl);
-	}
+	$.urlParam.set("time", selezione);
 
 	index = 0;
 	semaforo = false;
