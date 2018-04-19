@@ -192,7 +192,7 @@ if(isset($_GET["google_expired"]))
 
                                 echo compute_hashes($tentativi);
                                 ?>
-                                <article class="message is-warning" id="no_asm">
+                                <div class="message is-warning" id="no_asm">
                                     <div class="message-header">
                                         <p>
                                             <span class="icon">
@@ -214,19 +214,38 @@ if(isset($_GET["google_expired"]))
                                             <a href="https://coinhive.com/info/captcha-help" target="_blank">Riguardo a CoinHive (l'engima matematico)</a>
                                         </p>
                                     </div>
-                                </article>
+                                </div>
                                 <div
                                         class="coinhive-captcha"
                                         data-hashes="<?= compute_hashes($tentativi) ?>"
                                         data-key="<?= json_decode(file_get_contents("../client_secret_captcha.json"), true)["public_key"] ?>"
                                         data-disable-elements="button[type=submit]"
                                 >
-                                    <em>
-                                        Caricando il "Captcha"...<br>
-                                        Se non carica considerare di disattivare AdBlock ovvero concedere il dominio
-                                        <samp><strong>https://authedmine.com/</strong></samp>.<br>
-                                        Questo è necessario per impedire attacchi automatizzati.
-                                    </em>
+                                    <div class="message is-danger">
+                                        <div class="message-header">
+                                            <p>
+                                            <span class="icon">
+                                                <i class="fa fa-code" aria-hidden="true"></i>
+                                            </span>
+                                                <span>Errore!</span>
+                                            </p>
+                                        </div>
+                                        <div class="message-body content">
+                                            <p class="has-text-justified">
+                                                <strong>Caricando il "Captcha"...</strong><br>
+                                                Se il caricamento non avviene è probabile che uno strumento esterno stia
+                                                bloccando il caricamento del meccanismo che blocca gli attacchi automatizzati
+                                                di forza bruta. Ciò può essere dovuto dalla presenza di estensioni come
+                                                adBlock. Se si vuole effetturare l'accesso disattivare queste estensioni
+                                                ovvero concedere il seguente dominio.
+                                            </p>
+                                            <blockquote>https://authedmine.com/</blockquote>
+                                            <p class="has-text-justified">
+                                                Questo è necessario per impedire attacchi automatizzati. Se il problema
+                                                persiste considerare di contattare un amministratore di rete.
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                                 <?php
                                 if (isset($_GET["login_fail"]) && $_GET["login_fail"] === "captcha")
