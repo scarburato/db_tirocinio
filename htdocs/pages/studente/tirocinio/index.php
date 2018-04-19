@@ -19,14 +19,14 @@ $oauth2 = \auth\connect_token_google($google_client, $user->get_token());
 
 
 if (!isset($_GET["tirocinio"]))
-    redirect('index.php');
+    redirect('../index.php');
 
 $tirocinio_azienda = $server->prepare(
     'SELECT A.nominativo, A.IVA, A.codiceFiscale,
     S.nome, S.cognome, S.indirizzo_posta, S.fotografia,
     C.nome, C.cognome, C.email, C.telefono, C.FAX,
     D.nome, D.cognome, D.indirizzo_posta, D.fotografia,
-    T.dataInizio, T.dataTermine, T.giudizio, T.descrizione, T.visibilita, MD5(T.descrizione)
+    T.dataInizio, T.dataTermine, T.giudizio, T.descrizione, T.visibilita, MD5(T.descrizione), T.ultima_modifica
     FROM Tirocinio T 
         LEFT JOIN Azienda A ON T.azienda = A.id
         LEFT JOIN UtenteGoogle D ON T.docenteTutore = D.id
@@ -42,7 +42,7 @@ $tirocinio_azienda->bind_result($a_nom, $a_iva, $a_cf,
     $studente_nome, $studente_cognome, $studente_posta, $studente_fotografia,
     $c_nome, $c_cognome, $c_posta, $c_tel, $c_fax,
     $doc_nome, $doc_cog, $doc_posta, $doc_fotografia,
-    $t_ini, $t_end, $t_giud, $t_desc, $t_vis, $desc_md5);
+    $t_ini, $t_end, $t_giud, $t_desc, $t_vis, $desc_md5, $t_last_edit);
 
 if (!$tirocinio_azienda->fetch()) // errore, utente non valido e/o tirocinio non trovatos
     throw new RuntimeException("Il tirocinio non esiste ovvero non si posseggono i privilegi per visualizzarlo");
@@ -58,7 +58,7 @@ if ($t_desc === NULL)
  * 2 = resoconto visibile globalmente, modifica non effettuabile
  * Questi dati sono già calcolati in tirocinio.php, ma sono ricalcolati per evitare possibili intrusioni dannose
 */
-$status = ($t_ini > date('Y-m-d') ? 0 : ($t_vis == 'azienda' ? 2 : 1));
+$status = ($t_ini > date('Y-m-d') ? 0 : ($t_vis === 'azienda' ? 2 : 1));
 // Questo permette un comportamento ottimizzato con lo switch seguente
 if (!isset($_GET['page']))
     $_GET['page'] = 'no';
@@ -76,7 +76,7 @@ else
             $passed = ($_GET['page'] == 'resoconto' ? 'editor' : 'info');
             break;
         case 2:
-            $passed = ($_GET['page'] == 'resoconto' ? 'preview' : 'info');
+            $passed = ($_GET['page'] == 'preview' || $_GET['page'] == 'resoconto' ? 'preview' : 'info');
             break;
     }
     unset($_GET['page']);
@@ -316,23 +316,40 @@ $num_tir = $_GET['tirocinio'];
                                   title="resonto" <?php if ($t_vis == "azienda") echo 'readonly'; ?> ><?= filter_var($t_desc, FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?></textarea>
                     </div>
                 <?php }
-                if ($status != 0)
+                if ($status !== 0)
                 { ?>
                     <div data-tab="preview" hidden>
                         <?php
-                        if ($status == 1)
-                        { /*
-                    * TODO Spostare il bottone formattandolo meglio
-                    */ ?>
-                            <div class="field">
-                                <button class="button" id="bt_save">
-                                    <span class="icon">
-                                        <i class="fa fa-floppy-o" aria-hidden="true"></i>
-                                    </span>
-                                    <span>
-                                        Salva Modifiche
-                                    </span>
-                                </button>
+                        if ($status === 1)
+                        {
+                            ?>
+                            <div class="box">
+                                <div class="media">
+                                    <p class="media-content">
+                                        <strong>
+                                            Ultima modifica:
+                                        </strong>
+                                        <time id="last_edit" datetime="<?= $t_last_edit ?>"><?= $t_last_edit ?></time>
+                                    </p>
+                                    <p class="media-right">
+                                        <button class="button is-link" id="bt_save">
+                                            <span class="icon">
+                                                <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                            </span>
+                                                <span>
+                                                Salva Modifiche
+                                            </span>
+                                        </button>
+                                        <a class="button is-success" id="bt_publish" <?= $t_vis !== "studente" ? "disabled" : "href=\"publish.php?tirocinio={$_GET['tirocinio']}\"" ?>>
+                                            <span class="icon">
+                                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                            </span>
+                                                <span>
+                                                Pubblica al docente
+                                            </span>
+                                        </a>
+                                    </p>
+                                </div>
                             </div>
                         <?php } ?>
                         <p class="content" id="preview_editor"><?php if ($t_vis == 'azienda') echo sanitize_html($t_desc); ?></p>
