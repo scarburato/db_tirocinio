@@ -41,7 +41,8 @@ catch (Google_Exception $e)
  */
 function compute_hashes($tries)
 {
-    return ((int)($tries/2) + 1)*768;
+    $quanto = ((int)($tries/2) + 1)*768;
+    return $quanto > 30720 ? 30720 : $quanto;
 }
 
 function sanitize_html($string = "")
