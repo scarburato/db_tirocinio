@@ -35,5 +35,6 @@ $update->execute();
 
 $return["success"]=true;
 $return["md5"]=md5($newDescription);
+$return["last_edit"] = date('Y-m-d G:i:s'); // LoL, quasi sicuramente non sarà mai identeica a quella nella base di dati :PPPP
 
 echo json_encode($return, JSON_UNESCAPED_UNICODE);
