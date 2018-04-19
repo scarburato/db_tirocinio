@@ -7,18 +7,18 @@ https://mariadb.com/kb/en/library/constraint/#check-constraints
 
 DROP DATABASE IF EXISTS Tirocini;
 
-CREATE DATABASE IF NOT EXISTS Tirocini
+CREATE DATABASE Tirocini
   DEFAULT CHARACTER SET utf8
   DEFAULT COLLATE utf8_general_ci;
 
 USE Tirocini;
 
-CREATE TABLE IF NOT EXISTS UnitaOrganizzativa(
+CREATE TABLE UnitaOrganizzativa(
   tipo                ENUM ('docente', 'studente', 'ambedue') NOT NULL,
-  unita_organizzativa VARCHAR(2083) PRIMARY KEY NOT NULL
+  unita_organizzativa VARCHAR(255) UNIQUE NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS UtenteGoogle (
+CREATE TABLE UtenteGoogle (
   id              SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   SUB_GOOGLE      VARCHAR(64) UNIQUE,
   nome            VARCHAR(128) NOT NULL,
@@ -29,12 +29,12 @@ CREATE TABLE IF NOT EXISTS UtenteGoogle (
   INDEX (indirizzo_posta)
 );
 
-CREATE TABLE IF NOT EXISTS Indirizzo (
+CREATE TABLE Indirizzo (
   id        INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   indirizzo VARCHAR(128) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Studente (
+CREATE TABLE Studente (
   utente    SMALLINT UNSIGNED PRIMARY KEY,
   indirizzo INT UNSIGNED,
   matricola VARCHAR(10) UNIQUE,
@@ -45,23 +45,23 @@ CREATE TABLE IF NOT EXISTS Studente (
   REFERENCES Indirizzo (id)
 );
 
-CREATE TABLE IF NOT EXISTS Docente (
+CREATE TABLE Docente (
   utente SMALLINT UNSIGNED PRIMARY KEY,
   FOREIGN KEY (utente)
   REFERENCES UtenteGoogle (id)
 );
 
-CREATE TABLE IF NOT EXISTS Privilegio (
+CREATE TABLE Privilegio (
   nome        VARCHAR(126) PRIMARY KEY,
   descrizione TINYTEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Gruppo (
+CREATE TABLE Gruppo (
   nome        VARCHAR(126) PRIMARY KEY,
   descrizione TINYTEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS PermessiGruppo (
+CREATE TABLE PermessiGruppo (
   gruppo      VARCHAR(126),
   privilegio  VARCHAR(126),
 
@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS PermessiGruppo (
   FOREIGN KEY (privilegio) REFERENCES Privilegio(nome)
 );
 
-CREATE TABLE IF NOT EXISTS GruppiApplicati (
+CREATE TABLE GruppiApplicati (
   utente     SMALLINT UNSIGNED,
   gruppo     VARCHAR(126),
 
@@ -81,18 +81,18 @@ CREATE TABLE IF NOT EXISTS GruppiApplicati (
   REFERENCES Gruppo (nome)
 );
 
-CREATE TABLE IF NOT EXISTS Classificazioni (
+CREATE TABLE Classificazioni (
   id          SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   descrizione TINYTEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS CodiceAteco (
+CREATE TABLE CodiceAteco (
   id          SMALLINT UNSIGNED PRIMARY KEY,
   cod2007     CHAR(8) UNIQUE,
   descrizione TEXT
 );
 
-CREATE TABLE IF NOT EXISTS Azienda (
+CREATE TABLE Azienda (
   id              INT UNSIGNED               AUTO_INCREMENT PRIMARY KEY,
   IVA             CHAR(11) UNIQUE CHECK (CHAR_LENGTH(IVA) = 11),
   codiceFiscale   CHAR(16) UNIQUE CHECK (CHAR_LENGTH(codiceFiscale) BETWEEN 11 AND 16),
@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS Azienda (
   REFERENCES CodiceAteco (id)
 );
 
-CREATE TABLE IF NOT EXISTS Sede (
+CREATE TABLE Sede (
   id        TINYINT UNSIGNED AUTO_INCREMENT,
   azienda   INT UNSIGNED,
   nomeSede  VARCHAR(128) NOT NULL,
@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS Sede (
 Gli indirizzi di una azienda sono quelli della scuola (Info, tlc, cma ecc)
 non quelli di casa!
  */
-CREATE TABLE IF NOT EXISTS IndirizziAzienda (
+CREATE TABLE IndirizziAzienda (
   indirizzo   INT UNSIGNED,
   azienda     INT UNSIGNED,
   motivazioni TEXT NOT NULL,
@@ -143,7 +143,7 @@ CREATE TABLE IF NOT EXISTS IndirizziAzienda (
   REFERENCES Azienda (ID)
 );
 
-CREATE TABLE IF NOT EXISTS Contatto (
+CREATE TABLE Contatto (
   id             INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   azienda        INT UNSIGNED,
   nome           VARCHAR(128) NOT NULL,
@@ -158,20 +158,41 @@ CREATE TABLE IF NOT EXISTS Contatto (
   REFERENCES Azienda (ID)
 );
 
-CREATE TABLE IF NOT EXISTS EntratoInContatto (
+CREATE TABLE EntratoInContatto (
   contatto INT(8) UNSIGNED,
   docente  SMALLINT UNSIGNED,
   inizio   DATE NOT NULL,
-  fine     DATE,
+  fine     DATE               CHECK(fine IS NULL OR fine >= inizio),
 
-  PRIMARY KEY (Contatto, Docente),
+  PRIMARY KEY (Contatto, Docente, inizio),
   FOREIGN KEY (Contatto)
   REFERENCES Contatto (ID),
   FOREIGN KEY (Docente)
   REFERENCES Docente (Utente)
 );
 
-CREATE TABLE IF NOT EXISTS Tirocinio (
+/*
+Questo evento viene chiamato prima dell'inserimento nella tabella EntratoInContatto,
+se un contatto con una persone si sovrappone temporalmente un errore 70002 viene generato!
+ */
+CREATE TRIGGER ControlloSovrapposizioneTemporale
+  BEFORE INSERT ON EntratoInContatto
+  FOR EACH ROW
+  BEGIN
+    IF (EXISTS (
+        SELECT inizio
+        FROM EntratoInContatto E
+        WHERE E.docente = NEW.docente
+              AND E.contatto = NEW.contatto
+              AND (fine IS NULL OR fine >= NEW.inizio)
+    ))
+    THEN
+      SIGNAL SQLSTATE '70002'
+      SET MESSAGE_TEXT = 'Already in contact each other!';
+    END IF;
+  END;
+
+CREATE TABLE Tirocinio (
   id              INT(8) UNSIGNED                         AUTO_INCREMENT PRIMARY KEY,
   studente        SMALLINT UNSIGNED                       NOT NULL,
   azienda         INT UNSIGNED                            NOT NULL,
@@ -181,7 +202,8 @@ CREATE TABLE IF NOT EXISTS Tirocinio (
   dataTermine     DATE,
 
   giudizio        TINYINT UNSIGNED,
-  descrizione     LONGTEXT,
+  descrizione     LONGTEXT, /* È la recensione dello studente! */
+  ultima_modifica TIMESTAMP                               NULL DEFAULT NULL,
   visibilita      ENUM ('studente', 'docente', 'azienda') NOT NULL DEFAULT 'studente',
 
   UNIQUE (Studente, Azienda, DataInizio),
@@ -197,7 +219,21 @@ CREATE TABLE IF NOT EXISTS Tirocinio (
   CONSTRAINT CHK_data CHECK (dataTermine IS NULL OR dataInizio <= dataTermine)
 );
 
-CREATE TABLE IF NOT EXISTS Commento (
+CREATE TRIGGER AggiornaUltimaModifica
+  BEFORE UPDATE ON Tirocinio
+  FOR EACH ROW
+  BEGIN
+    IF MD5(NEW.descrizione) <> MD5(OLD.descrizione) THEN
+      IF NEW.visibilita = 'azienda' THEN
+        SIGNAL SQLSTATE '70003'
+        SET MESSAGE_TEXT = 'It\'s impossible to update descrizione when visibilita = \'azienda\'!';
+      ELSE
+        SET NEW.ultima_modifica = CURRENT_TIMESTAMP();
+      END IF;
+    END IF;
+  END;
+
+CREATE TABLE Commento (
   id        INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   tirocinio INT(8) UNSIGNED NOT NULL,
   autore    SMALLINT UNSIGNED NOT NULL,
@@ -212,7 +248,7 @@ CREATE TABLE IF NOT EXISTS Commento (
   REFERENCES UtenteGoogle (id)
 );
 
-CREATE TABLE IF NOT EXISTS AziendeTentativiAccesso (
+CREATE TABLE AziendeTentativiAccesso (
   indirizzo_rete    VARBINARY(16) NOT NULL PRIMARY KEY,
   ultimo_accesso    TIMESTAMP     NULL     DEFAULT NULL,
   tentativi_falliti INT UNSIGNED  NOT NULL DEFAULT 0,

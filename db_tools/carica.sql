@@ -1,11 +1,10 @@
-﻿
-LOAD DATA LOCAL INFILE 'C:\\Users\\Utente\\Documents\\db_tirocinio\\db_tools\\ateco2007.csv'
+﻿LOAD DATA LOCAL INFILE '/tmp/csvtmp/ateco2007.csv'
   INTO TABLE CodiceAteco
 FIELDS TERMINATED BY ',' ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 LINES;
 
-LOAD DATA LOCAL INFILE 'C:\\Users\\Utente\\Documents\\db_tirocinio\\db_tools\\classificazioni_predefinite.csv'
+LOAD DATA LOCAL INFILE '/tmp/csvtmp/classificazioni_predefinite.csv'
   INTO TABLE Classificazioni
 FIELDS TERMINATED BY ',' ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
@@ -18,7 +17,8 @@ INSERT INTO UnitaOrganizzativa(tipo, unita_organizzativa) VALUES
   ('docente', '/Docenti IPSIA');
 
 INSERT INTO Privilegio(nome, descrizione) VALUES
-  ('user.google.add', 'Consente di aggiungere utenti alla base dati'),
+  ('user.google.add', 'Consente di aggiungere utenti alla base dati leggendoli dal dominio'),
+  ('user.google.orgunits', 'Consente di modificare le associazioni tra tipo di utente e le unità organizzative del dominio'),
   ('user.factory.add', 'Consente di creare aziende'),
   ('user.factory.resetpasswd', 'Consente di cambiare la parola d\'ordine delle aziende'),
   ('train.add', 'Consente di creare tirocini'),
@@ -28,6 +28,9 @@ INSERT INTO Privilegio(nome, descrizione) VALUES
   ('train.comments.delete', 'Consente di elimare i commenti'),
   ('control.forgive', 'Consente di perdonare gli indirizzi che hanno tentato troppi accessi'),
   ('control.groups', 'COnsente di modificare i gruppi'),
+  ('factory.intouch', 'Consente di entrare in contatto con le aziende'),
+  ('factory.contacts.create', 'Consente di creare contatti aziendali'),
+  ('factory.contacts.create', 'Consente di segnarsi come in contatto con un contatto'),
   ('user.groups', 'Consente di assegnare gruppi agli utenti'),
   ('root', 'Accesso totale a tutto, nessuna domanda');
 
