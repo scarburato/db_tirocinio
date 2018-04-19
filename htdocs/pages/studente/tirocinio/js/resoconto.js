@@ -1,7 +1,7 @@
 // TODO??? aggiungere semaforo
 
 let textarea = $ ("#resoconto");
-let editor;
+let editor, parser;
 if (textarea[0] !== undefined)
 {
 	sceditor.create (textarea[0], {
@@ -16,6 +16,8 @@ if (textarea[0] !== undefined)
 	if (textarea.is ("[readonly]"))
 		editor.readOnly (true);
 }
+else
+	parser = new sceditor.BBCodeParser();
 
 let x = new ToggleTab ($ ("#selector"), $ ("#contents"), PASSED);
 $("#weknow").hide();
@@ -24,11 +26,20 @@ x.onChange (function (e)
 {
 	$.urlParam.set("page", e);
 
-	if (e === "preview" && editor !== undefined)
+	if (e === "preview")
 	{
-		$ ("#preview_editor").html (
-			editor.fromBBCode(editor.val(), true)
-		);
+		let prev = $ ("#preview_editor");
+		if(editor !== undefined)
+			prev.html (
+				editor.fromBBCode(editor.val(), true)
+			);
+		else
+		{
+			let text = prev.html();
+			prev.html (
+				parser.toHTML (text)
+			);
+		}
 
 		if(/<[a-z][\s\S]*>/i.test(editor.val()))
 			$("#weknow").show();
