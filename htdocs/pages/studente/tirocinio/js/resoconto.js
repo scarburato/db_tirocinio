@@ -1,6 +1,7 @@
 // TODO??? aggiungere semaforo
 
 let textarea = $ ("#resoconto");
+let area = $("#preview_editor");
 let editor;
 if (textarea[0] !== undefined)
 {
@@ -16,10 +17,9 @@ if (textarea[0] !== undefined)
 	if (textarea.is ("[readonly]"))
 		editor.readOnly (true);
 }
-else
+else if(area[0] !== undefined)
 {
 	let parser = new sceditor.BBCodeParser ();
-	let area = $("#preview_editor");
 	let text = area.html();
 
 	area.html(parser.toHTML(text));
@@ -34,7 +34,7 @@ x.onChange (function (e)
 
 	if (e === "preview" && editor !== undefined)
 	{
-		$ ("#preview_editor").html (
+		area.html (
 			editor.fromBBCode(editor.val(), true)
 		);
 
