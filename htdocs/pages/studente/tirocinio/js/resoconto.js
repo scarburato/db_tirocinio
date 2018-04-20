@@ -75,3 +75,9 @@ $ ("#bt_save").on ("click", function ()
 		}
 	}
 );
+
+// Bottone per la stampa
+$ ("#print").on("click", function ()
+{
+	area.printElement();
+});

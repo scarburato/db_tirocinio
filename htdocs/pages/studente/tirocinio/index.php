@@ -107,6 +107,9 @@ $num_tir = $_GET['tirocinio'];
 		const TIR = '<?=$num_tir?>';
     </script>
 
+    <?php // Necessario per migrare la stampa ?>
+    <script src="https://code.jquery.com/jquery-migrate-1.0.0.js"></script>
+    <script src="<?= BASE_DIR ?>js/lib/jquery.printElement.min.js"></script>
 </head>
 <body>
 <?php include "../../common/google_navbar.php"; ?>
@@ -332,6 +335,14 @@ $num_tir = $_GET['tirocinio'];
                                         <time id="last_edit" datetime="<?= $t_last_edit ?>"><?= $t_last_edit ?></time>
                                     </p>
                                     <p class="media-right">
+                                        <button class="button" id="print">
+                                            <span class="icon">
+                                                <i class="fa fa-print" aria-hidden="true"></i>
+                                            </span>
+                                            <span>
+                                                Stampa
+                                            </span>
+                                        </button>
                                         <button class="button is-link" id="bt_save">
                                             <span class="icon">
                                                 <i class="fa fa-floppy-o" aria-hidden="true"></i>
