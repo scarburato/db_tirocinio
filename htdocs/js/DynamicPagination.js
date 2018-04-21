@@ -16,10 +16,10 @@ class DynamicPagination
 		if(!(paginationDiv instanceof jQuery))
 			throw("paginationDiv must be an instance of jQuery");
 
-		if(!(paginationAdrr instanceof String) || !(paginationAdrr instanceof URL))
+		if(!(isString(paginationAdrr)) && !(paginationAdrr instanceof URL))
 			throw("paginationAdrr must be a String or an instance on URL");
 
-		if(optionsGET !== undefined || !(optionsGET instanceof Object))
+		if(optionsGET !== undefined && !(optionsGET instanceof Object))
 			throw("optionsGET must be undefined or an Object!");
 
 		// Element jQuery
@@ -30,12 +30,12 @@ class DynamicPagination
 		this.remAddr = (paginationAdrr instanceof URL) ? paginationAdrr.href : paginationAdrr;
 
 		this.currentPage = undefined;
-		this.semaforo = true;
+		this.semaforo = false;
 
 		// Bind ai tasti dinamici
 		this.div.on("click", ".js-page-nav", (e) =>
 		{
-			this.goto(e.data.data("page"));
+			this.goto($(e.target).data("page"));
 		});
 
 		this.div.on("keyup", ".js-page-nav", function (e)
@@ -51,7 +51,7 @@ class DynamicPagination
 	 */
 	setLoading(loadingDiv)
 	{
-		if( !(loadingDIV instanceof jQuery))
+		if( !(loadingDiv instanceof jQuery))
 			throw("loadingDIV must be undefined or an instance of jQuery");
 
 		this.load = loadingDiv;
@@ -75,13 +75,13 @@ class DynamicPagination
 		if(!Number.isInteger(page))
 			throw("destination page must be an integer");
 
-		if(page === this.currentPage && !force_reolad)
+		if(page === this.currentPage && !forceReload)
 			return;
 
-		if(semaforo)
+		if(this.semaforo)
 			return;
 
-		semaforo = true;
+		this.semaforo = true;
 
 		this.load.show();
 		this.div.hide();
@@ -102,7 +102,7 @@ class DynamicPagination
 			})
 			.always(() =>
 			{
-				semaforo = false;
+				this.semaforo = false;
 			});
 	}
 
