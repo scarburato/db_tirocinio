@@ -1,57 +1,9 @@
-/**
- *
- * @param page Number
- */
-let page_nav = {
-	loading: $("#dynamic_comments_loading"),
-	comments: $("#dynamic_comments"),
-	current_page: undefined,
+let page_nav = new DynamicPagination($("#dynamic_comments"), "comments.php", {
+	tirocinio: TIR
+});
 
-	/**
-	 *
-	 * @param page Number
-	 * @param force_reolad Boolean
-	 */
-	goto: function(page, force_reolad)
-	{
-		if(page === this.current_page && !force_reolad)
-			return;
-
-		this.loading.show();
-		this.comments.hide();
-
-		$.get
-		(
-			"comments.php",
-			{
-				tirocinio: TIR,
-				pagina: page
-			}
-		)
-			.done( (data) =>
-			{
-				this.comments.html(data);
-				this.comments.show();
-				this.loading.hide();
-
-				this.current_page = this.comments.find(".ajax_comment").data("current-page");
-			});
-	}
-};
-
+page_nav.setLoading($("#dynamic_comments_loading"));
 page_nav.goto(0);
-
-// In ascolto per gli eventi sui pulsanti dei commenti
-page_nav.comments.on("click", ".js-page-nav", function ()
-{
-	page_nav.goto($(this).data("page"));
-});
-
-page_nav.comments.on("keyup", ".js-page-nav", function (e)
-{
-	if(e.which === 13)
-		$(this).click();
-});
 
 // Per evitare lo spam di commenti
 let nonPigiareTroppo = false;
@@ -82,13 +34,13 @@ $ ("#bt_comments").on ("click", function ()
 	)
 		.always(function (data)
 		{
-			page_nav.goto(0, true);
+			page_nav.refresh();
 		});
 });
 
 $ ("#bt_comments_reload").on("click", function ()
 {
-	page_nav.goto(page_nav.current_page, true);
+	page_nav.refresh();
 });
 
 // Eliminazione commenti
@@ -108,6 +60,6 @@ $("#dynamic_comments").on("click", ".delete-comment", function ()
 		.done(function (data)
 		{
 			if(data.rows > 0)
-				page_nav.goto(page_nav.current_page, true);
+				page_nav.refresh();
 		});
 });

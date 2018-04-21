@@ -69,4 +69,6 @@ if($fail)
     ]);
 }
 
-redirect("aggiungi.php");
+redirect("/pages/docente/tirocini/tirocinio/", [
+    "tirocinio" => $insert->insert_id
+]);

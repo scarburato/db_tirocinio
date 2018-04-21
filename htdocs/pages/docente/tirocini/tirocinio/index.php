@@ -30,7 +30,7 @@ $tirocinio_azienda = $server->prepare(
     S.nome, S.cognome, S.indirizzo_posta, S.fotografia,
     C.nome, C.cognome, C.email, C.telefono, C.FAX,
     D.nome, D.cognome, D.indirizzo_posta, D.fotografia,
-    T.dataInizio, T.dataTermine, T.giudizio, T.descrizione, T.visibilita, MD5(T.descrizione)
+    T.dataInizio, T.dataTermine, T.giudizio, T.descrizione, T.visibilita, T.ultima_modifica
     FROM Tirocinio T 
         LEFT JOIN Azienda A ON T.azienda = A.id
         LEFT JOIN UtenteGoogle D ON T.docenteTutore = D.id
@@ -51,7 +51,7 @@ $tirocinio_azienda->bind_result($a_nom, $a_iva, $a_cf,
     $studente_nome, $studente_cognome, $studente_posta, $studente_fotografia,
     $c_nome, $c_cognome, $c_posta, $c_tel, $c_fax,
     $doc_nome, $doc_cog, $doc_posta, $doc_fotografia,
-    $t_ini, $t_end, $t_giud, $t_desc, $t_vis, $desc_md5);
+    $t_ini, $t_end, $t_giud, $t_desc, $t_vis, $t_last_edit);
 
 if (!$tirocinio_azienda->fetch()) // errore, utente non valido e/o tirocinio non trovatos
     throw new RuntimeException("Non si è autorizzati ad accedere questo tirocinio!");
@@ -63,18 +63,17 @@ if ($t_desc === NULL)
 
 /* variabile per controllare cosa è possibile fare.
  * 0 = futuro, solo Info ed eventualmente commenti visibili
- * 1 = in corso o simile, resoconto privato, modificabile
- * 2 = resoconto visibile globalmente, modifica non effettuabile
+ * 1 = in corso o simile, resoconto non
  * Questi dati sono già calcolati in tirocinio.php, ma sono ricalcolati per evitare possibili intrusioni dannose
 */
-$status = ($t_ini > date('Y-m-d') ? 0 : ($t_vis == 'azienda' ? 2 : 1));
+$status = ($t_ini > date('Y-m-d') ? 0 : 1);
 // Questo permette un comportamento ottimizzato con lo switch seguente
 if (!isset($_GET['page']))
     $_GET['page'] = 'no';
 
-if ($_GET['page'] == 'comments')
+if ($_GET['page'] === 'comments')
     $passed = 'comments';
-elseif (($_GET['page'] == 'resoconto' || $_GET['page'] == 'preview' ) && $status > 0)
+elseif (($_GET['page'] === 'resoconto' || $_GET['page'] === 'preview' ) && $status > 0)
     $passed = "preview";
 else
     $passed = 'info';
@@ -185,6 +184,63 @@ $num_tir = $_GET['tirocinio'];
                         <figure class="media-left">
                             <p>
                                 <span class="icon is-large" style="width: 96px;">
+                                    <i class="fa fa-file-text fa-3x" aria-hidden="true"></i>
+                                </span>
+                            </p>
+                        </figure>
+                        <div class="media-content">
+                            <h4 class="title is-4">Resoconto dello studente</h4>
+                            <p>
+                                <strong>Ultima modifica dello studente: </strong>
+                                <?php
+                                if($t_last_edit === null)
+                                {
+                                    ?>
+                                    Non ancora modificato!
+                                    <?php
+                                }
+                                else
+                                {
+                                    ?>
+                                    <time datetime="<?= $t_last_edit ?>"><?= $t_last_edit ?></time>
+                                    <?php
+                                }
+                                ?>
+                            </p>
+
+                            <p>
+                                <strong>Stato resoconto: </strong>
+                                <code><?= sanitize_html($t_vis)?></code>
+                            </p>
+                            <p class="has-text-justified">
+                                <?php
+                                if($status === 0)
+                                    echo "Questa attività non è ancora iniziata!";
+                                else
+                                    switch ($t_vis)
+                                    {
+                                        case "studente":
+                                            echo "Lo studente coinvolto nell'attività sta ancora scrivendo il suo resoconto (probabilmente non ha neanche inizato)";
+                                            break;
+                                        case "docente":
+                                            echo "Lo studente ha pubblicato il suo lavoro, è possibile leggere il suo resoconto. Lo studente coinvolto può ancora modificare il suo lavoro, le modifiche saranno immediatamente visualizzabili.";
+                                            break;
+                                        case "azienda":
+                                            echo "Lo studente non può più modificare il suo lavoro.";
+                                            break;
+                                        default:
+                                            echo "Questo non è possibile! Qualcuno ha modificato la base dati senza capire quello che stava facendo?";
+                                            break;
+                                    }
+                                ?>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="media">
+                        <figure class="media-left">
+                            <p>
+                                <span class="icon is-large" style="width: 96px;">
                                     <i class="fa fa-building fa-3x" aria-hidden="true"></i>
                                 </span>
                             </p>
@@ -251,11 +307,23 @@ $num_tir = $_GET['tirocinio'];
                     </div>
                 </div>
                 <?php
-                if ($status != 0)
+                if ($status !== 0)
                 {
                     ?>
                     <div data-tab="preview" hidden>
-                        <p class="content" id="preview_editor"><?= sanitize_html($t_desc) ?></p>
+                        <p class="content" id="preview_editor"><?= $t_vis !== "studente" ? sanitize_html($t_desc) : "" ?></p>
+                        <?php
+                        if($t_vis === "studente")
+                        {
+                            ?>
+                            <div class="message is-info">
+                                <div class="message-body">
+                                    Questo resoconto è ancora privato.
+                                </div>
+                            </div>
+                            <?php
+                        }
+                        ?>
                     </div>
                     <?php
                 }
@@ -306,6 +374,8 @@ $num_tir = $_GET['tirocinio'];
 </body>
 
 <script src="<?= BASE_DIR ?>js/toggleTab.js"></script>
+<script src="<?= BASE_DIR ?>js/DynamicPagination.js"></script>
+
 <script src="js/main.js"></script>
 <script src="js/comments.js"></script>
 </html>
