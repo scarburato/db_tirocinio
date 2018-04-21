@@ -415,6 +415,8 @@ $num_tir = $_GET['tirocinio'];
 </body>
 
 <script src="<?= BASE_DIR ?>js/toggleTab.js"></script>
+<script src="<?= BASE_DIR ?>js/DynamicPagination.js"></script>
+
 <script src="js/resoconto.js"></script>
 <script src="js/comments.js"></script>
 </html>
