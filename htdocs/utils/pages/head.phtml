@@ -20,6 +20,27 @@
     ?>
 </title>
 
+<!-- Cosnati JS ed altro -->
+<script>
+	const BASE = "<?= BASE_DIR ?>";
+
+	/**
+     * È una stringa?
+     * @author https://stackoverflow.com/a/17772086
+	 * @param x
+	 * @return {boolean}
+	 */
+	function isString(x)
+    {
+		return Object.prototype.toString.call(x) === "[object String]"
+	}
+</script>
+
+<!-- JavaScript -->
+<script src="<?= BASE_DIR ?>js/lib/jquery-3.3.1.min.js"></script>
+<script src="<?= BASE_DIR ?>js/lib/jquery.urlParam.js"></script>
+<script src="<?= BASE_DIR ?>js/global.js"></script>
+
 <!-- CSS -->
 <link rel="stylesheet" href="<?= BASE_DIR ?>css/bulma.min.css">
 <link rel="stylesheet" href="<?= BASE_DIR ?>css/font-awesome-4.7.0/css/font-awesome.min.css">
@@ -30,12 +51,3 @@
         overflow-y: auto;
     }
 </style>
-
-<!-- Cosnati JS -->
-<script>
-	const BASE = "<?= BASE_DIR ?>";
-</script>
-
-<!-- JavaScript -->
-<script src="<?= BASE_DIR ?>js/lib/jquery-3.3.1.min.js"></script>
-<script src="<?= BASE_DIR ?>js/global.js"></script>
