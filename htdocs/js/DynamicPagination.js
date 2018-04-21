@@ -8,16 +8,16 @@ class DynamicPagination
 {
 	/**
 	 * @param paginationDiv jQuery la DIV
-	 * @param paginationAdrr {String | URL} indirizzo che ritorna HTML generato da PHP
+	 * @param paginationAddr {String | URL} indirizzo che ritorna HTML generato da PHP
 	 * @param optionsGET {Object | undefined} opzioni supplementari da passare alla GET
 	 */
-	constructor(paginationDiv, paginationAdrr, optionsGET)
+	constructor(paginationDiv, paginationAddr, optionsGET)
 	{
 		if(!(paginationDiv instanceof jQuery))
 			throw("paginationDiv must be an instance of jQuery");
 
-		if(!(isString(paginationAdrr)) && !(paginationAdrr instanceof URL))
-			throw("paginationAdrr must be a String or an instance on URL");
+		if(!(isString(paginationAddr)) && !(paginationAddr instanceof URL))
+			throw("paginationAddr must be a String or an instance on URL");
 
 		if(optionsGET !== undefined && !(optionsGET instanceof Object))
 			throw("optionsGET must be undefined or an Object!");
@@ -27,10 +27,12 @@ class DynamicPagination
 		this.load = $();
 
 		this.defOptions = optionsGET === undefined ? {} : optionsGET;
-		this.remAddr = (paginationAdrr instanceof URL) ? paginationAdrr.href : paginationAdrr;
+		this.remAddr = (paginationAddr instanceof URL) ? paginationAddr.href : paginationAddr;
 
 		this.currentPage = undefined;
 		this.semaforo = false;
+
+		this.onChange = () => {};
 
 		// Bind ai tasti dinamici
 		this.div.on("click", ".js-page-nav", (e) =>
@@ -55,6 +57,18 @@ class DynamicPagination
 			throw("loadingDIV must be undefined or an instance of jQuery");
 
 		this.load = loadingDiv;
+	}
+
+	/**
+	 * Registra UNA funzione da eseguire quando è cambianta pagina
+	 * @param handler Function(pagina_richiesta, pagina_ottenuta)
+	 */
+	setOnChange(handler)
+	{
+		if(!$.isFunction(handler))
+			throw("handler must be function");
+
+		this.onChange = handler;
 	}
 
 	/**
@@ -99,6 +113,8 @@ class DynamicPagination
 				this.load.hide();
 
 				this.currentPage = this.div.find(".ajax_comment").data("current-page");
+
+				this.onChange(page, this.currentPage);
 			})
 			.always(() =>
 			{
