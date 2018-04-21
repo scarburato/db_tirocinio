@@ -35,7 +35,7 @@ if(isset($_GET["tipo"]))
 </head>
 <body>
     <section class="section">
-        <div class="container has-text-centered">
+        <div class="container is-fluid">
             <div class="columns">
                 <div class="column is-4 is-offset-4">
                     <div class="box">
