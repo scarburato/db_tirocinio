@@ -28,7 +28,7 @@ class RetriveStudenteFromDatabase implements \auth\RetriveInformations
             "i",
             $user->get_database_id()
         );
-        $retrive->execute(true);
+        $retrive->execute();
 
         $return = new \auth\UserInfo($retrive->get_result()->fetch_assoc());
         $return->id = $user->get_database_id();
@@ -62,7 +62,7 @@ class RetriveDocenteFromDatabase implements \auth\RetriveInformations
             "i",
             $user->get_database_id()
         );
-        $retrive->execute(true);
+        $retrive->execute();
 
         $return = new \auth\UserInfo($retrive->get_result()->fetch_assoc());
         $return->id = $user->get_database_id();
@@ -93,7 +93,7 @@ class RetriveAziendaFromDatabase implements \auth\RetriveInformations
             "i",
             $user->get_database_id()
         );
-        $retrive->execute(true);
+        $retrive->execute();
 
         $return = new \auth\UserInfo($retrive->get_result()->fetch_assoc());
         $return->id = $user->get_database_id();

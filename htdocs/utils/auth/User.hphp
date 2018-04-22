@@ -57,8 +57,9 @@ class User
     }
 
     /**
+     * Controlla se un un utente è autorizzato rispetto ad acceddere rispetto ad un permesso!
      * @param int $auth_level
-     * @param int $on_fail
+     * @param int $on_fail Modifica il comportamento, di norma ritorna FALSE
      * @return bool
      * @throws Unauthorized
      */

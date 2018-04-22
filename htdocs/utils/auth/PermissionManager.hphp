@@ -62,7 +62,7 @@ class PermissionManager
             $permission
         );
 
-        $controllo->execute(false);
+        $controllo->execute();
         $res = $controllo->fetch() !== null;
         $controllo->close();
 

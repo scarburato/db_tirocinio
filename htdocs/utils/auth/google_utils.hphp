@@ -23,6 +23,7 @@ function aggiungi_utente_database(\mysqli_wrapper\mysqli $link,\Google_Service_O
         throw new \RuntimeException("Wrong domain", 10);
 
     $id = null;
+    $already = false;
     $return = [];
 
     // Cerco di ottenre l'ID se esiste altrimenti lo aggiungo
@@ -32,7 +33,7 @@ function aggiungi_utente_database(\mysqli_wrapper\mysqli $link,\Google_Service_O
         $userinfo->id
     );
 
-    $id_stm->execute(false);
+    $id_stm->execute();
     $id_stm->store_result();
     $id_stm->bind_result($id);
 
@@ -53,12 +54,14 @@ function aggiungi_utente_database(\mysqli_wrapper\mysqli $link,\Google_Service_O
         $userinfo->id
     );
 
-    $operazione->execute(false);
+    $operazione->execute();
     $operazione->bind_result($id);
     $operazione->fetch();
 
     if($id === null)
         $id = $operazione->insert_id;
+    else
+        $already = true;
 
     $return["id"] = $id;
 
@@ -80,7 +83,7 @@ function aggiungi_utente_database(\mysqli_wrapper\mysqli $link,\Google_Service_O
         $utente->orgUnitPath
     );
 
-    $controllo->execute(true);
+    $controllo->execute();
     $controllo->bind_result($tipo);
 
     while($controllo->fetch())
@@ -100,25 +103,25 @@ function aggiungi_utente_database(\mysqli_wrapper\mysqli $link,\Google_Service_O
     if($userinfo->email === "dario.pagani@itispisa.gov.it")
         $utente_studente = $utente_docente = true;
 
-    if($utente_docente)
+    if(!$already && $utente_docente)
     {
         $operazione = $link->prepare("INSERT INTO Docente(utente) VALUES (?)");
         $operazione->bind_param(
             "i",
             $id
         );
-        $operazione->execute(false);
+        $operazione->execute();
         $operazione->close();
     }
 
-    if($utente_studente)
+    if(!$already && $utente_studente)
     {
         $operazione = $link->prepare("INSERT INTO Studente(utente) VALUES (?)");
         $operazione->bind_param(
             "i",
             $id
         );
-        $operazione->execute(false);
+        $operazione->execute();
         $operazione->close();
     }
 
