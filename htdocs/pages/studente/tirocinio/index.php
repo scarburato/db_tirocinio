@@ -202,17 +202,18 @@ $num_tir = $_GET['tirocinio'];
                               </span>
                             </a>
                         </li>
-                        <li data-tab="comments">
-                            <a> <!-- TODO visualizzazione -->
-                                <span class="icon">
-                                  <i class="fa fa-comments" aria-hidden="true"></i>
-                              </span>
-                                <span>
-                                  Commenti
-                              </span>
-                            </a>
-                        </li>
                     <?php } ?>
+
+                    <li data-tab="comments">
+                        <a> <!-- TODO visualizzazione -->
+                            <span class="icon">
+                              <i class="fa fa-comments" aria-hidden="true"></i>
+                          </span>
+                            <span>
+                              Commenti
+                          </span>
+                        </a>
+                    </li>
                 </ul>
             </div>
 
