@@ -29,6 +29,7 @@ class GetHandler
 		this.next_page = 0;
 		this.prev_page = null;
 		this.query = "";
+		this.params = {};
 
 		this.tbody = table_body;
 		this.thead = table_head;
@@ -83,6 +84,18 @@ class GetHandler
 	}
 
 	/**
+	 * Imposta parametri aggiunti alla chiamata GET
+	 * @param params
+	 */
+	setParams(params)
+	{
+		if(!(params instanceof Object))
+			throw("Params must e Object!");
+
+		this.params = params;
+	}
+
+	/**
 	 * Funzione che effettua la chiamata GET ed aggiorna tutti i pulsanti
 	 */
 	get()
@@ -107,10 +120,10 @@ class GetHandler
 		$.get
 		(
 			this.remote,
-			{
+			this.bulidArgs({
 				page: this.current_page,
 				query: this.query
-			}
+			})
 		)
 			.done((data) =>
 			{
@@ -123,7 +136,6 @@ class GetHandler
 					{
 						e.prop("disabled", true)
 					});
-					return;
 				}
 
 				// Aggiorno la tabella
@@ -202,5 +214,19 @@ class GetHandler
 			this.current_page = this.next_page;
 
 		this.get();
+	}
+
+	/**
+	 * Funzione che crea un nuovo oggetto partendo dalle opzioni di defualt e quelle passate
+	 * @param opts Object
+	 * @return Object
+	 * @private
+	 */
+	bulidArgs(opts)
+	{
+		let dux = {};
+		$.extend(dux, opts, this.params);
+
+		return dux;
 	}
 }
