@@ -17,6 +17,10 @@ $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
 $oauth2 = \auth\connect_token_google($google_client, $user->get_token());
 
+$permissions = new \auth\PermissionManager($server, $user);
+
+$permissions->check("factory.intouch", \auth\PermissionManager::UNAUTHORIZED_REDIRECT);
+
 // Variabili pagina
 $page = "Contatti";
 
@@ -41,7 +45,7 @@ $contatti = new class($server,
                         INNER JOIN Contatto C on EntratoInContatto.contatto = C.id
                       WHERE C.azienda = A.id)");
 
-        $conta->execute(true);
+        $conta->execute();
         $conta->bind_result($row_tot);
         $conta->fetch();
         $conta->close();
@@ -51,7 +55,7 @@ $contatti = new class($server,
 };
 $nav = new \helper\PaginationIndexBuilder($contatti);
 
-$contatti->execute(true);
+$contatti->execute();
 $contatti->bind_result($id,$nome, $numero_contatti);
 ?>
 <html lang="it">
@@ -70,6 +74,18 @@ $contatti->bind_result($id,$nome, $numero_contatti);
             ?>
         </aside>
         <div class="column">
+            <div class="field">
+                <p class="control has-text-right">
+                    <a class="button is-primary is-large" href="contatti/create.php">
+                        <span class="icon">
+                            <i class="fa fa-handshake-o" aria-hidden="true"></i>
+                        </span>
+                        <span>
+                            Segnarsi come in contatto
+                        </span>
+                    </a>
+                </p>
+            </div>
             <?php
             while($contatti->fetch())
             {
