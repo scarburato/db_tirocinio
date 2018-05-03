@@ -27,33 +27,36 @@ $page = "Cruscotto";
  * - I tirocini che sono appena partiti
  * - I contatti che sono appena iniziati
  *
+ * Mostra gli eventi già iniziati e quelli che inizierranno nelle prossime sei ore!
+ *
  * @ docente non è altro che una variabile per evitare di dover scrivere ogni volta l'ID del docente
  * nella bind param, nel primo WHERE gli viene assegno il valore di ? con l'operatore := e se lo tiene anche per dopo :P
  * Lo scoperto solo il tre di Maggio quindi è probabile trovare vecchie interrogazioni al BD che contegano inutili
  * ripetizioni di '?' PAX
  */
-$recenti = $server->prepare("SELECT * FROM (
+$recenti = $server->prepare("
+SELECT * FROM (
   SELECT C.quando AS 'time', 'commento' AS 'type', T2.id AS 'id', CONCAT(G.nome, ' ', G.cognome) AS 'preview'
     FROM Commento C
     INNER JOIN Tirocinio T2 on C.tirocinio = T2.id
     LEFT JOIN UtenteGoogle G on C.autore = G.id
-  WHERE T2.docenteTutore = @docente := ?  AND C.autore <> @docente
-  UNION ALL (
+  WHERE T2.docenteTutore = (@docente := ?) AND C.autore <> @docente
+  UNION (
     SELECT T.dataInizio as 'time', 'tirocinio' AS 'type', T.id, A.nominativo AS 'preview'
       FROM Tirocinio T
       INNER JOIN Azienda A on T.azienda = A.id
     WHERE T.docenteTutore = @docente
   )
-  UNION ALL (
+  UNION (
     SELECT E.inizio AS 'time', 'contatto' AS 'type', E.contatto AS 'id', CONCAT(C2.nome, ' ', C2.cognome) AS 'preview'
       FROM EntratoInContatto E
       INNER JOIN Contatto C2 on E.contatto = C2.id
     WHERE E.docente = @docente
   )
   ORDER BY time DESC
-  LIMIT 6
 ) tmp
-WHERE time <= CURRENT_TIME();");
+WHERE time <= DATE_ADD(CURRENT_TIME(), INTERVAL 6 HOUR) LIMIT 4
+");
 
 $recenti->bind_param("i", $user->get_database_id());
 
@@ -63,24 +66,26 @@ $recenti->bind_result($time, $type, $id, $prev);
 ?>
 <html lang="it">
 <head>
-    <?php include ($_SERVER["DOCUMENT_ROOT"]) ."/utils/pages/head.phtml"; ?>
+	<?php include ($_SERVER["DOCUMENT_ROOT"]) ."/utils/pages/head.phtml"; ?>
 </head>
 <body>
 <?php include "../common/google_navbar.php"; ?>
 <br>
 <section class="container">
-    <div class="columns">
-        <aside class="column is-3 is-fullheight">
-            <?php
-            $index_menu = 0;
-            include "menu.php";
-            ?>
-        </aside>
-        <div class="column">
+	<div class="columns">
+		<aside class="column is-3 is-fullheight">
 			<?php
+			$index_menu = 0;
+			include "menu.php";
+			?>
+		</aside>
+		<div class="column">
+			<?php
+			$trigerred = false;
 			while($recenti->fetch())
-            {
-            	?>
+			{
+				$trigerred = true;
+				?>
 				<div class="media box">
 					<?php
 					switch ($type)
@@ -105,7 +110,7 @@ $recenti->bind_result($time, $type, $id, $prev);
 							break;
 
 						case "tirocinio":
-                            ?>
+							?>
 							<figure class="media-left">
 							<span class="icon is-large">
 								<i class="fa fa-briefcase fa-2x" aria-hidden="true"></i>
@@ -120,11 +125,11 @@ $recenti->bind_result($time, $type, $id, $prev);
 									</a>
 								</p>
 							</div>
-                            <?php
+							<?php
 							break;
 
 						case "contatto":
-                            ?>
+							?>
 							<figure class="media-left">
 							<span class="icon is-large">
 								<i class="fa fa-address-card fa-2x" aria-hidden="true"></i>
@@ -139,7 +144,7 @@ $recenti->bind_result($time, $type, $id, $prev);
 									</a>
 								</p>
 							</div>
-                            <?php
+							<?php
 							break;
 
 						default:
@@ -149,10 +154,24 @@ $recenti->bind_result($time, $type, $id, $prev);
 					?>
 				</div>
 				<?php
-            }
+			}
+
+			if(!$trigerred)
+			{
+                ?>
+				<h4 class="title is-4 has-text-centered">
+					<span class="icon">
+						<i class="fa fa-frown-o" aria-hidden="true"></i>
+					</span>
+					<span>
+						Non c'è nulla da mostrare qua, riprovare in un secondo momento!
+					</span>
+				</h4>
+				<?php
+			}
 			?>
-        </div>
-    </div>
+		</div>
+	</div>
 </section>
 <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 </body>
