@@ -30,9 +30,15 @@ INSERT INTO Privilegio(nome, descrizione) VALUES
   ('control.groups', 'COnsente di modificare i gruppi'),
   ('factory.intouch', 'Consente di entrare in contatto con le aziende'),
   ('factory.contacts.create', 'Consente di creare contatti aziendali'),
-  ('factory.contacts.create', 'Consente di segnarsi come in contatto con un contatto'),
   ('user.groups', 'Consente di assegnare gruppi agli utenti'),
   ('root', 'Accesso totale a tutto, nessuna domanda');
 
 INSERT INTO Gruppo(nome, descrizione) VALUES ('root', 'Accesso totale e globale al programma');
 INSERT INTO PermessiGruppo(gruppo, privilegio) VALUES ('root', 'root');
+
+INSERT INTO Indirizzo(indirizzo) VALUES
+  ('Informatica e Telecomunicazioni'),
+  ('Chimica, Materiali e Biotecnologie'),
+  ('Elettronica ed Elettrotecnica'),
+  ('Meccanica, Meccatronica ed Energia'),
+  ('Trasporti e Logistica');

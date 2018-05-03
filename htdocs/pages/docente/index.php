@@ -2,7 +2,7 @@
 /**
  * Created by PhpStorm.
  * User: dario
- * Date: 23/01/18
+ * Date: 03/05/18
  * Time: 19.27
  */
 
@@ -19,6 +19,47 @@ $oauth2 = \auth\connect_token_google($google_client, $user->get_token());
 
 // Variabili pagina
 $page = "Cruscotto";
+
+/**
+ * Questa query mostra le attività più recenti riguardati il docente loggato, non spaventarsi, non è nulla di che
+ * fa una UNION di più tabelle in modo da poter ordinare gli eventi per il tempo di creazione, al momento mostra
+ * - I nuovi commenti scritti sotto i tirocini del docente NON scritti dal docente stesso
+ * - I tirocini che sono appena partiti
+ * - I contatti che sono appena iniziati
+ *
+ * @ docente non è altro che una variabile per evitare di dover scrivere ogni volta l'ID del docente
+ * nella bind param, nel primo WHERE gli viene assegno il valore di ? con l'operatore := e se lo tiene anche per dopo :P
+ * Lo scoperto solo il tre di Maggio quindi è probabile trovare vecchie interrogazioni al BD che contegano inutili
+ * ripetizioni di '?' PAX
+ */
+$recenti = $server->prepare("SELECT * FROM (
+  SELECT C.quando AS 'time', 'commento' AS 'type', T2.id AS 'id', CONCAT(G.nome, ' ', G.cognome) AS 'preview'
+    FROM Commento C
+    INNER JOIN Tirocinio T2 on C.tirocinio = T2.id
+    LEFT JOIN UtenteGoogle G on C.autore = G.id
+  WHERE T2.docenteTutore = @docente := ?  AND C.autore <> @docente
+  UNION ALL (
+    SELECT T.dataInizio as 'time', 'tirocinio' AS 'type', T.id, A.nominativo AS 'preview'
+      FROM Tirocinio T
+      INNER JOIN Azienda A on T.azienda = A.id
+    WHERE T.docenteTutore = @docente
+  )
+  UNION ALL (
+    SELECT E.inizio AS 'time', 'contatto' AS 'type', E.contatto AS 'id', CONCAT(C2.nome, ' ', C2.cognome) AS 'preview'
+      FROM EntratoInContatto E
+      INNER JOIN Contatto C2 on E.contatto = C2.id
+    WHERE E.docente = @docente
+  )
+  ORDER BY time DESC
+  LIMIT 6
+) tmp
+WHERE time <= CURRENT_TIME();");
+
+$recenti->bind_param("i", $user->get_database_id());
+
+$recenti->execute();
+$recenti->bind_result($time, $type, $id, $prev);
+
 ?>
 <html lang="it">
 <head>
@@ -36,7 +77,80 @@ $page = "Cruscotto";
             ?>
         </aside>
         <div class="column">
+			<?php
+			while($recenti->fetch())
+            {
+            	?>
+				<div class="media box">
+					<?php
+					switch ($type)
+					{
+						case "commento":
+							?>
+							<figure class="media-left">
+							<span class="icon is-large">
+								<i class="fa fa-comment fa-2x" aria-hidden="true"></i>
+							</span>
+							</figure>
+							<div class="media-content">
+								<h4 class="title is-4"><?= sanitize_html($prev) ?> ha scritto un commento</h4>
+								<h4 class="subtitle is-4"><?= $time ?></h4>
+								<p class="control has-text-right">
+									<a class="button is-link" href="tirocini/tirocinio/?page=comments&tirocinio=<?= $id ?>">
+										Guarda
+									</a>
+								</p>
+							</div>
+							<?php
+							break;
 
+						case "tirocinio":
+                            ?>
+							<figure class="media-left">
+							<span class="icon is-large">
+								<i class="fa fa-briefcase fa-2x" aria-hidden="true"></i>
+							</span>
+							</figure>
+							<div class="media-content">
+								<h4 class="title is-4">Tirocinio a <?= sanitize_html($prev) ?> è appena iniziato</h4>
+								<h4 class="subtitle is-4"><?= $time ?></h4>
+								<p class="control has-text-right">
+									<a class="button is-link" href="tirocini/tirocinio/?tirocinio=<?= $id ?>">
+										Guarda
+									</a>
+								</p>
+							</div>
+                            <?php
+							break;
+
+						case "contatto":
+                            ?>
+							<figure class="media-left">
+							<span class="icon is-large">
+								<i class="fa fa-address-card fa-2x" aria-hidden="true"></i>
+							</span>
+							</figure>
+							<div class="media-content">
+								<h4 class="title is-4">Inizio dei contatti con <?= sanitize_html($prev) ?></h4>
+								<h4 class="subtitle is-4"><?= $time ?></h4>
+								<p class="control has-text-right">
+									<a class="button is-link" href="azienda/contatto/?id=<?= $id ?>">
+										Guarda
+									</a>
+								</p>
+							</div>
+                            <?php
+							break;
+
+						default:
+							throw new RuntimeException("Stato invalido! Stato: $type", -1); // Lul ke simpatico, speriamo non crei problemi
+							break;
+					}
+					?>
+				</div>
+				<?php
+            }
+			?>
         </div>
     </div>
 </section>

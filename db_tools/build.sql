@@ -184,7 +184,8 @@ CREATE TRIGGER ControlloSovrapposizioneTemporale
         FROM EntratoInContatto E
         WHERE E.docente = NEW.docente
               AND E.contatto = NEW.contatto
-              AND (fine IS NULL OR fine >= NEW.inizio)
+              AND (E.fine IS NULL OR NEW.inizio <= E.fine)
+              AND (NEW.fine IS NULL OR NEW.fine >= E.inizio)
     ))
     THEN
       SIGNAL SQLSTATE '70002'
