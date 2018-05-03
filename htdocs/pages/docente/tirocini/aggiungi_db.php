@@ -12,12 +12,12 @@ require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 $server = new \mysqli_wrapper\mysqli();
 
 $user = new \auth\User();
-$user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
-$user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
+$user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
 
 $oauth2 = \auth\connect_token_google($google_client, $user->get_token());
 
-\auth\check_permission($server, "control.training.create");
+$permissions = new \auth\PermissionManager($server, $user);
+$permissions->check("train.add", \auth\PermissionManager::UNAUTHORIZED_THROW);
 
 // TODO Scrivere controlli
 // Controllo validità campi

@@ -12,8 +12,10 @@ $server = new \mysqli_wrapper\mysqli();
 
 $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
-$user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
+$permissions = new \auth\PermissionManager($server, $user);
+$permissions->check("train.add", \auth\PermissionManager::UNAUTHORIZED_REDIRECT);
 
+$user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 $oauth2 = \auth\connect_token_google($google_client, $user->get_token());
 
 // Variabili pagina
@@ -23,6 +25,10 @@ $page = "Creazione tirocinio";
 <html lang="it">
 <head>
     <?php include "../../../utils/pages/head.phtml"; ?>
+
+	<script src="<?= BASE_DIR ?>js/table/getHandler.js"></script>
+	<script src="<?= BASE_DIR ?>js/table/tableSelection.js"></script>
+	<script src="<?= BASE_DIR ?>js/togglePanel.js"></script>
 </head>
 <body>
 <?php include "../../common/google_navbar.php"; ?>
@@ -331,17 +337,69 @@ $page = "Creazione tirocinio";
 </div>
 
 <!--- PopOut: Seleziona Aziende -->
-<?php include ($_SERVER["DOCUMENT_ROOT"]) . "/pages/docente/modals/azienda.phtml"; ?>
+<div class="modal" id="azienda_modal">
+	<div class="modal-background"></div>
+	<div class="modal-card">
+		<header class="modal-card-head">
+			<p class="modal-card-title">Selezione azienda</p>
+		</header>
+		<section class="modal-card-body" style="height: 100%; max-height: 100%">
+			<div class="level">
+				<!-- Left side -->
+				<div class="level-left">
+					<form id="azienda_cerca">
+						<div class="field has-addons">
+							<p class="control">
+								<input class="input" name="query" type="text" placeholder="Filtra">
+							</p>
+							<p class="control">
+								<button type="submit" class="button">
+									Cerca
+								</button>
+							</p>
+						</div>
+					</form>
+				</div>
+
+				<div class="level-right">
+					<div class="field has-addons">
+						<p class="control">
+							<button class="button" disabled id="azienda_back">Indietro</button>
+						</p>
+						<p class="control">
+							<button class="button" disabled id="azienda_forward">Avanti</button>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="is-fullwidth" style="overflow-y: auto">
+				<table class="table is-fullwidth is-narrow is-hoverable">
+					<thead>
+					<tr>
+						<th>Nominativo</th>
+						<th>IVA</th>
+						<th>C. Fiscale</th>
+						<th style="width: 10%"></th>
+					</tr>
+					</thead>
+					<tbody id="aziende_tbody">
+
+					</tbody>
+				</table>
+			</div>
+		</section>
+		<footer class="modal-card-foot">
+			<button class="button is-success" id="seleziona_azienda_aggiungi">Seleziona</button>
+			<button class="button" id="seleziona_azienda_scarta">Scarta</button>
+		</footer>
+	</div>
+</div>
 
 <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 </body>
 <script>
 	let main_form = $ ("#main_form");
 </script>
-<script src="<?= BASE_DIR ?>js/table/getHandler.js"></script>
-<script src="<?= BASE_DIR ?>js/table/tableSelection.js"></script>
-<script src="<?= BASE_DIR ?>js/togglePanel.js"></script>
-
 
 <script src="js/selezione_studente.js"></script>
 <script src="js/selezione_docente.js"></script>
