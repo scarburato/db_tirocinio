@@ -1,12 +1,28 @@
+/**
+ * Classe che permette di creare schede interattive.
+ * Si deve passare un menù creato coi i tag html li ed ul, un div che contiene altri div. Ogni div è una scheda.
+ *
+ * Per associare le schede ai div usare il tag data-tab. Ad esempio premendo su un li con data-tab="info" lo script
+ * tenterà di visualizzare la div che ha data-tab="info"!
+ */
 class ToggleTab
 {
 	/**
-	 * @param selector jQuery
-	 * @param tabs_container jQuery
-	 * @param active_tab undefined | string @since 2018-02-28
+	 * @param selector jQuery										È l'elemento che contine le li
+	 * @param tabs_container jQuery									È l'elemento che contiene gli elementi associati
+	 * @param active_tab undefined | string @since 2018-02-28		Opzionale stringa che identifica la scheda attiva di def
 	 */
 	constructor(selector, tabs_container, active_tab)
 	{
+		if(!(selector instanceof jQuery))
+			throw("select must be jQuery");
+
+		if(!(tabs_container instanceof jQuery))
+			throw("container must be jQuery");
+
+		if(active_tab !== undefined && !isString(active_tab))
+			throw("active_tab must be a Strig or undefined");
+
 		let _self = this;
 
 		this.selector = selector;
@@ -16,9 +32,8 @@ class ToggleTab
 		this.tabs = this.tabs_container.find ("[data-tab]");
 
 		if (active_tab !== undefined)
-		{
 			this.setActive(active_tab);
-		}
+
 
 		this.handler = function ()
 		{
@@ -63,10 +78,14 @@ class ToggleTab
 	}
 
 	/**
+	 * Una (SINGOLA) funzione da eseguire
 	 * @param f function(evento)
 	 */
 	onChange(f)
 	{
+		if(!$.isFunction(f))
+			throw("Argument must me a function!");
+
 		this.handler = f;
 	}
 }
