@@ -220,10 +220,40 @@ CREATE TABLE Tirocinio (
   CONSTRAINT CHK_data CHECK (dataTermine IS NULL OR dataInizio <= dataTermine)
 );
 
-CREATE TRIGGER AggiornaUltimaModifica
+/*
+Questo evento viene chiamato prima dell'AGGIORNAMENTO nella tabella Tirocinio,
+- se viene inserito un contatto aziendale che non è coerente con l'azienda inbsetrita
+  viene elevato un errore SQL
+- controlla validità aggipornato descrizione!
+ */
+CREATE TRIGGER ControlloCoerenzaAggiornamento
+  BEFORE INSERT ON Tirocinio
+  FOR EACH ROW
+  BEGIN
+    -- Controllo se il coso è coerente
+    IF
+    NEW.tutoreAziendale IS NOT NULL AND
+    (SELECT C.azienda FROM Contatto C WHERE C.id = NEW.tutoreAziendale) <> NEW.azienda
+    THEN
+      SIGNAL SQLSTATE '70004'
+      SET MESSAGE_TEXT = 'Inserted tutoreAziendale is not working for inserted azienda!';
+    END IF;
+  END;
+
+CREATE TRIGGER ControlloCoerenzaAggiornamentoEAggiornaUltimaModifica
   BEFORE UPDATE ON Tirocinio
   FOR EACH ROW
   BEGIN
+    -- Controllo se il coso è coerente
+    IF
+    NEW.tutoreAziendale IS NOT NULL AND
+    (SELECT C.azienda FROM Contatto C WHERE C.id = NEW.tutoreAziendale) <> NEW.azienda
+    THEN
+      SIGNAL SQLSTATE '70004'
+      SET MESSAGE_TEXT = 'Inserted tutoreAziendale is not working for inserted azienda!';
+    END IF;
+
+    -- Controllo, in caso di modifica se è possibile aggiornare, se no elevo
     IF MD5(NEW.descrizione) <> MD5(OLD.descrizione) THEN
       IF NEW.visibilita = 'azienda' THEN
         SIGNAL SQLSTATE '70003'
