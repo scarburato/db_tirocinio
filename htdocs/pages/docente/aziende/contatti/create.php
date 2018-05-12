@@ -171,7 +171,7 @@ if ($is_set_contatto)
 
                 <div class="message is-warning" hidden id="contatto-occupato">
                     <div class="message-body">
-                        <p>
+                        <p class="has-text-justified">
                             Risulta che il contatto <span id="duplicate-contact-name">test</span> dell'azienda <span
                                     id="duplicate-factory-name"></span>
                             sia già in contatto con qualcuno a scuola.
@@ -196,9 +196,8 @@ if ($is_set_contatto)
                     <div class="field-body">
                         <div class="field">
                             <div class="control">
-                                <input title="Data di inizio" id="test" required class="input" type="date"
-                                       name="data_inizio"
-                                       placeholder="Inizio">
+                                <input title="Data di inizio" id="data_inizio" required type="date"
+									   class="input data_dinamica" name="data_inizio" placeholder="Inizio">
                             </div>
                             <p class="help">
                                 Campo obbligatorio
@@ -206,8 +205,8 @@ if ($is_set_contatto)
                         </div>
                         <div class="field">
                             <div class="control">
-                                <input title="Data di termine" class="input" type="date" name="data_fine"
-                                       placeholder="Fine">
+                                <input title="Data di termine" class="input data_dinamica" type="date"
+									   name="data_fine" id="data_fine" placeholder="Fine">
                             </div>
                             <p class="help">
                                 La data di termine non è obbligatoria
@@ -215,6 +214,25 @@ if ($is_set_contatto)
                         </div>
                     </div>
                 </div>
+
+				<div class="message is-danger" hidden id="contatto-sovrapposto">
+					<div class="message-body">
+						<p class="has-text-justified">
+							Il contatto selezionato è già in contatto l'utente attuale nello stesso periodo temporale. Continurare genererà un eccezzione di sovrapposizione temporale.<br>
+							Se si vuole proseguire terminare il contatto che crea sovrapossizione!
+						</p>
+						<p class="has-text-right">
+							<a id="contatto-sovrapposto-href"
+							   class="button is-danger is-small"
+							   target="_blank"
+							   href="<?= BASE_DIR ?>pages/docente/azienda/contatto"
+							   title="mostra scheda interessato"
+							>
+								Guarda
+							</a>
+						</p>
+					</div>
+				</div>
 
                 <div class="field">
                     <div class="control has-text-right">
@@ -290,5 +308,7 @@ if ($is_set_contatto)
 </div>
 
 <script src="js/seleziona_contatto_aziendale.js"></script>
+<script src="js/controllo_sovrapposizione.js"></script>
+
 </body>
 </html>
