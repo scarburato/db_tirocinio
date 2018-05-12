@@ -8,12 +8,23 @@
 
 namespace helper;
 
+/**
+ * Interface PaginationMode
+ * Questa interfaccia contiene metodi che verrano chiamate da PaginationIndexBuilder per generare
+ * il contenuto HTML dei pulsanti. Ad esempio è possibile trovare implementazioni per generare un semplice
+ * navigatore statico ed un semplice navigatore AJAX
+ * @package helper
+ *
+ * @see PaginationIndexBuilder
+ * @see IndexHTTP
+ * @see IndexJS
+ */
 interface PaginationMode
 {
-    public function last_page(Pagination $current): Attributes;
-    public function first_page(Pagination $current): Attributes;
-    public function next_page(Pagination $current): Attributes;
-    public function current_page(Pagination $current): Attributes;
-    public function previus_page(Pagination $current): Attributes;
-    public function offset_page(Pagination $current, int $offset): Attributes;
+	public function last_page(Pagination $current): Attributes;
+	public function first_page(Pagination $current): Attributes;
+	public function next_page(Pagination $current): Attributes;
+	public function current_page(Pagination $current): Attributes;
+	public function previus_page(Pagination $current): Attributes;
+	public function offset_page(Pagination $current, int $offset): Attributes;
 }
