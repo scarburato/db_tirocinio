@@ -14,3 +14,9 @@ p.html(
 );
 
 text = undefined;
+
+// Bottone per la stampa
+$ ("#print").on("click", function ()
+{
+	$("#preview_editor").printElement();
+});
