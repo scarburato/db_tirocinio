@@ -42,7 +42,7 @@ $page = "Creazione tirocinio";
             ?>
         </aside>
         <div class="column">
-			<?php include "../../common/create_contact.php"; ?>
+			<?php include "../../common/mysql_error.php"; ?>
 			<form action="aggiungi_db.php" method="post" id="main_form">
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">

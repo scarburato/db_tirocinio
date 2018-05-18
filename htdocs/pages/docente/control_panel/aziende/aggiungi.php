@@ -36,7 +36,7 @@ $page = "Gestione Aziende - Aggiungi";
             ?>
         </aside>
         <div class="column">
-			<?php include "../../../common/create_contact.php"; ?>
+			<?php include "../../../common/mysql_error.php"; ?>
             <form id="main_form" method="post" action="./aggiungi_db.php">
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">

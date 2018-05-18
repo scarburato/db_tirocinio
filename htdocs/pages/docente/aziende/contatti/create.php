@@ -67,7 +67,7 @@ if ($is_set_contatto)
             ?>
         </aside>
         <div class="column">
-			<?php include "../../../common/create_contact.php"; ?>
+			<?php include "../../../common/mysql_error.php"; ?>
 			<form action="create_db.php" method="post">
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
