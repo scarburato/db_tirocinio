@@ -42,38 +42,8 @@ $page = "Creazione tirocinio";
             ?>
         </aside>
         <div class="column">
-            <?php
-            if(isset($_GET["errors"]))
-            {
-                $errori = urldecode($_GET["errors"]);
-                ?>
-                <article class="message is-danger" id="errore_db">
-                    <div class="message-header">
-                        <p>
-                            <span class="icon">
-                                <i class="fa fa-database"></i>
-                            </span>
-                            <span>
-                                Errore di processo
-                            </span>
-                        </p>
-                        <button class="delete" aria-label="delete" id="errore_db_delete"></button>
-                    </div>
-                    <div class="message-body">
-                        <p>Si sono verificati dei problemi durante il processo dei dati!</p>
-                        <pre><?= sanitize_html($errori) ?></pre>
-                    </div>
-                    <script>
-						$("#errore_db_delete").on("click", function ()
-						{
-							$("#errore_db").remove();
-						});
-                    </script>
-                </article>
-                <?php
-            }
-            ?>
-            <form action="aggiungi_db.php" method="post" id="main_form">
+			<?php include "../../common/create_contact.php"; ?>
+			<form action="aggiungi_db.php" method="post" id="main_form">
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
                         <label class="label">Studente</label>
@@ -359,7 +329,7 @@ $page = "Creazione tirocinio";
 							</p>
 						</div>
 					</form>
-				</div>
+				</div>2\
 
 				<div class="level-right">
 					<div class="field has-addons">
