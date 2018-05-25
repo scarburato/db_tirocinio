@@ -2,11 +2,17 @@ class TogglePanel
 {
 	/**
 	 *
-	 * @param panel String a string to use in jQuery (yes... I know )
+	 * @param panel String|jQuery String is depracted
 	 */
 	constructor(panel)
 	{
-		this.panelName = panel;
+		if(panel instanceof jQuery)
+			this.panel = panel;
+		else if(isString(panel))
+			this.panel = $(panel);
+		else
+			throw ("First parameter must be a jQuery");
+
 		this.onShow = function (index)
 		{
 			index.value = "";
@@ -20,9 +26,9 @@ class TogglePanel
 
 	show()
 	{
-		$ (this.panelName).addClass ("is-active");
+		this.panel.addClass ("is-active");
 
-		let elements = $ (this.panelName).find ($ ("input"));
+		let elements = this.panel.find ($ ("input"));
 
 		for (let i = 0; i < elements.length; i++)
 			this.onShow (elements[i]);
@@ -30,7 +36,7 @@ class TogglePanel
 
 	hide()
 	{
-		$ (this.panelName).removeClass ("is-active");
+		this.panel.removeClass ("is-active");
 	}
 
 	toggle()
@@ -39,5 +45,14 @@ class TogglePanel
 			this.hide ();
 		else
 			this.show ();
+	}
+
+	/**
+	 * Returns true if the panel is visible
+	 * @returns {boolean}
+	 */
+	isActive()
+	{
+		return this.panel.hasClass("is-active");
 	}
 }
