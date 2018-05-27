@@ -171,6 +171,18 @@ CREATE TABLE EntratoInContatto (
   REFERENCES Docente (Utente)
 );
 
+CREATE FUNCTION sovrapponeEvento(docente SMALLINT UNSIGNED, contatto INT(8) UNSIGNED, inizio DATE, fine DATE)
+  RETURNS BOOLEAN
+  BEGIN
+    RETURN EXISTS (
+        SELECT inizio
+        FROM EntratoInContatto E
+        WHERE E.docente = docente
+              AND E.contatto = contatto
+              AND (E.fine IS NULL OR inizio <= E.fine)
+              AND (fine IS NULL OR fine >= E.inizio)
+    );
+  END;
 /*
 Questo evento viene chiamato prima dell'inserimento nella tabella EntratoInContatto,
 se un contatto con una persone si sovrappone temporalmente un errore 70002 viene generato!
@@ -179,15 +191,25 @@ CREATE TRIGGER ControlloSovrapposizioneTemporale
   BEFORE INSERT ON EntratoInContatto
   FOR EACH ROW
   BEGIN
-    IF (EXISTS (
-        SELECT inizio
-        FROM EntratoInContatto E
-        WHERE E.docente = NEW.docente
-              AND E.contatto = NEW.contatto
-              AND (E.fine IS NULL OR NEW.inizio <= E.fine)
-              AND (NEW.fine IS NULL OR NEW.fine >= E.inizio)
-    ))
-    THEN
+    IF NEW.fine < NEW.inizio THEN
+      SIGNAL SQLSTATE '70003'
+      SET MESSAGE_TEXT = 'Fine has to be greater than inizio';
+    END IF;
+    IF sovrapponeEvento(NEW.docente, NEW.contatto, NEW.inizio, NEW.fine) THEN
+      SIGNAL SQLSTATE '70002'
+      SET MESSAGE_TEXT = 'Already in contact each other!';
+    END IF;
+  END;
+
+CREATE TRIGGER ControlloSovrapposizioneTemporaleUpdate
+  BEFORE UPDATE ON EntratoInContatto
+  FOR EACH ROW
+  BEGIN
+    IF NEW.fine < NEW.inizio THEN
+      SIGNAL SQLSTATE '70003'
+      SET MESSAGE_TEXT = 'Fine has to be greater than inizio';
+    END IF;
+    IF sovrapponeEvento(NEW.docente, NEW.contatto, NEW.inizio, NEW.fine) THEN
       SIGNAL SQLSTATE '70002'
       SET MESSAGE_TEXT = 'Already in contact each other!';
     END IF;
