@@ -181,13 +181,15 @@ CREATE FUNCTION sovrapponeEvento(docente SMALLINT UNSIGNED, contatto INT(8) UNSI
               AND E.contatto = contatto
               AND (E.fine IS NULL OR inizio <= E.fine)
               AND (fine IS NULL OR fine >= E.inizio)
+              -- Condizione necessaria per saltare la riga stessa :P. Tanto è chiave primaria
+              AND E.inizio <> inizio
     );
   END;
 /*
 Questo evento viene chiamato prima dell'inserimento nella tabella EntratoInContatto,
 se un contatto con una persone si sovrappone temporalmente un errore 70002 viene generato!
  */
-CREATE TRIGGER ControlloSovrapposizioneTemporale
+CREATE TRIGGER controlloSovrapposizioneTemporale
   BEFORE INSERT ON EntratoInContatto
   FOR EACH ROW
   BEGIN
@@ -197,11 +199,11 @@ CREATE TRIGGER ControlloSovrapposizioneTemporale
     END IF;
     IF sovrapponeEvento(NEW.docente, NEW.contatto, NEW.inizio, NEW.fine) THEN
       SIGNAL SQLSTATE '70002'
-      SET MESSAGE_TEXT = 'Already in contact each other!';
+      SET MESSAGE_TEXT = 'Already in contact each other! Aborted to avoid an overlap of events';
     END IF;
   END;
 
-CREATE TRIGGER ControlloSovrapposizioneTemporaleUpdate
+CREATE TRIGGER controlloSovrapposizioneTemporaleUpdate
   BEFORE UPDATE ON EntratoInContatto
   FOR EACH ROW
   BEGIN
@@ -211,7 +213,7 @@ CREATE TRIGGER ControlloSovrapposizioneTemporaleUpdate
     END IF;
     IF sovrapponeEvento(NEW.docente, NEW.contatto, NEW.inizio, NEW.fine) THEN
       SIGNAL SQLSTATE '70002'
-      SET MESSAGE_TEXT = 'Already in contact each other!';
+      SET MESSAGE_TEXT = 'Already in contact each other! Aborted to avoid an overlap of events';
     END IF;
   END;
 
