@@ -193,7 +193,7 @@ CREATE TRIGGER controlloSovrapposizioneTemporale
   BEFORE INSERT ON EntratoInContatto
   FOR EACH ROW
   BEGIN
-    IF NEW.fine < NEW.inizio THEN
+    IF NEW.fine IS NOT NULL AND NEW.fine < NEW.inizio THEN
       SIGNAL SQLSTATE '70003'
       SET MESSAGE_TEXT = 'Fine has to be greater than inizio';
     END IF;
@@ -207,7 +207,7 @@ CREATE TRIGGER controlloSovrapposizioneTemporaleUpdate
   BEFORE UPDATE ON EntratoInContatto
   FOR EACH ROW
   BEGIN
-    IF NEW.fine < NEW.inizio THEN
+    IF NEW.fine IS NOT NULL AND NEW.fine < NEW.inizio THEN
       SIGNAL SQLSTATE '70003'
       SET MESSAGE_TEXT = 'Fine has to be greater than inizio';
     END IF;
