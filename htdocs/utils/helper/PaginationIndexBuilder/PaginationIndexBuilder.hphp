@@ -95,14 +95,14 @@ class PaginationIndexBuilder
 				<a <?= $this->pagination_builder->previus_page($this->pagination)->merge(new Attributes(
 						[
 							"class" => ["pagination-previous"],
-							"aria-label" => ["Proseguire avanti di una pagina"]
+							"aria-label" => ["Retrocedere indietro di una pagina"]
 						])
 				)->build() ?>
 					<?= !$this->pagination->has_previus_page() ? "disabled" : "" ?>>Indietro</a>
 				<a <?= $this->pagination_builder->next_page($this->pagination)->merge(new Attributes(
 						[
 							"class" => ["pagination-next"],
-							"aria-label" => ["Retrocedere indietro di una pagina"]
+							"aria-label" => ["Proseguire avanti di una pagina"]
 						])
 				)->build() ?>
 					<?= !$this->pagination->has_next_page() ? "disabled" : "" ?>>Avanti</a>
@@ -169,7 +169,7 @@ class PaginationIndexBuilder
 						<a <?= $this->pagination_builder->next_page($this->pagination)->merge(new Attributes(
 								[
 									"class" => ["pagination-link"],
-									"aria-label" => ["Pagina " . ($this->pagination->get_current_page())],
+									"aria-label" => ["Pagina " . ($this->pagination->get_current_page() +1)],
 								])
 						)->build() ?>
 						>
@@ -189,7 +189,7 @@ class PaginationIndexBuilder
 						<a <?= $this->pagination_builder->last_page($this->pagination)->merge(new Attributes(
 								[
 									"class" => ["pagination-link"],
-									"aria-label" => ["Pagina " . ($this->pagination->get_current_page())],
+									"aria-label" => ["Pagina " . ($this->pagination->get_max_page())],
 								])
 						)->build() ?>>
 							<?= $this->pagination->get_max_page() ?>
