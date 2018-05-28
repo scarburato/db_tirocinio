@@ -1,0 +1,74 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 28/05/18
+ * Time: 12.26
+ */
+
+namespace auth;
+
+/**
+ * Class GoogleConnection
+ * Questa classe permette di gestire la connessione di un'utente con Google!
+ *
+ * @package auth
+ */
+class GoogleConnection
+{
+	private $google_client;
+	private $user;
+	private $oauth2;
+
+	/**
+	 * GoogleConnection constructor.
+	 * @param User $user
+	 * @throws \Google_Exception
+	 */
+	public function __construct(User $user)
+	{
+		$this->user = $user;
+
+		if($this->user->get_token() === null)
+			throw new \LogicException("This user does not have a Google token!");
+
+		$this->google_client = GoogleConnection::buildClient();
+		$this->google_client->setAccessToken($user->get_token());
+
+		if($this->google_client->isAccessTokenExpired())
+		{
+			$new_token = $this->google_client->fetchAccessTokenWithRefreshToken();
+			$this->google_client->setAccessToken($new_token);
+			$this->user->set_token($this->google_client->getAccessToken());
+		}
+
+		$this->oauth2 = new \Google_Service_Oauth2($this->google_client);
+	}
+
+	/**
+	 * Ritorna le informazioni utente di google
+	 * @return \Google_Service_Oauth2_Userinfoplus
+	 */
+	public function getUserProps(): \Google_Service_Oauth2_Userinfoplus
+	{
+		return $this->oauth2->userinfo->get();
+	}
+
+	/**
+	 * Questa funzione genera un Google_Client configuarto per l'accesso a itispisa.gov.it!!!!
+	 * @return \Google_Client
+	 * @throws \Google_Exception
+	 */
+	public static function buildClient(): \Google_Client
+	{
+		$google_client = new \Google_Client();
+		$google_client->setAuthConfig(dirname(__FILE__) . "/../../../client_secret_login.json");
+
+		$google_client->setRedirectUri(GOOGLE_REDIRECT_URI);
+		$google_client->addScope("https://www.googleapis.com/auth/userinfo.email");
+		$google_client->addScope("https://www.googleapis.com/auth/userinfo.profile");
+
+		return $google_client;
+	}
+}
+

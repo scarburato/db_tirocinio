@@ -46,7 +46,12 @@ function redirect_error(string $nome, string $code, array $what)
     $errore = [
         "name" => $nome,
         "code" => $code,
-        "what" => json_encode($what, JSON_PRETTY_PRINT)
+        "what" => json_encode($what, JSON_PRETTY_PRINT),
+        "dump" => [
+            "post" => $_POST,
+            "get" => $_GET,
+            "session" => $_SESSION
+        ]
     ];
 
     if(session_status() !== PHP_SESSION_ACTIVE)

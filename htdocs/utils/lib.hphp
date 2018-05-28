@@ -22,12 +22,10 @@ session_start();
 
 try
 {
-    $google_client = new Google_Client();
-    $google_client->setAuthConfig(dirname(__FILE__) . "/../../client_secret_login.json");
-
-    $google_client->setRedirectUri(GOOGLE_REDIRECT_URI);
-    $google_client->addScope("https://www.googleapis.com/auth/userinfo.email");
-    $google_client->addScope("https://www.googleapis.com/auth/userinfo.profile");
+	/**
+	 * @deprecated
+	 */
+	$google_client = \auth\GoogleConnection::buildClient();
 }
 catch (Google_Exception $e)
 {

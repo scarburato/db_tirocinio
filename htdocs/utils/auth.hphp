@@ -81,7 +81,8 @@ namespace auth
      * @param $token string
      * @param $redirect bool
      * @return \Google_Service_Oauth2;
-     */
+	 * 	 * @deprecated usare GoogleConnection
+	 */
     function connect_token_google(&$google, $token, $redirect = true)
     {
         try
@@ -116,6 +117,7 @@ namespace auth
      * @param bool $redirect
      * @return \Google_Service_Oauth2_Userinfoplus|null
      * @throws \Google_Exception
+	 * @deprecated usare GoogleConnection
      */
     function get_user_info(\Google_Service_Oauth2 &$oauth2, $redirect = true)
     {
