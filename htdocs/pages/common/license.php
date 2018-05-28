@@ -88,6 +88,11 @@ $user->is_authorized(\auth\LEVEL_ALL, \auth\User::UNAUTHORIZED_REDIRECT);
                 <td>Apache License 2.0</td>
                 <td><a href="https://github.com/google/google-api-php-client/blob/master/LICENSE">Licenza</a></td>
             </tr>
+			<tr>
+				<th>Vis.js</th>
+				<td>MIT License</td>
+				<td><a href="http://visjs.org/index.html#licenses">Licenza</a></td>
+			</tr>
             </tbody>
         </table>
     </div>
