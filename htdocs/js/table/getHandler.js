@@ -130,13 +130,13 @@ class GetHandler
 				let res = data;
 
 				// Se il contatore è vuoto, non c'è motivo di mostrare come disponible il pulsante per proseguire
-				if(res.data_rows <= 0)
+				/*if(res.data_rows <= 0)
 				{
 					this.buttons.forward.elements.forEach(function (e)
 					{
 						e.prop("disabled", true)
 					});
-				}
+				}*/
 
 				// Aggiorno la tabella
 				if(this.on_head !== undefined)
@@ -157,7 +157,7 @@ class GetHandler
 				this.prev_page = res.previus_page;
 
 				// Se non è possibile proseguire disabilito il pulsante, altrimneti [ri]attivo
-				let comp = this.next_page === null;
+				let comp = this.next_page === null || res.data_rows <= 0;
 				this.buttons.forward.elements.forEach(function (e)
 				{
 					e.prop ("disabled", comp);
