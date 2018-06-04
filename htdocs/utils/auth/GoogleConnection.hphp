@@ -25,7 +25,7 @@ class GoogleConnection
 	 * @param User $user
 	 * @throws \Google_Exception
 	 */
-	public function __construct(User $user)
+	public function __construct(User $user, bool $redirect = true)
 	{
 		$this->user = $user;
 
@@ -35,11 +35,25 @@ class GoogleConnection
 		$this->google_client = GoogleConnection::buildClient();
 		$this->google_client->setAccessToken($user->get_token());
 
-		if($this->google_client->isAccessTokenExpired())
+		try
 		{
-			$new_token = $this->google_client->fetchAccessTokenWithRefreshToken();
-			$this->google_client->setAccessToken($new_token);
-			$this->user->set_token($this->google_client->getAccessToken());
+			if ($this->google_client->isAccessTokenExpired())
+			{
+				// FIXME
+				$new_token = $this->google_client->fetchAccessTokenWithRefreshToken();
+				$this->google_client->setAccessToken($new_token);
+				$this->user->set_token($this->google_client->getAccessToken());
+			}
+		}
+		catch (\Google_Service_Exception $e)
+		{
+			if($redirect)
+			{
+				$user->erase();
+				redirect("/index.php", ["google_expired" => true]);
+			}
+			else
+				throw $e;
 		}
 
 		$this->oauth2 = new \Google_Service_Oauth2($this->google_client);
@@ -52,6 +66,14 @@ class GoogleConnection
 	public function getUserProps(): \Google_Service_Oauth2_Userinfoplus
 	{
 		return $this->oauth2->userinfo->get();
+	}
+
+	/**
+	 * Funzione che effettua il logut e rende invalido il token di google
+	 */
+	public function logOut()
+	{
+		// TODO
 	}
 
 	/**

@@ -163,7 +163,8 @@ class User
     }
 
     /**
-     *
+     * Cancella tutte le informazioni dell'utente!
+	 * Equivale ed effetturare il log_out
      */
     public function erase()
     {

@@ -40,7 +40,7 @@ $from = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "sconosciut
     <?php include "utils/pages/head.phtml" ?>
 </head>
 <body>
-<section class="section container">
+<section class="section">
     <article class="message is-danger is-large">
         <div class="message-header">
             <p>Errore lato server!</p>
@@ -88,7 +88,7 @@ $from = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "sconosciut
             }
             ?>
 
-            <a class="button is-warning" href="mailto:<?= ERROR_MAIL ?>?subject=Problema&body=<?= urlencode($from)?>%0A%0A<?= urlencode($_GET["error"]) ?>">
+            <a class="button is-warning" href="mailto:<?= ERROR_MAIL ?>?subject=Problema&body=<?= $errore["filename"] ?>">
                 <span class="icon">
                     <i class="fa fa-envelope" aria-hidden="true"></i>
                 </span>

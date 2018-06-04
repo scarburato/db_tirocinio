@@ -41,9 +41,10 @@ function redirect(string $path, array $get_args = [])
     );
 }
 
-function redirect_error(string $nome, string $code, array $what)
+function redirect_error(string $nome, string $code, array $what, string $filename = "")
 {
     $errore = [
+    	"filename" => $filename,
         "name" => $nome,
         "code" => $code,
         "what" => json_encode($what, JSON_PRETTY_PRINT),
