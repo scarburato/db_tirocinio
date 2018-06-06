@@ -15,21 +15,20 @@ $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
 $user_info = ($user->get_info(new RetriveStudenteFromDatabase($server)));
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$permission_manager = new \auth\PermissionManager($server, $user);
 
-$bbCode = new Genert\BBCode\BBCode();
+$google_user = new \auth\GoogleConnection($user);
 
 if (!isset($_GET["tirocinio"]))
 	redirect('../index.php');
 
-// TODO Controllo permessi!
-$can_see_all = true;
+$can_see_all = $permission_manager->check("train.readall");
 
 $tirocinio_azienda = $server->prepare(
 	'SELECT A.nominativo, A.IVA, A.codiceFiscale,
 	S.nome, S.cognome, S.indirizzo_posta, S.fotografia,
 	C.nome, C.cognome, C.email, C.telefono, C.FAX,
-	D.nome, D.cognome, D.indirizzo_posta, D.fotografia,
+	D.id, D.nome, D.cognome, D.indirizzo_posta, D.fotografia,
 	T.dataInizio, T.dataTermine, T.giudizio, T.descrizione, T.visibilita, T.ultima_modifica
 	FROM Tirocinio T 
 		LEFT JOIN Azienda A ON T.azienda = A.id
@@ -50,11 +49,11 @@ $tirocinio_azienda->execute();
 $tirocinio_azienda->bind_result($a_nom, $a_iva, $a_cf,
 	$studente_nome, $studente_cognome, $studente_posta, $studente_fotografia,
 	$c_nome, $c_cognome, $c_posta, $c_tel, $c_fax,
-	$doc_nome, $doc_cog, $doc_posta, $doc_fotografia,
+	$doc_tir_id, $doc_nome, $doc_cog, $doc_posta, $doc_fotografia,
 	$t_ini, $t_end, $t_giud, $t_desc, $t_vis, $t_last_edit);
 
 if (!$tirocinio_azienda->fetch()) // errore, utente non valido e/o tirocinio non trovatos
-	throw new RuntimeException("Non si è autorizzati ad accedere questo tirocinio!");
+	throw new RuntimeException("Il tirocinio non esistete ovvero si è autorizzati ad accedere questo tirocinio!");
 
 $tirocinio_azienda->close();
 
