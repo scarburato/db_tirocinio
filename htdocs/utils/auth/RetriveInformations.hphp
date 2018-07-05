@@ -1,0 +1,15 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 25/02/18
+ * Time: 12.03
+ */
+
+namespace auth;
+
+
+interface RetriveInformations
+{
+    public function retrive(User $user): UserInfo;
+}

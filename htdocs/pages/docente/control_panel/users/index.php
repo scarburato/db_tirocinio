@@ -9,21 +9,24 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
-$oauth2 = \auth\connect_token_google($google_client, $_SESSION["user"]["token"]);$user = \auth\get_user_info($oauth2);
+$server = new \mysqli_wrapper\mysqli();
 
+$user = new \auth\User();
+$user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
+$user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
+
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 // Variabili pagina
 $page = "Utenze Google";
 
 $filtro = (isset($_GET["filtro"])) ? "%{$_GET["filtro"]}%" : "%";
-$server = new \mysqli_wrapper\mysqli();
 $utenze = new class($server, "SELECT id, nome, cognome, indirizzo_posta, D.utente, S.utente FROM UtenteGoogle
   LEFT JOIN Docente D ON UtenteGoogle.id = D.utente
   LEFT JOIN Studente S ON UtenteGoogle.id = S.utente
   WHERE nome LIKE ? OR cognome LIKE ? OR indirizzo_posta LIKE ?
   ") extends \helper\Pagination
 {
-    public function compute_rows()
+    public function compute_rows(): int
     {
         $row_tot = 0;
         $filtro = (isset($_GET["filtro"])) ? "%{$_GET["filtro"]}%" : "%";
@@ -37,7 +40,7 @@ $utenze = new class($server, "SELECT id, nome, cognome, indirizzo_posta, D.utent
                 $filtro,
                 $filtro
         );
-        $conta->execute(true);
+        $conta->execute();
         $conta->bind_result($row_tot);
         $conta->fetch();
         $conta->close();
@@ -56,7 +59,7 @@ $utenze->bind_param(
         $filtro
 );
 
-$utenze->execute(true);
+$utenze->execute();
 
 $utenze->bind_result($id_interno, $nome, $cognome, $posta, $docente, $studente);
 
@@ -83,30 +86,30 @@ $nav = new \helper\PaginationIndexBuilder($utenze);
                 <div class="level">
                     <div class="level-left">
                         <div class="level-item">
-                            <button class="button is-primary" type="button">
+                            <a class="button is-primary" href="import.php">
                                 <span class="icon">
                                     <i class="fa fa-user-plus" aria-hidden="true"></i>
                                 </span>
                                 <span>
                                     Aggiungi utente dal dominio
                                 </span>
-                            </button>
+                            </a>
                         </div>
                         <div class="level-item">
-                            <button class="button" type="button" title="Imposta">
+                            <a href="set_orgunit.php" class="button" type="button" title="Imposta">
                                 <span class="icon">
                                     <i class="fa fa-gear" aria-hidden="true"></i>
                                 </span>
-                            </button>
+                            </a>
                         </div>
                     </div>
                     <div class="level-right">
                         <div class="level-item">
                             <div class="field has-addons">
                                 <p class="control">
-                                    <input class="input" name="filtro" type="text" value="<?= $_GET["filtro"] ?>" placeholder="Filtra persone">
+                                    <input class="input" name="filtro" type="text" value="<?= sanitize_html($_GET["filtro"]) ?>" placeholder="Filtra persone">
                                 </p>
-                                <input title="limite" hidden type="number" name="limite" value="<?= $utenze->get_limit() ?>">
+                                <input title="limite" hidden type="number" name="limite" value="<?= sanitize_html($utenze->get_limit()) ?>">
                                 <p class="control">
                                     <button type="submit" class="button">
                                         Filtra
@@ -120,8 +123,8 @@ $nav = new \helper\PaginationIndexBuilder($utenze);
             <table class="table is-fullwidth">
                 <thead>
                 <tr>
-                    <th title="I nomi sono stati inseriti all'icontrario dalla scuola">Nome</th>
-                    <th title="I nomi sono stati inseriti all'icontrario dalla scuola">Cognome</th>
+                    <th title="I nomi sono stati inseriti all'incontrario dalla scuola">Nome</th>
+                    <th title="I nomi sono stati inseriti all'incontrario dalla scuola">Cognome</th>
                     <th>Posta Elettronica</th>
                     <th>Studente</th>
                     <th>Docente</th>
@@ -134,17 +137,17 @@ $nav = new \helper\PaginationIndexBuilder($utenze);
                 {
                     ?>
                     <tr>
-                        <td><?= $nome ?></td>
-                        <td><?= $cognome ?></td>
+                        <td><?= sanitize_html($nome) ?></td>
+                        <td><?= sanitize_html($cognome) ?></td>
                         <td>
-                            <a href="mailto:<?= $posta ?>">
-                                <?= $posta ?>
+                            <a href="mailto:<?= sanitize_html($posta) ?>">
+                                <?= sanitize_html($posta) ?>
                             </a>
                         </td>
                         <td><?= ($studente !== null) ? "SÌ" : "NO" ?></td>
                         <td><?= ($docente !== null) ? "SÌ" : "NO" ?></td>
                         <td>
-                            <a href="" class="button is-small is-fullwidth is-warning">
+                            <a href="info.php?utente=<?= $id_interno ?>" class="button is-small is-fullwidth is-warning">
                                 <span class="icon">
                                     <i class="fa fa-cog" aria-hidden="true"></i>
                                 </span>

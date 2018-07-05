@@ -1,0 +1,14 @@
+<Files .htaccess>
+Order allow,deny
+Deny from all
+</Files>
+
+<Files secret_token.json>
+Order allow,deny
+Deny from all
+</Files>
+
+<FilesMatch ".*\.(hphp|phtml)$">
+Order allow,deny
+Deny from all
+</FilesMatch>

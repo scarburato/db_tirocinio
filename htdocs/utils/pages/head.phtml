@@ -16,18 +16,38 @@
         echo SITE_NAME;
 
         if(isset($page))
-            echo " - {$page}";
+            echo " - " . filter_var($page, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     ?>
 </title>
+
+<!-- Cosnati JS ed altro -->
+<script>
+	const BASE = "<?= BASE_DIR ?>";
+
+	/**
+     * È una stringa?
+     * @author https://stackoverflow.com/a/17772086
+	 * @param x
+	 * @return {boolean}
+	 */
+	function isString(x)
+    {
+		return Object.prototype.toString.call(x) === "[object String]"
+	}
+</script>
+
+<!-- JavaScript -->
+<script src="<?= BASE_DIR ?>js/lib/jquery-3.3.1.min.js"></script>
+<script src="<?= BASE_DIR ?>js/lib/jquery.urlParam.js"></script>
+<script src="<?= BASE_DIR ?>js/global.js"></script>
 
 <!-- CSS -->
 <link rel="stylesheet" href="<?= BASE_DIR ?>css/bulma.min.css">
 <link rel="stylesheet" href="<?= BASE_DIR ?>css/font-awesome-4.7.0/css/font-awesome.min.css">
-
-<!-- JavaScript -->
-<script src="<?= BASE_DIR ?>js/lib/jquery-3.3.1.min.js"></script>
-
-<!-- Cosnati JS -->
-<script>
-	const BASE = "<?= BASE_DIR ?>";
-</script>
+<style>
+    .overflow
+    {
+        overflow-x: auto;
+        overflow-y: auto;
+    }
+</style>

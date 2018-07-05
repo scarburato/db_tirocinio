@@ -6,13 +6,57 @@
  * Time: 15.50
  */
 
+use auth\Unauthorized;
+
+function log_to_file(Throwable $e): string
+{
+	$nome = "";
+	try
+	{
+		$data = json_encode([
+			"name" => $e->getMessage(),
+			"code" => $e->getCode(),
+			"what" => $e->getTrace(),
+			"dump" => [
+				"post" => $_POST,
+				"get" => $_GET,
+				"session" => $_SESSION
+			]
+		], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+
+
+		$nome = uniqid('Errore' . date(DATE_ATOM), true) . '.json';
+		file_put_contents(dirname(__FILE__) . "/../../../errors/" . $nome, $data);
+	}
+	catch (Throwable $e1)
+	{
+		;
+	}
+
+	return $nome;
+}
+
 function trowh_handler(Throwable $e)
 {
-    redirect_error($e->getMessage(), $e->getCode(), $e->getTrace());
+	$n = log_to_file($e);
+    redirect_error($e->getMessage(), $e->getCode(), $e->getTrace(), $n);
 }
 
 function trowh_json_handler(Throwable $e)
 {
+	log_to_file($e);
+	header("exception: " . $e->getMessage());
+
+    if($e instanceof Unauthorized)
+        header("{$_SERVER['SERVER_PROTOCOL']} 403 Forbidden", true, 403);
+    elseif($e instanceof Google_Exception && $e->getCode() == 401)
+    {
+        header("{$_SERVER['SERVER_PROTOCOL']} 403 Forbidden", true, 403);
+        header("google_expired: true", true);
+    }
+    else
+        header("{$_SERVER['SERVER_PROTOCOL']} 200 PHP exception occurred", true, 500);
+
     echo json_encode(
         [
             "error" => $e->getCode(),

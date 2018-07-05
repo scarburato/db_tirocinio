@@ -1,0 +1,178 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 25/02/18
+ * Time: 11.28
+ */
+
+namespace auth;
+use Throwable;
+
+/**
+ * La classe utente si occupa di gestire la sessione dell'utente e comparare il livello d'accesso dell'utente con uno
+ * richiesto. È possibile gestire più istanze passando indici diversi. È necessaria 
+ * @package auth
+ */
+class User
+{
+    const UNAUTHORIZED_RETURN_FALSE = 0;
+    const UNAUTHORIZED_REDIRECT = 1;
+    const UNAUTHORIZED_THROW = 2;
+
+
+    private $database_id    = 0;
+    private $token          = null;
+    private $type           = LEVEL_GUEST;
+    private $session_index;
+
+    /**
+     * User constructor.
+     * @param string $session_index
+     */
+    public function __construct(string $session_index = "user")
+    {
+        if(session_status() !== PHP_SESSION_ACTIVE)
+            throw new \RuntimeException("No session!", -1);
+
+        $this->session_index = $session_index;
+
+        if(isset($_SESSION[$this->session_index]))
+        {
+            $this->database_id = $_SESSION[$this->session_index]["id"];
+            $this->token = $_SESSION[$this->session_index]["token"];
+            $this->type = $_SESSION[$this->session_index]["type"];
+        }
+        else
+            $this->write_to_session();
+    }
+
+    private function write_to_session()
+    {
+        if(session_status() !== PHP_SESSION_ACTIVE)
+            throw new \RuntimeException("No session!", -1);
+
+        $_SESSION[$this->session_index]["id"] = $this->database_id;
+        $_SESSION[$this->session_index]["token"] = $this->token;
+        $_SESSION[$this->session_index]["type"] = $this->type;
+    }
+
+    /**
+     * Controlla se un un utente è autorizzato rispetto ad acceddere rispetto ad un permesso!
+     * @param int $auth_level
+     * @param int $on_fail Modifica il comportamento, di norma ritorna FALSE
+     * @return bool
+     * @throws Unauthorized
+     */
+    public function is_authorized(int $auth_level, int $on_fail = User::UNAUTHORIZED_RETURN_FALSE): bool
+    {
+        if($auth_level & $this->type)
+            return true;
+
+        if($on_fail === User::UNAUTHORIZED_REDIRECT)
+        {
+            switch ($_SESSION["user"]["type"])
+            {
+                case LEVEL_GUEST:
+                case LEVEL_GOOGLE_UNAUTHORIZED:
+                default:
+                    redirect("/index.php");
+                    break;
+                case LEVEL_GOOGLE_STUDENT:
+                    redirect("/pages/studente/");
+                    break;
+                case LEVEL_GOOGLE_TEACHER:
+                    redirect("/pages/docente/");
+                    break;
+                case LEVEL_GOOGLE_BOTH:
+                    redirect("/ambiguita.php");
+                    break;
+                case LEVEL_FACTORY:
+                    redirect("/pages/azienda/");
+                    break;
+            }
+            die("Redirect!");
+        }
+        elseif($on_fail === User::UNAUTHORIZED_THROW)
+            throw new Unauthorized($auth_level, $this->type);
+        else
+            return false;
+    }
+
+    public function get_info(RetriveInformations $method): UserInfo
+    {
+        return $method->retrive($this);
+    }
+
+    /**
+     * @return int
+     */
+    public function get_database_id(): int
+    {
+        return $this->database_id;
+    }
+
+    /**
+     * @param int $database_id
+     */
+    public function set_database_id(int $database_id)
+    {
+        $this->database_id = $database_id;
+
+        $this->write_to_session();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function get_token()
+    {
+        return $this->token;
+    }
+
+    /**
+     * @param
+     */
+    public function set_token($token)
+    {
+        $this->token = $token;
+
+        $this->write_to_session();
+    }
+
+    /**
+     * @return int
+     */
+    public function get_type(): int
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param int $type
+     */
+    public function set_type(int $type)
+    {
+        // Controllo che l'utente che si vuole settare abbia solo un BIT di maschera!
+        if(($type & ($type - 1)) || $type === 0b0)
+            throw new \RuntimeException(
+                "User access level MUST have a signle bit to 1!", 50);
+
+        $this->type = $type;
+
+        $this->write_to_session();
+    }
+
+    /**
+     * Cancella tutte le informazioni dell'utente!
+	 * Equivale ed effetturare il log_out
+     */
+    public function erase()
+    {
+        $this->database_id = 0;
+        $this->token = null;
+        $this->type = LEVEL_GUEST;
+
+        $this->write_to_session();
+    }
+}

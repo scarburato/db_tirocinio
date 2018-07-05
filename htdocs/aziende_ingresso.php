@@ -18,9 +18,9 @@ if(!SKIP_CAPTCHA)
             'header' => "Content-type: application/x-www-form-urlencoded\r\n",
             'method' => 'POST',
             'content' => http_build_query([
-                'secret' => $captcha_key["private_key"], // <- Your secret key
+                'secret' => $captcha_key["private_key"],
                 'token' => $_POST['coinhive-captcha-token'],
-                'hashes' => 256
+                'hashes' => compute_hashes(empty($_SESSION["hash_weight"]) ? 0 : $_SESSION["hash_weight"])
             ])
         ]
     ]);
@@ -32,7 +32,6 @@ if(!SKIP_CAPTCHA)
     if (!$risposta_captcha || !$risposta_captcha->success)
     {
         header("Location: index.php?login_fail=captcha");
-        die("NON SI È USATO IL CAPTCHA!¡");
     }
 }
 
@@ -47,7 +46,7 @@ $azienda->bind_param(
     $_POST["id"]
 );
 
-$azienda->execute(true);
+$azienda->execute();
 $azienda->bind_result($hash_pass);
 $esiste = $azienda->fetch();
 $azienda->close();
@@ -57,8 +56,7 @@ echo $_POST["id"] . "<br>" . $_POST["pass"] . "<br>" . $hash_pass . "<br>";
 $success = false;
 if($esiste && password_verify($_POST["pass"], $hash_pass))
 {
-    echo "Dentro!";
-    // TODO password_needs_ reash
+    // TODO password_needs_rehash
 
     $_SESSION["user"]["type"] = \auth\LEVEL_FACTORY;
     $_SESSION["user"]["id"] = $_POST["id"];
@@ -71,7 +69,6 @@ else
         "SELECT aggiungiTentativoAccesso(?)");
 
     $fail = true;
-    echo "Fuori!";
 }
 
 $controllo_indirizzo->bind_param(
@@ -79,7 +76,7 @@ $controllo_indirizzo->bind_param(
     $indirizzo
 );
 
-$controllo_indirizzo->execute(true);
+$controllo_indirizzo->execute();
 $controllo_indirizzo->close();
 
 redirect("index.php",[

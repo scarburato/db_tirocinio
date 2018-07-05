@@ -24,7 +24,7 @@ class mysqli extends \mysqli
      * @param string $user
      * @param string $password
      */
-    public function __construct(string $db = NULL,string $server = NULL,string $user = NULL,string $password = NULL, bool $redirect_on_error = true)
+    public function __construct(string $db = NULL,string $server = NULL,string $user = NULL,string $password = NULL)
     {
         if($db !== NULL)
             $this->db = $db;
@@ -40,10 +40,16 @@ class mysqli extends \mysqli
 
         parent::__construct($this->server_name, $this->user, $this->password, $this->db);
 
-        if($redirect_on_error && $this->connect_errno)
-            redirect_error("Errore conessione", $this->connect_errno, [$this->connect_error]);
+        if($this->connect_errno)
+            throw new sql_exception($this->error_list, $this->errno);
 
         parent::set_charset("utf8");
+    }
+
+    public function __destruct()
+    {
+        if(parent::close() === false)
+            throw new sql_exception($this->error_list, $this->errno);
     }
 
     public function prepare($query): mysqli_stmt
@@ -63,8 +69,9 @@ class mysqli extends \mysqli
     public function enum_values(string $table, string $field): array
     {
         $result = $this->query( "SHOW COLUMNS FROM {$table} WHERE Field = '{$field}'" );
-        if($result === FALSE)
-            throw new mysqli_sql_exception($this->error);
+
+        if($result === false)
+            throw new sql_exception($this->error_list, $this->errno);
 
         $type = $result->fetch_assoc()["Type"];
 

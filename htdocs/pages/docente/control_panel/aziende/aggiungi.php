@@ -9,10 +9,14 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) ."/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
-$oauth2 = \auth\connect_token_google($google_client, $_SESSION["user"]["token"]);
-$user = \auth\get_user_info($oauth2);
 $server = new \mysqli_wrapper\mysqli();
+
+$user = new \auth\User();
+$user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
+$user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
+
+$google_user = new \auth\GoogleConnection($user);
+$oauth2 = $google_user->getUserProps();
 
 // Variabili pagina
 $page = "Gestione Aziende - Aggiungi";
@@ -33,37 +37,7 @@ $page = "Gestione Aziende - Aggiungi";
             ?>
         </aside>
         <div class="column">
-            <?php
-            if(isset($_GET["errors"]))
-            {
-                $errori = urldecode($_GET["errors"]);
-                ?>
-                <article class="message is-danger" id="errore_db">
-                    <div class="message-header">
-                        <p>
-                            <span class="icon">
-                                <i class="fa fa-database"></i>
-                            </span>
-                            <span>
-                                Errore di processo
-                            </span>
-                        </p>
-                        <button class="delete" aria-label="delete" id="errore_db_delete"></button>
-                    </div>
-                    <div class="message-body">
-                        <p>Si sono verificati dei problemi durante il processo dei dati!</p>
-                        <pre><?= $errori ?></pre>
-                    </div>
-                    <script>
-                        $("#errore_db_delete").on("click", function ()
-						{
-                           $("#errore_db").remove();
-						});
-                    </script>
-                </article>
-                <?php
-            }
-            ?>
+			<?php include "../../../common/mysql_error.php"; ?>
             <form id="main_form" method="post" action="./aggiungi_db.php">
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
@@ -169,8 +143,8 @@ $page = "Gestione Aziende - Aggiungi";
                                         foreach ($opzioni as $opzione)
                                         {
                                             ?>
-                                            <option value="<?= $opzione ?>">
-                                                <?= $opzione ?>
+                                            <option value="<?= sanitize_html($opzione) ?>">
+                                                <?= sanitize_html($opzione) ?>
                                             </option>
                                             <?php
                                         }
@@ -198,8 +172,8 @@ $page = "Gestione Aziende - Aggiungi";
                                         foreach ($opzioni as $opzione)
                                         {
                                             ?>
-                                            <option value="<?= $opzione ?>">
-                                                <?= $opzione ?>
+                                            <option value="<?= sanitize_html($opzione) ?>">
+                                                <?= sanitize_html($opzione) ?>
                                             </option>
                                             <?php
                                         }
@@ -223,14 +197,14 @@ $page = "Gestione Aziende - Aggiungi";
                                     <select title="classificazione" name="classificazione">
                                         <?php
                                         $classificazioni = $server->prepare("SELECT id, descrizione FROM Classificazioni");
-                                        $classificazioni->execute(true);
+                                        $classificazioni->execute();
 
                                         $classificazioni->bind_result($id, $descrizione);
                                         while($classificazioni->fetch())
                                         {
                                             ?>
                                                 <option value="<?= $id ?>">
-                                                    <?= $descrizione ?>
+                                                    <?= sanitize_html($descrizione) ?>
                                                 </option>
                                             <?php
                                         }
@@ -387,7 +361,7 @@ $page = "Gestione Aziende - Aggiungi";
                     while ($stati->fetch())
                     {
                         ?>
-                        <option value="<?= $stato ?>">
+                        <option value="<?= sanitize_html($stato) ?>">
                         <?php
                     }
                     ?>
@@ -446,8 +420,8 @@ $page = "Gestione Aziende - Aggiungi";
                         ?>
                         <tr style="cursor: pointer">
 
-                            <td class="codice_ateco_value" data-dbid="<?= $id ?>"><?= $codice?></td>
-                            <td><?= $descrizione?></td>
+                            <td class="codice_ateco_value" data-dbid="<?= $id ?>"><?= sanitize_html($codice)?></td>
+                            <td><?= sanitize_html($descrizione) ?></td>
                             <td>
                                 <a class="is-link" tabindex="">Seleziona</a>
                             </td>

@@ -1,0 +1,79 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 24/03/18
+ * Time: 18.15
+ */
+
+namespace auth;
+
+use mysqli_wrapper\mysqli;
+
+/**
+ * Class PermissionManager
+ * Questa classe serve per gestire i permessi dei docenti
+ * @package auth
+ */
+class PermissionManager
+{
+    const UNAUTHORIZED_RETURN_FALSE = 0;
+    const UNAUTHORIZED_REDIRECT = 1;
+    const UNAUTHORIZED_THROW = 2;
+
+    private $server;
+    private $user;
+
+    /**
+     * PermissionManager constructor.
+     * @param mysqli $server
+     */
+    public function __construct(mysqli $server, User $user)
+    {
+        $this->server = $server;
+        $this->user = $user;
+    }
+
+    /**
+     * Controlla la presenza del permesso
+     *
+     * A seconda del metodo usato cambia il comportamento della funzione
+     *  - PermissionManager::UNAUTHORIZED_THROW
+     *  - PermissionManager::UNAUTHORIZED_REDIRECT
+     *  - PermissionManager::UNAUTHORIZED_RETURN_FALSE
+     *
+     * @param string $permission
+     * @param int $method
+     * @return boolean
+     */
+    public function check(string $permission, int $method = PermissionManager::UNAUTHORIZED_RETURN_FALSE): bool
+    {
+        $controllo = $this->server->prepare(
+            "SELECT privilegio 
+                      FROM GruppiApplicati
+                      INNER JOIN Gruppo G ON GruppiApplicati.gruppo = G.nome
+                      INNER JOIN PermessiGruppo Gruppo2 ON G.nome = Gruppo2.gruppo
+                    WHERE utente = ? AND (privilegio = ? OR privilegio = 'root')"
+        );
+
+        $controllo->bind_param(
+            "ss",
+            $this->user->get_database_id(),
+            $permission
+        );
+
+        $controllo->execute();
+        $res = $controllo->fetch() !== null;
+        $controllo->close();
+
+        if(!$res)
+        {
+            if($method === PermissionManager::UNAUTHORIZED_THROW)
+                throw new Unauthorized($permission, "nothig");
+            elseif ($method === PermissionManager::UNAUTHORIZED_REDIRECT)
+                redirect("/");
+        }
+
+        return $res;
+    }
+}

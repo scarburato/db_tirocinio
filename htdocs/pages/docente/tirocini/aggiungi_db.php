@@ -9,11 +9,15 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
-$oauth2 = \auth\connect_token_google($google_client, $_SESSION["user"]["token"]);
-
 $server = new \mysqli_wrapper\mysqli();
-\auth\check_permission($server, "control.training.create");
+
+$user = new \auth\User();
+$user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
+
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
+
+$permissions = new \auth\PermissionManager($server, $user);
+$permissions->check("train.add", \auth\PermissionManager::UNAUTHORIZED_THROW);
 
 // TODO Scrivere controlli
 // Controllo validità campi
@@ -65,4 +69,6 @@ if($fail)
     ]);
 }
 
-redirect("aggiungi.php");
+redirect("/pages/docente/tirocini/tirocinio/", [
+    "tirocinio" => $insert->insert_id
+]);

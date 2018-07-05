@@ -6,6 +6,22 @@
  * Time: 14.42
  */
 
+/**
+ * Funzione che reindirizza ad una data pagina, passare eventuali
+ * parametri GET con un array.
+ *
+ * NOTA: Questa che osservate non è la soluzione ottimale e professionale®
+ * per cambiare pagina. Un cambiamento della testata HTML a metà del programma
+ * è brutale e può portare a malfunzionamenti ovvero a comportamenti indefiniti.
+ *
+ * In specialmodo se la funzione è chiamata troppo tardi nell'eseguzione dello script
+ * PHP, quando la testata è già stata generata da Apache, risulta impossibile un reindirizzamento
+ * lato server, allorché ho scritto un work-arround© che stampa uno script JS che, una volta
+ * eseguito dal client, porta al reindirizzamento :P.
+ *
+ * @param string $path
+ * @param array $get_args
+ */
 function redirect(string $path, array $get_args = [])
 {
     if(count($get_args) > 0)
@@ -14,16 +30,29 @@ function redirect(string $path, array $get_args = [])
     if($path[0] === '/')
         $path = PROTOCOL . $_SERVER['HTTP_HOST'] . BASE_DIR . substr($path, 1);
 
-    header("Location: {$path}");
-    die();
+    header("Location: {$path}", true, 302);
+    // Stampo uno script per forzare il redirect anche in caso gravioso
+    die(
+        "<script>
+           window.location.replace('{$path}')
+        </script>
+        <p><a href='{$path}'>Qualcosa è andato storto, redirect in corso... se non funziona premi</a></p>
+        "
+    );
 }
 
-function redirect_error(string $nome, string $code, array $what)
+function redirect_error(string $nome, string $code, array $what, string $filename = "")
 {
     $errore = [
+    	"filename" => $filename,
         "name" => $nome,
         "code" => $code,
-        "what" => json_encode($what, JSON_PRETTY_PRINT)
+        "what" => json_encode($what, JSON_PRETTY_PRINT),
+        "dump" => [
+            "post" => $_POST,
+            "get" => $_GET,
+            "session" => $_SESSION
+        ]
     ];
 
     if(session_status() !== PHP_SESSION_ACTIVE)

@@ -9,13 +9,15 @@
  */
 
 require_once "lib.hphp";
-require_once "auth.hphp";
 
-if($_SESSION["user"]["token"] !== NULL)
+$user = new \auth\User();
+
+if($user->get_token() !== NULL)
 {
-    $google_client->revokeToken($_SESSION["user"]["token"]);
+    $google_client->revokeToken($user->get_token());
 }
 
-\auth\log_out();
+$user->erase();
+session_destroy();
 
 header("Location: ../index.php");

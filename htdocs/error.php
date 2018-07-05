@@ -14,6 +14,7 @@ else if(isset($_GET["session_mode"]))
 {
     session_start();
     $errore = $_SESSION["last_error"];
+	unset($_SESSION["last_error"]);
 }
 else
     $errore = array(
@@ -40,20 +41,55 @@ $from = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "sconosciut
     <?php include "utils/pages/head.phtml" ?>
 </head>
 <body>
-<section class="section container">
-
+<section class="section">
     <article class="message is-danger is-large">
         <div class="message-header">
             <p>Errore lato server!</p>
         </div>
         <div class="message-body content">
-            <h1><?= $errore["name"] ?></h1>
-            <p><em><?= $errore["code"] ?></em></p>
-            <blockquote><?= $from ?></blockquote>
-            <pre style="height: 80%; overflow-y: scroll; font-size: 60%">
-                <?= $errore["what"] ?>
-            </pre>
-            <a class="button is-warning" href="mailto:<?= ERROR_MAIL ?>?subject=Problema&body=<?= urlencode($from)?>%0A%0A<?= urlencode($_GET["error"]) ?>">
+            <p>Durante l'esecuzione degli script lato server si è generato un errore!</p>
+            <h4>Pagina di provenienza</h4>
+            <pre style="overflow-y: scroll; font-size: 60%"><?= $from ?></pre>
+
+            <h3>Informazioni eccezzione</h3>
+            <h4>Codice d'errore</h4>
+            <p><em><?= filter_var($errore["code"], FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?></em></p>
+
+            <h4>Messaggio</h4>
+            <pre style="max-height: 40%; overflow-y: scroll; font-size: 60%"><?= filter_var($errore["name"], FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?></pre>
+
+            <h4>Trace</h4>
+            <pre style="max-height: 80%; overflow-y: scroll; font-size: 60%"><?= filter_var($errore["what"], FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?></pre>
+
+            <h3>Informazioni d'ambienete</h3>
+            <?php
+            if(!empty($errore["dump"]["post"]))
+            {
+                ?>
+                <h4>$_POST (convertito a JSON)</h4>
+                <pre style="max-height: 80%; overflow-y: scroll; font-size: 60%"><?= (json_encode($errore["dump"]["post"], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)) ?></pre>
+                <?php
+            }
+
+            if(!empty($errore["dump"]["get"]))
+            {
+                ?>
+                <h4>$_GET (convertito a JSON)</h4>
+                <pre style="max-height: 80%; overflow-y: scroll; font-size: 60%"><?= (json_encode($errore["dump"]["get"], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)) ?></pre>
+                <?php
+            }
+
+            if(!empty($errore["dump"]["session"]))
+            {
+                unset($errore["dump"]["session"]["last_error"]);
+                ?>
+                <h4>$_SESSION (convertito a JSON)</h4>
+                <pre style="max-height: 80%; overflow-y: scroll; font-size: 60%"><?= (json_encode($errore["dump"]["session"], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)) ?></pre>
+                <?php
+            }
+            ?>
+
+            <a class="button is-warning" href="mailto:<?= ERROR_MAIL ?>?subject=Problema&body=<?= $errore["filename"] ?>">
                 <span class="icon">
                     <i class="fa fa-envelope" aria-hidden="true"></i>
                 </span>

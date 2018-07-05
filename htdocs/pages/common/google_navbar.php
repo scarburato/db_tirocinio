@@ -25,19 +25,21 @@ if(false)
     <div class="navbar-end">
         <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
-                <?= $user["email"] ?>
+                <?= sanitize_html($user_info->username) ?>
             </a>
 
             <div class="navbar-dropdown">
                 <div class="navbar-item">
-                    <p class="title is-4 is-capitalized">
-                        <span class="icon">
-                            <img alt="profile_picture" src="<?= $user["picture"] ?>">
-                        </span>
-                        <span>
-                            <?= $user["name"] ?>
-                        </span>
-                    </p>
+                    <div class="media">
+                        <div class="media-left">
+                            <figure class="image is-48x48">
+                                <img style="max-height: none" alt="" src="<?= sanitize_html($user_info["picture"]) ?>">
+                            </figure>
+                        </div>
+                        <p class="media-content title is-4 is-capitalized">
+                            <?= sanitize_html($user_info->nominative) ?>
+                        </p>
+                    </div>
                 </div>
                 <div class="navbar-item is-pulled-right">
                     <a class="button" href="<?= BASE_DIR ?>utils/logout.php">

@@ -1,0 +1,29 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 25/02/18
+ * Time: 11.26
+ */
+
+namespace auth;
+
+require_once dirname(__FILE__) . "/../url_utils/__init.hphp";
+
+const LEVEL_ALL                     = 0xFF;
+const LEVEL_GOOGLE_STUDENT          = 0b00000001;
+const LEVEL_GOOGLE_TEACHER          = 0b00000010;
+const LEVEL_GOOGLE_BOTH             = 0b00000100;
+const LEVEL_GOOGLE_UNAUTHORIZED     = 0b00001000;
+const LEVEL_FACTORY                 = 0b00010000;
+const LEVEL_GUEST                   = 0b00100000;
+
+
+require_once dirname(__FILE__) . "/Unauthorized.hphp";
+require_once dirname(__FILE__) . "/User.hphp";
+require_once dirname(__FILE__) . "/UserInfo.hphp";
+require_once dirname(__FILE__) . "/RetriveInformations.hphp";
+require_once dirname(__FILE__) . "/common_retrive.hphp";
+require_once dirname(__FILE__) . "/google_utils.hphp";
+require_once dirname(__FILE__) . "/PermissionManager.hphp";
+require_once dirname(__FILE__) . "/GoogleConnection.hphp";

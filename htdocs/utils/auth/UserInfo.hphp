@@ -1,0 +1,22 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 25/02/18
+ * Time: 12.01
+ */
+
+namespace auth;
+
+class UserInfo extends \ArrayObject
+{
+    public $id = null;
+    public $nominative = "";
+    public $username = "";
+    public $picture = "";
+
+    public function __construct($basic_data = [])
+    {
+        parent::__construct($basic_data);
+    }
+}

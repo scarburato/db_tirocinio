@@ -8,23 +8,15 @@
 
 namespace auth
 {
-    require_once dirname(__FILE__) . "/url_utils/__init.hphp";
     use GuzzleHttp\Exception\ConnectException;
     use mysqli_wrapper\mysqli;
-
-    const LEVEL_ALL                     =-1;
-    const LEVEL_GUEST                   = 0;
-    const LEVEL_GOOGLE_STUDENT          = 1;
-    const LEVEL_GOOGLE_TEACHER          = 2;
-    const LEVEL_GOOGLE_BOTH             = 3;
-    const LEVEL_GOOGLE_UNAUTHORIZED     = 4;
-    const LEVEL_FACTORY                 = 5;
 
     /**
      * Controlla i permessi
      * @param $auth_level
      * @param bool $redirect
      * @return bool
+     * @deprecated
      */
     function check_and_redirect($auth_level, $redirect = true): bool
     {
@@ -69,6 +61,7 @@ namespace auth
 
     /**
      * Fa il logout
+     * @deprecated
      */
     function log_out()
     {
@@ -88,7 +81,8 @@ namespace auth
      * @param $token string
      * @param $redirect bool
      * @return \Google_Service_Oauth2;
-     */
+	 * 	 * @deprecated usare GoogleConnection
+	 */
     function connect_token_google(&$google, $token, $redirect = true)
     {
         try
@@ -123,6 +117,7 @@ namespace auth
      * @param bool $redirect
      * @return \Google_Service_Oauth2_Userinfoplus|null
      * @throws \Google_Exception
+	 * @deprecated usare GoogleConnection
      */
     function get_user_info(\Google_Service_Oauth2 &$oauth2, $redirect = true)
     {
@@ -165,6 +160,7 @@ namespace auth
      * @param string $permission
      * @param bool $redirect
      * @return bool
+     * @deprecated ***RITORNA SEMPRE TRUE AHAHAHA***
      */
     function check_permission(mysqli $link, string $permission, bool $redirect = true): bool
     {

@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="Tirocini@localhost" uuid="53d0a92a-9f4d-48e3-a067-fa9442664178">
+    <data-source source="LOCAL" name="Tirocini@localhost" group="local" uuid="53d0a92a-9f4d-48e3-a067-fa9442664178">
+      <driver-ref>mysql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.gjt.mm.mysql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://localhost:3306/Tirocini</jdbc-url>
+      <driver-properties>
+        <property name="autoReconnect" value="true" />
+        <property name="zeroDateTimeBehavior" value="convertToNull" />
+        <property name="tinyInt1isBit" value="false" />
+        <property name="characterEncoding" value="utf8" />
+        <property name="characterSetResults" value="utf8" />
+        <property name="yearIsDateType" value="false" />
+      </driver-properties>
+    </data-source>
+    <data-source source="LOCAL" name="Raspberry" uuid="3ba10d20-dbc5-400b-ae74-6ad52339655e">
       <driver-ref>mysql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.gjt.mm.mysql.Driver</jdbc-driver>

@@ -1,5 +1,5 @@
 let studente_tbody = $ ("#studenti_tbody");
-let studente = new GetHandler(studente_tbody, BASE + "rest/users/studenti.php", function (datum, tbody)
+let studente = new GetHandler(studente_tbody, BASE + "rest/users/list/studenti.php", function (datum, tbody)
 {
 	tbody.append (
 		"<tr data-dbid='"+ datum.id + "'>" +

@@ -9,11 +9,16 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_STUDENT);
-$oauth2 = \auth\connect_token_google($google_client, $_SESSION["user"]["token"]);$user = \auth\get_user_info($oauth2);
+$server = new \mysqli_wrapper\mysqli();
 
+$user = new \auth\User();
+$user->is_authorized(\auth\LEVEL_GOOGLE_STUDENT, \auth\User::UNAUTHORIZED_REDIRECT);
+$user_info = ($user->get_info(new RetriveStudenteFromDatabase($server)));
+
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 // Variabili pagina
 $page = "In corso";
+
 ?>
 <html lang="it">
 <head>
@@ -24,13 +29,13 @@ $page = "In corso";
 <br>
 <section class="container">
     <div class="columns">
-        <aside class="column is-3 is-fullheight" style="min-height: 20em">
+        <aside class="column is-3 is-fullheight">
             <p class="menu-label">
                 Tirocini
             </p>
             <ul class="menu-list">
                 <li>
-                    <a class="is-active">
+                    <a class="is-active switch" data-selezione="1" tabindex="">
                         <span class="icon">
                             <i class="fa fa-play" aria-hidden="true"></i>
                         </span>
@@ -40,7 +45,7 @@ $page = "In corso";
                     </a>
                 </li>
                 <li>
-                    <a>
+                    <a class="switch" data-selezione="2" tabindex="">
                         <span class="icon">
                             <i class="fa fa-fast-forward" aria-hidden="true"></i>
                         </span>
@@ -50,7 +55,7 @@ $page = "In corso";
                     </a>
                 </li>
                 <li>
-                    <a>
+                    <a class="switch" data-selezione="0" tabindex="">
                         <span class="icon">
                             <i class="fa fa-stop" aria-hidden="true"></i>
                         </span>
@@ -60,6 +65,9 @@ $page = "In corso";
                     </a>
                 </li>
             </ul>
+            <div class="is-hidden-mobile" style="min-height: 15em">
+
+            </div>
         </aside>
         <div class="column">
             <div id="tirocinis">
@@ -89,6 +97,6 @@ $page = "In corso";
 </section>
 <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 
-<script src="js/tirocini_builder.js"></script>
+<script src="<?= BASE_DIR ?>js/tirocini_builder.js"></script>
 </body>
 </html>

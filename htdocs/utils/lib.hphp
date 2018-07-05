@@ -8,10 +8,13 @@
 
 mb_internal_encoding("UTF-8");
 require_once dirname(__FILE__) . "/const.hphp";
-require_once dirname(__FILE__) . "/url_utils/__init.hphp";
 
+require_once dirname(__FILE__) . "/url_utils/__init.hphp";
 require_once dirname(__FILE__) . "/mysqli_wrapper/__init.hphp";
 require_once dirname(__FILE__) . "/helper/__init.hphp";
+require_once dirname(__FILE__) . "/auth/__init.hphp";
+require_once dirname(__FILE__) . "/auth.hphp";
+
 
 require_once dirname(__FILE__) . "/../../vendor/autoload.php";
 
@@ -19,12 +22,10 @@ session_start();
 
 try
 {
-    $google_client = new Google_Client();
-    $google_client->setAuthConfig(dirname(__FILE__) . "/../../client_secret_login.json");
-
-    $google_client->setRedirectUri(GOOGLE_REDIRECT_URI);
-    $google_client->addScope("https://www.googleapis.com/auth/userinfo.email");
-    $google_client->addScope("https://www.googleapis.com/auth/userinfo.profile");
+	/**
+	 * @deprecated
+	 */
+	$google_client = \auth\GoogleConnection::buildClient();
 }
 catch (Google_Exception $e)
 {
@@ -38,5 +39,11 @@ catch (Google_Exception $e)
  */
 function compute_hashes($tries)
 {
-    return ((int)($tries/2) + 1)*2048;
+    $quanto = ((int)($tries/2) + 1)*768;
+    return $quanto > 30720 ? 30720 : $quanto;
+}
+
+function sanitize_html($string = "")
+{
+    return filter_var($string, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 }

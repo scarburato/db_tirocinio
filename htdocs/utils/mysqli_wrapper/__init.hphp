@@ -6,5 +6,13 @@
  * Time: 18.07
  */
 
+namespace mysqli_wrapper;
+
+const ERROR_THROW = 0;
+const ERROR_RETURN_FALSE = 1;
+
+require_once dirname(__FILE__) . "/sql_exception.hphp";
 require_once dirname(__FILE__) . "/mysqli.hphp";
 require_once dirname(__FILE__) . "/mysqli_stmt.hphp";
+
+const notrowh = true;

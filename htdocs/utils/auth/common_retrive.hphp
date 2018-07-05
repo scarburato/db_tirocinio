@@ -1,0 +1,108 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 25/02/18
+ * Time: 12.04
+ */
+
+class RetriveStudenteFromDatabase implements \auth\RetriveInformations
+{
+    private $link;
+
+    public function __construct(\mysqli_wrapper\mysqli &$link)
+    {
+        $this->link = &$link;
+    }
+
+    public function retrive(\auth\User $user): \auth\UserInfo
+    {
+        $retrive = $this->link->prepare(
+            "SELECT U.id, nome, cognome, indirizzo_posta, SUB_GOOGLE AS 'id_google', matricola, fotografia AS 'picture', I.indirizzo
+                      FROM UtenteGoogle U 
+                      INNER JOIN Studente S ON U.id = S.utente
+                      LEFT JOIN Indirizzo I ON S.indirizzo = I.indirizzo
+                    WHERE U.id = ?");
+
+        $retrive->bind_param(
+            "i",
+            $user->get_database_id()
+        );
+        $retrive->execute();
+
+        $return = new \auth\UserInfo($retrive->get_result()->fetch_assoc());
+        $return->id = $user->get_database_id();
+        $return->nominative = $return["nome"] . ' ' . $return["cognome"];
+        $return->username = $return["indirizzo_posta"];
+
+        $retrive->close();
+
+        return $return;
+    }
+}
+
+class RetriveDocenteFromDatabase implements \auth\RetriveInformations
+{
+    private $link;
+
+    public function __construct(\mysqli_wrapper\mysqli &$link)
+    {
+        $this->link = &$link;
+    }
+
+    public function retrive(\auth\User $user): \auth\UserInfo
+    {
+        $retrive = $this->link->prepare(
+            "SELECT id, nome, cognome, indirizzo_posta, SUB_GOOGLE AS 'id_google', fotografia AS 'picture'
+                      FROM UtenteGoogle 
+                      INNER JOIN Docente D ON UtenteGoogle.id = D.utente
+                    WHERE id = ?");
+
+        $retrive->bind_param(
+            "i",
+            $user->get_database_id()
+        );
+        $retrive->execute();
+
+        $return = new \auth\UserInfo($retrive->get_result()->fetch_assoc());
+        $return->id = $user->get_database_id();
+        $return->nominative = $return["nome"] . ' ' . $return["cognome"];
+        $return->username = $return["indirizzo_posta"];
+
+        $retrive->close();
+
+        return $return;
+    }
+}
+
+class RetriveAziendaFromDatabase implements \auth\RetriveInformations
+{
+    private $link;
+
+    public function __construct(\mysqli_wrapper\mysqli &$link)
+    {
+        $this->link = &$link;
+    }
+
+    public function retrive(\auth\User $user): \auth\UserInfo
+    {
+        $retrive = $this->link->prepare(
+            "SELECT id, nominativo, IVA, codiceFiscale, NULL AS 'picture' FROM Azienda WHERE id = ?");
+
+        $retrive->bind_param(
+            "i",
+            $user->get_database_id()
+        );
+        $retrive->execute();
+
+        $return = new \auth\UserInfo($retrive->get_result()->fetch_assoc());
+        $return->id = $user->get_database_id();
+        //$return->nominative = $return["IVA"];
+        $return->nominative = "";
+        $return->username = $return["nominativo"];
+
+        $retrive->close();
+
+        return $return;
+    }
+}

@@ -9,10 +9,14 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
-$oauth2 = \auth\connect_token_google($google_client, $_SESSION["user"]["token"]);
+$server = new \mysqli_wrapper\mysqli();
 
-$user = \auth\get_user_info($oauth2);
+$user = new \auth\User();
+$user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
+$user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
+
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
+$permission = new \auth\PermissionManager($server, $user);
 
 // Variabili pagina
 $page = "Cassetta degli strumenti";
@@ -33,70 +37,148 @@ $page = "Cassetta degli strumenti";
             ?>
         </aside>
         <div class="column">
-            <div class="notification is-danger">
-                Sembra che non si possegga alcun diritto in questa sezione.<br>
-            </div>
-            <article class="media box">
-                <figure class="media-left">
+            <?php
+            $print = false;
+            if($permission->check("user.google.add"))
+            {
+                $print = true;
+                ?>
+                <article class="media box">
+                    <figure class="media-left">
                     <span class="icon is-large">
                         <i class="fa fa-users fa-2x" aria-hidden="true"></i>
                     </span>
-                </figure>
-                <div class="media-content">
-                    <div class="content">
-                        <h1>Gestione Utenze scolastiche</h1>
-                        <p class="has-text-justified">È necessario avere un'utenza su Google in grado di sfogliare le utenze sul dominio</p>
-                        <a class="button is-link is-pulled-right" href="users">
-                            Configura
-                        </a>
+                    </figure>
+                    <div class="media-content">
+                        <div class="content">
+                            <h1>Gestione Utenze scolastiche</h1>
+                            <a class="button is-link is-pulled-right" href="users">
+                                Configura
+                            </a>
+                        </div>
                     </div>
-                </div>
-            </article>
-            <article class="media box">
-                <figure class="media-left">
+                </article>
+                <?php
+            }
+            if($permission->check('user.factory.add') || $permission->check("factory.contacts.create"))
+            {
+                $print = true;
+                ?>
+                <article class="media box">
+                    <figure class="media-left">
                     <span class="icon is-large">
                         <i class="fa fa-building fa-2x" aria-hidden="true"></i>
                     </span>
-                </figure>
-                <div class="media-content">
-                    <div class="content">
-                        <h1>Gestione Aziende</h1>
-                        <a class="button is-link is-pulled-right" href="./aziende">
-                            Configura
-                        </a>
+                    </figure>
+                    <div class="media-content">
+                        <div class="content">
+                            <h1>Gestione Aziende</h1>
+                            <a class="button is-link is-pulled-right" href="./aziende">
+                                Configura
+                            </a>
+                        </div>
                     </div>
-                </div>
-            </article>
-            <article class="media box">
-                <figure class="media-left">
-                    <span class="icon is-large">
-                        <i class="fa fa-plug fa-2x" aria-hidden="true"></i>
-                    </span>
-                </figure>
-                <div class="media-content">
-                    <div class="content">
-                        <h1>Controllo degli accessi</h1>
-                        <a class="button is-link is-pulled-right" href="./traffico">
-                            Configura
-                        </a>
+                </article>
+                <?php
+            }
+
+            if($permission->check('control.forgive'))
+            {
+                $print = true;
+                ?>
+                <article class="media box">
+                    <figure class="media-left">
+                        <span class="icon is-large">
+                            <i class="fa fa-plug fa-2x" aria-hidden="true"></i>
+                        </span>
+                    </figure>
+                    <div class="media-content">
+                        <div class="content">
+                            <h1>Controllo degli accessi</h1>
+                            <a class="button is-link is-pulled-right" href="./traffico">
+                                Configura
+                            </a>
+                        </div>
                     </div>
-                </div>
-            </article>
-            <article class="media box">
-                <figure class="media-left">
+                </article>
+                <?php
+            }
+            $gruppi = $permission->check("control.groups");
+            $assegnazione_gruppi = $permission->check('user.groups');
+
+            if($assegnazione_gruppi || $gruppi)
+            {
+                $print = true;
+                ?>
+                <article class="media box">
+                    <figure class="media-left">
                     <span class="icon is-large">
                         <i class="fa fa-legal fa-2x" aria-hidden="true"></i>
                     </span>
-                </figure>
-                <div class="media-content">
-                    <div class="content">
-                        <h1>Gestione permessi docenti</h1>
-                        <a class="button is-link is-pulled-right">
-                            Configura
-                        </a>
+                    </figure>
+                    <div class="media-content">
+                        <div class="content">
+                            <h1>Gestione permessi docenti</h1>
+                            <div class="field is-grouped is-grouped-right">
+                                <?php
+                                if($gruppi)
+                                {
+                                    ?>
+                                    <p class="control">
+                                        <a href="permissions/gruppi.php" class="button is-link">
+                                            Configura Gruppi
+                                        </a>
+                                    </p>
+                                    <?php
+                                }
+
+                                if($assegnazione_gruppi)
+                                {
+                                    ?>
+                                    <p class="control">
+                                        <a href="permissions" class="button is-link">
+                                            Configura Utenti
+                                        </a>
+                                    </p>
+                                    <?php
+                                }?>
+                            </div>
+                        </div>
                     </div>
+                </article>
+                <?php
+            }
+
+            if($permission->check('control.throw'))
+			{
+				?>
+				<article class="media box">
+					<figure class="media-left">
+                        <span class="icon is-large">
+                            <i class="fa fa-bug fa-2x" aria-hidden="true"></i>
+                        </span>
+					</figure>
+					<div class="media-content">
+						<div class="content">
+							<h1>Simula un errore negli script</h1>
+							<a class="button is-link is-pulled-right" href="./lancia.php">
+								Lancia un ecceziùne!
+							</a>
+						</div>
+					</div>
+				</article>
+				<?php
+			}
+
+            if(!$print)
+            {
+                ?>
+                <div class="notification is-danger">
+                    Sembra che non si possegga alcun diritto in questa sezione.<br>
                 </div>
-            </article>
+                <?php
+            }
+            ?>
         </div>
     </div>
 </section>

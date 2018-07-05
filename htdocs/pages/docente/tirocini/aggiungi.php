@@ -8,18 +8,27 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
-$oauth2 = \auth\connect_token_google($google_client, $_SESSION["user"]["token"]);
-$user = \auth\get_user_info($oauth2);
+$server = new \mysqli_wrapper\mysqli();
+
+$user = new \auth\User();
+$user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
+$permissions = new \auth\PermissionManager($server, $user);
+$permissions->check("train.add", \auth\PermissionManager::UNAUTHORIZED_REDIRECT);
+
+$user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 
 // Variabili pagina
 $page = "Creazione tirocinio";
 
-$server = new \mysqli_wrapper\mysqli();
 ?>
 <html lang="it">
 <head>
     <?php include "../../../utils/pages/head.phtml"; ?>
+
+	<script src="<?= BASE_DIR ?>js/table/getHandler.js"></script>
+	<script src="<?= BASE_DIR ?>js/table/tableSelection.js"></script>
+	<script src="<?= BASE_DIR ?>js/togglePanel.js"></script>
 </head>
 <body>
 <?php include "../../common/google_navbar.php"; ?>
@@ -33,38 +42,8 @@ $server = new \mysqli_wrapper\mysqli();
             ?>
         </aside>
         <div class="column">
-            <?php
-            if(isset($_GET["errors"]))
-            {
-                $errori = urldecode($_GET["errors"]);
-                ?>
-                <article class="message is-danger" id="errore_db">
-                    <div class="message-header">
-                        <p>
-                            <span class="icon">
-                                <i class="fa fa-database"></i>
-                            </span>
-                            <span>
-                                Errore di processo
-                            </span>
-                        </p>
-                        <button class="delete" aria-label="delete" id="errore_db_delete"></button>
-                    </div>
-                    <div class="message-body">
-                        <p>Si sono verificati dei problemi durante il processo dei dati!</p>
-                        <pre><?= $errori ?></pre>
-                    </div>
-                    <script>
-						$("#errore_db_delete").on("click", function ()
-						{
-							$("#errore_db").remove();
-						});
-                    </script>
-                </article>
-                <?php
-            }
-            ?>
-            <form action="aggiungi_db.php" method="post" id="main_form">
+			<?php include "../../common/mysql_error.php"; ?>
+			<form action="aggiungi_db.php" method="post" id="main_form">
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
                         <label class="label">Studente</label>
@@ -119,30 +98,7 @@ $server = new \mysqli_wrapper\mysqli();
                         </div>
                     </div>
                 </div>
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label">Tutore</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field has-addons is-normal">
-                            <div class="control is-expanded">
-                                <input class="input" type="text" readonly
-                                       placeholder="Selezionare tutore aziendale">
-                                <input hidden type="number" title="studente" name="tutore">
-                            </div>
-                            <div class="control">
-                                <button type="button" class="button is-info" id="seleziona_tutore_trigger" onclick="alert('No!')">
-                                    <span class="icon">
-                                        <i class="fa fa-list-alt" aria-hidden="true"></i>
-                                    </span>
-                                    <span>
-                                        Seleziona...
-                                    </span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
                         <label class="label">Docente</label>
@@ -170,6 +126,32 @@ $server = new \mysqli_wrapper\mysqli();
                         </div>
                     </div>
                 </div>
+
+				<div class="field is-horizontal">
+					<div class="field-label is-normal">
+						<label class="label">Referente aziendale</label>
+					</div>
+					<div class="field-body">
+						<div class="field has-addons is-normal">
+							<div class="control is-expanded">
+								<input class="input" type="text" readonly id="tutore_aziendale_nome"
+									   placeholder="Selezionare tutore aziendale">
+								<input hidden type="number" title="tutore" name="tutore" id="tutore_aziendale_id">
+							</div>
+							<div class="control">
+								<button type="button" class="button is-info" id="seleziona_tutore_trigger" disabled>
+                                    <span class="icon">
+                                        <i class="fa fa-list-alt" aria-hidden="true"></i>
+                                    </span>
+									<span>
+                                        Seleziona...
+                                    </span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
                         <label class="label">Periodo</label>
@@ -178,7 +160,7 @@ $server = new \mysqli_wrapper\mysqli();
                         <div class="field">
                             <div class="control">
                                 <input id="test" required class="input" type="date" name="data_inizio"
-                                       placeholder="Inizio">
+                                       placeholder="Inizio" title="Data di inzio">
                             </div>
                             <p class="help">
                                 Campo obbligatorio
@@ -186,7 +168,7 @@ $server = new \mysqli_wrapper\mysqli();
                         </div>
                         <div class="field">
                             <div class="control">
-                                <input class="input" type="date" name="data_fine" placeholder="Fine">
+                                <input class="input" type="date" name="data_fine" placeholder="Fine" title="Data di fine">
                             </div>
                             <p class="help">
                                 La data di termine non è obbligatoria
@@ -329,74 +311,120 @@ $server = new \mysqli_wrapper\mysqli();
 
 <!--- PopOut: Seleziona Aziende -->
 <div class="modal" id="azienda_modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Selezione azienda</p>
-        </header>
-        <section class="modal-card-body" style="height: 100%; max-height: 100%">
-            <div class="level">
-                <!-- Left side -->
-                <div class="level-left">
-                    <form id="azienda_cerca">
-                        <div class="field has-addons">
-                            <p class="control">
-                                <input class="input" name="query" type="text" placeholder="Cerca ATECO">
-                            </p>
-                            <p class="control">
-                                <button type="submit" class="button">
-                                    Cerca
-                                </button>
-                            </p>
-                        </div>
-                    </form>
-                </div>
+	<div class="modal-background"></div>
+	<div class="modal-card">
+		<header class="modal-card-head">
+			<p class="modal-card-title">Selezione azienda</p>
+		</header>
+		<section class="modal-card-body" style="height: 100%; max-height: 100%">
+			<div class="level">
+				<!-- Left side -->
+				<div class="level-left">
+					<form id="azienda_cerca">
+						<div class="field has-addons">
+							<p class="control">
+								<input class="input" name="query" type="text" placeholder="Filtra">
+							</p>
+							<p class="control">
+								<button type="submit" class="button">
+									Cerca
+								</button>
+							</p>
+						</div>
+					</form>
+				</div>
 
-                <div class="level-right">
-                    <div class="field has-addons">
-                        <p class="control">
-                            <button class="button" disabled id="azienda_back">Indietro</button>
-                        </p>
-                        <p class="control">
-                            <button class="button" disabled id="azienda_forward">Avanti</button>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="is-fullwidth" style="overflow-y: auto">
-                <table class="table is-fullwidth is-narrow is-hoverable">
-                    <thead>
-                    <tr>
-                        <th>Nominativo</th>
-                        <th>IVA</th>
-                        <th>C. Fiscale</th>
-                        <th style="width: 10%"></th>
-                    </tr>
-                    </thead>
-                    <tbody id="aziende_tbody">
+				<div class="level-right">
+					<div class="field has-addons">
+						<p class="control">
+							<button class="button" disabled id="azienda_back">Indietro</button>
+						</p>
+						<p class="control">
+							<button class="button" disabled id="azienda_forward">Avanti</button>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="is-fullwidth" style="overflow-y: auto">
+				<table class="table is-fullwidth is-narrow is-hoverable">
+					<thead>
+					<tr>
+						<th>Nominativo</th>
+						<th>IVA</th>
+						<th>C. Fiscale</th>
+						<th style="width: 10%"></th>
+					</tr>
+					</thead>
+					<tbody id="aziende_tbody">
 
-                    </tbody>
-                </table>
-            </div>
-        </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success" id="seleziona_azienda_aggiungi">Seleziona</button>
-            <button class="button" id="seleziona_azienda_scarta">Scarta</button>
-        </footer>
-    </div>
+					</tbody>
+				</table>
+			</div>
+		</section>
+		<footer class="modal-card-foot">
+			<button class="button is-success" id="seleziona_azienda_aggiungi">Seleziona</button>
+			<button class="button" id="seleziona_azienda_scarta">Scarta</button>
+		</footer>
+	</div>
 </div>
+
+<!-- PopOut selezione ref. referente -->
+<div class="modal" id="referente_modal">
+	<div class="modal-background"></div>
+	<div class="modal-card">
+		<header class="modal-card-head">
+			<p class="modal-card-title">Selezione referente aziendale</p>
+		</header>
+		<section class="modal-card-body" style="height: 100%; max-height: 100%">
+			<div class="level">
+				<!-- Left side -->
+				<div class="level-left">
+				</div>
+
+				<div class="level-right">
+					<div class="field has-addons">
+						<p class="control">
+							<button class="button" disabled id="referente_back">Indietro</button>
+						</p>
+						<p class="control">
+							<button class="button" disabled id="referente_forward">Avanti</button>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="is-fullwidth" style="overflow-y: auto">
+				<table class="table is-fullwidth is-narrow is-hoverable">
+					<thead>
+					<tr>
+						<th>Nominativo</th>
+						<th>Posta E.</th>
+						<th>Telefono</th>
+						<th style="width: 10%"></th>
+					</tr>
+					</thead>
+					<tbody id="referenti_tbody">
+
+					</tbody>
+				</table>
+			</div>
+		</section>
+		<footer class="modal-card-foot">
+			<button class="button is-success" id="seleziona_referente_aggiungi">Seleziona</button>
+			<button class="button" id="seleziona_referente_scarta">Scarta</button>
+		</footer>
+	</div>
+</div>
+
+
 <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
 </body>
 <script>
 	let main_form = $ ("#main_form");
 </script>
-<script src="<?= BASE_DIR ?>js/getHandler.js"></script>
-<script src="<?= BASE_DIR ?>js/tableSelection.js"></script>
-<script src="<?= BASE_DIR ?>js/togglePanel.js"></script>
-
 
 <script src="js/selezione_studente.js"></script>
 <script src="js/selezione_docente.js"></script>
 <script src="js/selezione_azienda.js"></script>
+<script src="js/selezione_referente.js"></script>
 
 </html>

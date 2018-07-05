@@ -33,9 +33,9 @@
             Tirocini
             </span>
         </a>
-        <ul>
+        <ul id="controls">
             <li>
-                <a class="<?= ($index_menu !== 2 ?: "is-active")?>">
+                <a data-selezione="1" href="<?= BASE_DIR ?>pages/docente/tirocini/list/?time=1" class="switch <?= ($index_menu !== 2 ?: "is-active")?>">
                     <span class="icon">
                     <i class="fa fa-play" aria-hidden="true"></i>
                     </span>
@@ -45,17 +45,17 @@
                 </a>
             </li>
             <li>
-                <a class="<?= ($index_menu !== 3 ?: "is-active")?>">
+                <a data-selezione="2" href="<?= BASE_DIR ?>pages/docente/tirocini/list/?time=2" class="switch <?= ($index_menu !== 3 ?: "is-active")?>">
                     <span class="icon">
                     <i class="fa fa-fast-forward" aria-hidden="true"></i>
                     </span>
                         <span>
-                    Futuri
+                        Futuri
                     </span>
                 </a>
             </li>
             <li>
-                <a class="<?= ($index_menu !== 4 ?: "is-active")?>">
+                <a data-selezione="0" href="<?= BASE_DIR ?>pages/docente/tirocini/list/?time=0" class="switch <?= ($index_menu !== 4 ?: "is-active")?>">
                     <span class="icon">
                     <i class="fa fa-stop" aria-hidden="true"></i>
                     </span>
@@ -66,7 +66,7 @@
             </li>
         </ul>
     </li>
-    <li>
+    <!--<li>
         <a class="<?= ($index_menu !== 5 ?: "is-active")?>">
             <span class="icon">
             <i class="fa fa-file-text" aria-hidden="true"></i>
@@ -75,14 +75,14 @@
             Resoconti
             </span>
         </a>
-    </li>
+    </li>-->
 </ul>
 <p class="menu-label">
     Aziende
 </p>
 <ul class="menu-list">
     <li>
-        <a class="<?= ($index_menu !== 6 ?: "is-active")?>">
+        <a href="<?= BASE_DIR ?>pages/docente/aziende/" class="<?= ($index_menu !== 6 ?: "is-active")?>">
             <span class="icon">
             <i class="fa fa-building" aria-hidden="true"></i>
             </span>
@@ -92,7 +92,7 @@
         </a>
     </li>
     <li>
-        <a class="<?= ($index_menu !== 7 ?: "is-active")?>">
+        <a href="<?= BASE_DIR ?>pages/docente/aziende/contacts.php" class="<?= ($index_menu !== 7 ?: "is-active")?>">
             <span class="icon">
             <i class="fa fa-address-card" aria-hidden="true"></i>
             </span>

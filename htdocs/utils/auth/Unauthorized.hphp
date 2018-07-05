@@ -1,0 +1,26 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 24/03/18
+ * Time: 18.17
+ */
+
+namespace auth;
+
+
+class Unauthorized extends \RuntimeException
+{
+    /**
+     * Unauthorized constructor.
+     * @param $required_level
+     * @param $acutal_level
+     * @see \RuntimeException
+     */
+    public function __construct($required_level, $acutal_level)
+    {
+        $req_bin = is_int($required_level) ? "0b" . decbin($required_level) : $required_level;
+        $act_bin = is_int($acutal_level) ? "0b" . decbin($acutal_level): $acutal_level;
+        parent::__construct("Tried to visit a page which requires $req_bin level but current user has $act_bin !", 403);
+    }
+}

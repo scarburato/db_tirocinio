@@ -9,9 +9,17 @@
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/lib.hphp";
 require_once ($_SERVER["DOCUMENT_ROOT"]) . "/utils/auth.hphp";
 
-\auth\check_and_redirect(\auth\LEVEL_GOOGLE_TEACHER);
-$oauth2 = \auth\connect_token_google($google_client, $_SESSION["user"]["token"]);$user = \auth\get_user_info($oauth2);
 $server = new \mysqli_wrapper\mysqli();
+
+$user = new \auth\User();
+$user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
+$user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
+$permissions = new \auth\PermissionManager($server, $user);
+
+$permissions->check("factory.contacts.create", \auth\PermissionManager::UNAUTHORIZED_REDIRECT);
+
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
+
 $info = $server->prepare("SELECT IVA, codiceFiscale, nominativo, C.descrizione, C2.cod2007, dimensione, gestione, no_accessi 
                                   FROM Azienda 
                                   INNER JOIN Classificazioni C ON Azienda.classificazione = C.id
@@ -22,13 +30,15 @@ $info->bind_param("i", $_GET["id"]);
 $info->execute();
 $info->bind_result($iva, $cf, $nome, $classificazione, $ateco_c,$dimensione, $gestione, $no_accesso);
 $info->store_result();
-$info->fetch();
+if($info->fetch() !== true)
+	throw new RuntimeException("Azienda non esistente!", -1);
 
 // Variabili pagina
-$page = "{$_GET["id"]}";
+$page = sanitize_html($nome);
 
 function edit_button()
 {
+	return;
     ?>
     <a class="button is-small is-fullwidth">
         <span class="icon">
@@ -63,6 +73,16 @@ function edit_button()
             ?>
         </aside>
         <div class="column">
+			<p class="control">
+				<a class="button is-primary is-pulled-right is-large" href="./aggiungi_contatto.php?id=<?= $_GET["id"] ?>">
+					<span class="icon">
+						<i class="fa fa-user-plus" aria-hidden="true"></i>
+					</span>
+					<span>
+                        Crea contatto
+					</span>
+				</a>
+			</p>
             <div class="">
                 <table class="table is-fullwidth">
                     <tr>
@@ -82,7 +102,7 @@ function edit_button()
                     <tr>
                         <th>Nominativo</th>
                         <td>
-                            <?= $nome ?>
+                            <?= sanitize_html($nome) ?>
                         </td>
                         <td class="edit-button" data-edit="nominativo">
                             <?php edit_button() ?>
@@ -91,7 +111,7 @@ function edit_button()
                     <tr>
                         <th>Parita IVA</th>
                         <td>
-                            <?= $iva ?>
+                            <?= sanitize_html($iva)?>
                         </td>
                         <td class="edit-button" data-edit="iva">
                             <?php edit_button() ?>
@@ -100,7 +120,7 @@ function edit_button()
                     <tr>
                         <th>Codice Fiscale</th>
                         <td>
-                            <?= $cf ?>
+                            <?= sanitize_html($cf) ?>
                         </td>
                         <td class="edit-button" data-edit="cf">
                             <?php edit_button() ?>
@@ -109,7 +129,7 @@ function edit_button()
                     <tr>
                         <th>Classificazione</th>
                         <td>
-                            <?= $classificazione ?>
+                            <?= sanitize_html($classificazione) ?>
                         </td>
                         <td class="edit-button" data-edit="classificazione">
                             <?php edit_button() ?>
@@ -118,7 +138,7 @@ function edit_button()
                     <tr>
                         <th>Ateco</th>
                         <td>
-                            <?= $ateco_c ?>
+                            <?= sanitize_html($ateco_c) ?>
                         </td>
                         <td class="edit-button" data-edit="ateco">
                             <?php edit_button() ?>
@@ -127,7 +147,7 @@ function edit_button()
                     <tr>
                         <th>Dimensione</th>
                         <td>
-                            <?= $dimensione ?>
+                            <?= sanitize_html($dimensione) ?>
                         </td>
                         <td class="edit-button" data-edit="dimensione">
                             <?php edit_button() ?>
@@ -136,7 +156,7 @@ function edit_button()
                     <tr>
                         <th>Tipologia gestione</th>
                         <td>
-                            <?= $gestione ?>
+                            <?= sanitize_html($gestione) ?>
                         </td>
                         <td class="edit-button" data-edit="gestione">
                             <?php edit_button() ?>
@@ -145,7 +165,7 @@ function edit_button()
                     <tr>
                         <th>Già stato acceduto?</th>
                         <td>
-                            <?= $no_accesso ?>
+                            <?= sanitize_html($no_accesso) ?>
                         </td>
                         <td class="edit-button" data-edit="access">
                             <?php edit_button() ?>
@@ -176,5 +196,7 @@ function edit_button()
 
 
 <script src="js/edit.js"></script>
+<?php include ($_SERVER["DOCUMENT_ROOT"]) .  "/utils/pages/footer.phtml"; ?>
+
 </body>
 </html>

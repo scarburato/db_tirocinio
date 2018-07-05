@@ -1,0 +1,49 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dario
+ * Date: 01/04/18
+ * Time: 14.17
+ */
+
+/**
+ * Funzione che ritorna l'id nella base di dati di un utente.
+ * Da usare con le REST API che accettato direttamente l'id XOR l'indirizzo di posta.
+ * Se vengono forniti ambedue si preferisce l'id senza controllare la reale corrispondenza con
+ * l'indirizzo di posta elettronica!
+ * @param array|null $get_array
+ * @param \mysqli_wrapper\mysqli $server
+ * @return int
+ */
+function get_id(\mysqli_wrapper\mysqli $server, array $parm_array = null): int
+{
+    if($parm_array === null)
+        $parm_array = $_GET;
+
+    if(empty($parm_array["email"]) && empty($parm_array["id"]))
+        throw new RuntimeException("invalid email or id");
+
+    if(!empty($parm_array["id"]))
+        return $parm_array["id"];
+
+    $id_stm = $server->prepare("SELECT id FROM UtenteGoogle INNER JOIN Docente D ON UtenteGoogle.id = D.utente
+                                  WHERE indirizzo_posta = ?");
+
+    $id_stm->bind_param(
+        "s",
+        $parm_array["email"]
+    );
+
+    $id_stm->execute();
+
+    $id_stm->bind_result($id);
+
+    $trovato = $id_stm->fetch() === true;
+
+    $id_stm->close();
+
+    if(!$trovato)
+        throw new RuntimeException("email {$parm_array["email"]} not found!", 404);
+
+    return $id;
+}
