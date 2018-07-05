@@ -10,7 +10,8 @@ namespace auth;
 use Throwable;
 
 /**
- * Class User
+ * La classe utente si occupa di gestire la sessione dell'utente e comparare il livello d'accesso dell'utente con uno
+ * richiesto. È possibile gestire più istanze passando indici diversi. È necessaria 
  * @package auth
  */
 class User

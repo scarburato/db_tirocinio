@@ -13,7 +13,7 @@ $server = new \mysqli_wrapper\mysqli();
 
 $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 
 $server = new \mysqli_wrapper\mysqli();
 
@@ -24,7 +24,7 @@ $crea_gruppo->bind_param(
     $_POST["desc"]
 );
 
-$crea_gruppo->execute(true);
+$crea_gruppo->execute();
 
 redirect("gruppo.php", [
     "group" => $_POST["name"]

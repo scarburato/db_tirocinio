@@ -16,6 +16,7 @@ $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW)
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
 $pagina = isset($_GET["pagina"]) ? $_GET["pagina"] : 0;
+$skipIndirizzo = empty($_GET["indirizzo"]);
 
 // Ottengo lista aziende
 $aziende = new class($server,
@@ -26,16 +27,20 @@ SELECT A.id, A.nominativo,
   (SELECT COUNT(T.id) FROM Tirocinio T WHERE
     (CURRENT_DATE() >= T.dataInizio AND (T.dataTermine IS NULL OR CURRENT_DATE() <= T.dataTermine))
     AND T.azienda = A.id)
-FROM Azienda A"
+FROM Azienda A 
+WHERE (? OR EXISTS(SELECT id FROM IndirizziAzienda I WHERE I.azienda = A.id AND I.indirizzo = ?)) "
 ) extends \helper\Pagination
 {
-    public function compute_rows()
+    public function compute_rows(): int
     {
         $row_tot = 0;
-        $conta = $this->link->prepare(
-            "SELECT COUNT(id) FROM Azienda");
+		$skipIndirizzo = empty($_GET["indirizzo"]);
+		$conta = $this->link->prepare(
+            "SELECT COUNT(id) FROM Azienda A WHERE ? OR EXISTS(SELECT id FROM IndirizziAzienda I WHERE I.azienda = A.id AND I.indirizzo = ?)");
 
-        $conta->execute();
+		$conta->bind_param("ii", $skipIndirizzo, $_GET["indirizzo"]);
+
+		$conta->execute();
         $conta->bind_result($row_tot);
         $conta->fetch();
         $conta->close();
@@ -46,6 +51,8 @@ FROM Azienda A"
 
 $aziende->set_limit(4);
 $aziende->set_current_page($pagina);
+
+$aziende->bind_param("ii", $skipIndirizzo, $_GET["indirizzo"]);
 
 $aziende->execute();
 $aziende->bind_result($id, $nominativo, $sedi_conta, $contatti_conta, $tirocini_conta);

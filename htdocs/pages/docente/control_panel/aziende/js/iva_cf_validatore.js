@@ -139,6 +139,8 @@ codice_fiscale.on ("keyup", function (tasto)
 
 		let esiste = data.esiste;
 
+		console.log(data);
+
 		if(esiste)
 		{
 			codice_fiscale_icone.switch("error");
@@ -200,7 +202,7 @@ iva.on ("keyup", function (tasto)
 		if(richiesta_attuale !== iva_ultima_richiesta)
 			return;
 
-		let esiste = JSON.parse(data).esiste;
+		let esiste = data.esiste;
 		if(esiste)
 		{
 			iva_icona.switch("error");

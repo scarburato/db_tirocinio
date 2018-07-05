@@ -15,7 +15,7 @@ $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 
 $permissions = new \auth\PermissionManager($server, $user);
 $permissions->check("train.import", \auth\PermissionManager::UNAUTHORIZED_REDIRECT);
@@ -405,7 +405,7 @@ $page = "Tirocini";
                         </div>
                     </div>
                     <?php
-                    $can_do_it = \auth\check_permission($server, "user.google.add", false);
+                    $can_do_it = $permissions->check("user.google.add");
                     ?>
                     <div class="field">
                         <div class="control">
@@ -456,7 +456,7 @@ $page = "Tirocini";
                 <div class="box">
                     <h5 class="title is-5" id="data_assoc_fact_name">Nome</h5>
                     <?php
-                    if(\auth\check_permission($server, "user.factory.add", false))
+                    if($permissions->check("user.factory.add"))
                     {
                     ?>
                         <div class="field">

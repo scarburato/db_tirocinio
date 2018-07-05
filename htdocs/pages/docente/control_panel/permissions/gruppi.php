@@ -15,7 +15,7 @@ $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 
 // Variabili pagina
 $page = "Gestione dei gruppi";
@@ -76,7 +76,7 @@ $server = new \mysqli_wrapper\mysqli();
                 <tbody>
                 <?php
                 $gruppi = $server->prepare("SELECT nome, descrizione FROM Gruppo");
-                $gruppi->execute(true);
+                $gruppi->execute();
                 $gruppi->bind_result($nome, $desc);
                 while($gruppi->fetch())
                 {

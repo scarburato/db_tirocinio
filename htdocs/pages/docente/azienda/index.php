@@ -15,7 +15,7 @@ $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 
 if(empty($_GET["id"]))
     throw new RuntimeException("Manca l'id!", -1);
@@ -102,55 +102,57 @@ $page = "Azienda - " . $nome;
                 </div>
             </div>
 
-            <div class="tabs" id="selector">
-                <ul>
-                    <li data-tab="indirizzi">
-                        <a>
-                            <span class="icon">
-                                <i class="fa fa-suitcase" aria-hidden="true"></i>
-                            </span>
-                            <span>
-                                Indirizzi di studio
-                            </span>
-                        </a>
-                    </li>
-                    <li data-tab="sedi">
-                        <a>
-                            <span class="icon">
-                                <i class="fa fa-map" aria-hidden="true"></i>
-                            </span>
-                            <span>
-                                Sedi
-                            </span>
-                        </a>
-                    </li>
-                    <li data-tab="contatti">
-                        <a>
-                            <span class="icon">
-                                <i class="fa fa-address-book" aria-hidden="true"></i>
-                            </span>
-                            <span>
-                                Contatti
-                            </span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <div id="contents">
-                <div data-tab="indirizzi" hidden>
-                    <h4 class="title is-4" id="indirizzi">Indirizzi di studio</h4>
-                    <div id="indirizzi_dinamici"></div>
+            <div class="section">
+                <div class="tabs is-boxed" id="selector">
+                    <ul>
+                        <li data-tab="indirizzi">
+                            <a>
+                                <span class="icon">
+                                    <i class="fa fa-suitcase" aria-hidden="true"></i>
+                                </span>
+                                <span>
+                                    Indirizzi di studio
+                                </span>
+                            </a>
+                        </li>
+                        <li data-tab="sedi">
+                            <a>
+                                <span class="icon">
+                                    <i class="fa fa-map" aria-hidden="true"></i>
+                                </span>
+                                <span>
+                                    Sedi
+                                </span>
+                            </a>
+                        </li>
+                        <li data-tab="contatti">
+                            <a>
+                                <span class="icon">
+                                    <i class="fa fa-address-book" aria-hidden="true"></i>
+                                </span>
+                                <span>
+                                    Contatti
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
 
-                <div data-tab="sedi" hidden>
-                    <h4 class="title is-4" id="sedi">Sedi</h4>
-                    <div id="sedi_dinamici"></div>
-                </div>
+                <div id="contents">
+                    <div data-tab="indirizzi" hidden>
+                        <h4 class="title is-4" id="indirizzi">Indirizzi di studio</h4>
+                        <div id="indirizzi_dinamici"></div>
+                    </div>
 
-                <div data-tab="contatti" hidden>
-                    <h4 class="title is-4" id="contatti">Contatti e referenti</h4>
-                    <div id="contatti_dinamici"></div>
+                    <div data-tab="sedi" hidden>
+                        <h4 class="title is-4" id="sedi">Sedi</h4>
+                        <div id="sedi_dinamici"></div>
+                    </div>
+
+                    <div data-tab="contatti" hidden>
+                        <h4 class="title is-4" id="contatti">Contatti e referenti</h4>
+                        <div id="contatti_dinamici"></div>
+                    </div>
                 </div>
             </div>
         </div>

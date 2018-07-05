@@ -189,8 +189,6 @@ if(isset($_GET["google_expired"]))
                                     $tentativi = 0;
 
                                 $_SESSION["hash_weight"] = $tentativi;
-
-                                echo compute_hashes($tentativi);
                                 ?>
                                 <div class="message is-warning" id="no_asm">
                                     <div class="message-header">
@@ -256,6 +254,8 @@ if(isset($_GET["google_expired"]))
                                     </p>
                                     <?php
                                 }
+
+                                echo compute_hashes($tentativi);
                             }
                             ?>
                         </div>

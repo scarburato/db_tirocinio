@@ -27,7 +27,7 @@ $users = new class(
       WHERE ? OR nome LIKE ? OR cognome LIKE ? OR indirizzo_posta LIKE ?"
 ) extends \helper\Pagination
 {
-    public function compute_rows()
+    public function compute_rows(): int
     {
         return PHP_INT_MAX;
     }

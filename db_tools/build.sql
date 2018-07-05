@@ -171,6 +171,13 @@ CREATE TABLE EntratoInContatto (
   REFERENCES Docente (Utente)
 );
 
+CREATE FUNCTION timeOverlap(startPeriodA DATETIME, endPeriodA DATETIME, startPeriodB DATETIME, endPeriodB DATETIME)
+  RETURNS BOOLEAN
+  BEGIN
+    RETURN    (endPeriodB IS NULL OR startPeriodA  <= endPeriodB)
+          AND (endPeriodA IS NULL OR endPeriodA >= startPeriodB);
+  END;
+
 CREATE FUNCTION sovrapponeEvento(docente SMALLINT UNSIGNED, contatto INT(8) UNSIGNED, inizio DATE, fine DATE)
   RETURNS BOOLEAN
   BEGIN
@@ -179,10 +186,9 @@ CREATE FUNCTION sovrapponeEvento(docente SMALLINT UNSIGNED, contatto INT(8) UNSI
         FROM EntratoInContatto E
         WHERE E.docente = docente
               AND E.contatto = contatto
-              AND (E.fine IS NULL OR inizio <= E.fine)
-              AND (fine IS NULL OR fine >= E.inizio)
-              -- Condizione necessaria per saltare la riga stessa :P. Tanto è chiave primaria
               AND E.inizio <> inizio
+              AND timeOverlap(E.inizio, E.fine, inizio, fine)
+              -- Condizione necessaria per saltare la riga stessa :P. Tanto è chiave primaria
     );
   END;
 /*
@@ -227,6 +233,7 @@ CREATE TABLE Tirocinio (
   dataTermine     DATE,
 
   giudizio        TINYINT UNSIGNED,
+
   descrizione     LONGTEXT, /* È la recensione dello studente! */
   ultima_modifica TIMESTAMP                               NULL DEFAULT NULL,
   visibilita      ENUM ('studente', 'docente', 'azienda') NOT NULL DEFAULT 'studente',

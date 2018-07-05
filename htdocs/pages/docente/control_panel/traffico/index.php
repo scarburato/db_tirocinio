@@ -15,7 +15,7 @@ $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 // Variabili pagina
 $page = "Accessi";
 
@@ -25,11 +25,11 @@ $indirizzi  = new class(
         "SELECT indirizzo_rete, ultimo_accesso, tentativi_falliti, ultimo_tentativo FROM AziendeTentativiAccesso ORDER BY ultimo_tentativo DESC, indirizzo_rete"
 ) extends helper\Pagination
 {
-    public  function compute_rows()
+    public  function compute_rows(): int
     {
         $rows = 0;
         $stm = $this->link->prepare("SELECT COUNT(indirizzo_rete) FROM AziendeTentativiAccesso");
-        $stm->execute(true);
+        $stm->execute();
         $stm->bind_result($rows);
         $stm->fetch();
         $stm->close();
@@ -38,7 +38,7 @@ $indirizzi  = new class(
     }
 };
 
-$indirizzi->execute(true);
+$indirizzi->execute();
 $indirizzi->bind_result(
         $indirizzo_ip,
         $ultimo_accesso,

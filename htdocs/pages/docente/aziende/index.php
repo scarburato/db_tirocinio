@@ -15,7 +15,7 @@ $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 
 // Variabili pagina
 $page = "Lista aziende";
@@ -45,7 +45,7 @@ $page = "Lista aziende";
                     <div class="field-body">
                         <div class="field">
                             <div class="control is-expanded">
-                                <input class="input" id="filter" type="text" placeholder="Parola chiave">
+                                <input class="input" id="filter_text" type="text" placeholder="Parola chiave">
                             </div>
                         </div>
                     </div>
@@ -59,7 +59,7 @@ $page = "Lista aziende";
                         <div class="field">
                             <div class="control is-expanded">
                                 <div class="select is-fullwidth">
-                                    <select title="docente" id="filter_values_stu">
+                                    <select title="docente" id="filter_values_ind">
                                         <option value="all" selected>Tutte le specializzazioni</option>
                                         <optgroup label="Indirizzi di studio">
                                             <?php
@@ -82,8 +82,8 @@ $page = "Lista aziende";
                     </div>
                 </div>
 
-                <p class="control has-text-right">
-                    <button class="button is-info" id="filter_go">
+                <p class="control has-text-right" >
+                    <button class="button is-info" id="filtralo">
                         <span class="icon">
                             <i class="fa fa-filter" aria-hidden="true"></i>
                         </span>

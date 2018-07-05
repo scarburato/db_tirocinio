@@ -28,7 +28,7 @@ $indirizzi = new class($server,
     WHERE azienda = ?"
 ) extends \helper\Pagination
 {
-    public function compute_rows()
+    public function compute_rows(): int
     {
         $row_tot = 0;
         $conta = $this->link->prepare(

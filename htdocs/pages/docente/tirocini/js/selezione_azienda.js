@@ -15,6 +15,11 @@ let azienda_listener = new TableSelection(azienda_tbody);
 
 let azienda_panel = new TogglePanel("#azienda_modal");
 
+azienda_listener.addHandler((row) =>
+{
+	$("#seleziona_tutore_trigger").prop("disabled", row === null);
+});
+
 $("#seleziona_azienda_trigger").on("click", function ()
 {
 	azienda.get();

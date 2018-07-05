@@ -28,7 +28,7 @@ $users = new class(
       INNER JOIN CodiceAteco C2 ON Azienda.ateco = C2.id"
 ) extends \helper\Pagination
 {
-    public function compute_rows()
+    public function compute_rows(): int
     {
         return PHP_INT_MAX;
     }

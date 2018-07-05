@@ -15,7 +15,7 @@ $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 
 // Variabili pagina
 $page = "Gestione Aziende - Riepilogo ultimo inserimento";
@@ -29,7 +29,7 @@ $azienda->bind_param(
         "i",
         $_GET["id"]
 );
-$azienda->execute(true);
+$azienda->execute();
 
 $azienda->bind_result(
         $id,
@@ -149,7 +149,7 @@ $azienda->close();
                             "i",
                             $id
                     );
-                    $sedi->execute(true);
+                    $sedi->execute();
                     $sedi->bind_result($nome, $indirizzo, $cap);
                     while ($sedi->fetch())
                     {

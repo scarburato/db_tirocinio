@@ -15,7 +15,7 @@ $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 
 // Variabili pagina
 $page = "Cruscotto";
@@ -31,8 +31,6 @@ $page = "Cruscotto";
  *
  * @ docente non è altro che una variabile per evitare di dover scrivere ogni volta l'ID del docente
  * nella bind param, nel primo WHERE gli viene assegno il valore di ? con l'operatore := e se lo tiene anche per dopo :P
- * Lo scoperto solo il tre di Maggio quindi è probabile trovare vecchie interrogazioni al BD che contegano inutili
- * ripetizioni di '?' PAX
  */
 $recenti = $server->prepare("
 SELECT * FROM (

@@ -30,7 +30,7 @@ $delete->bind_param(
     "s",
     $_GET["group"]
 );
-$delete->execute(true);
+$delete->execute();
 $delete->close();
 
 // Cancellazione associozioni
@@ -39,7 +39,7 @@ $delete->bind_param(
     "s",
     $_GET["group"]
 );
-$delete->execute(true);
+$delete->execute();
 $delete->close();
 
 // Cancellazione finale
@@ -48,7 +48,7 @@ $delete->bind_param(
     "s",
     $_GET["group"]
 );
-$delete->execute(true);
+$delete->execute();
 $delete->close();
 
 $server->commit();

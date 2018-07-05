@@ -16,12 +16,8 @@ $server = new \mysqli_wrapper\mysqli();
 
 $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
-$user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
-
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
 
 $return = array();
-$server = new \mysqli_wrapper\mysqli();
 
 $codice_fiscale = $server->prepare("SELECT COUNT(*) FROM Azienda WHERE IVA = ?");
 
@@ -35,5 +31,6 @@ $codice_fiscale->bind_result($count);
 $codice_fiscale->fetch();
 
 $return["esiste"] = ($count > 0);
+$return["iva"] = $_POST["iva"];
 
 echo json_encode($return);

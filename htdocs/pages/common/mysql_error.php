@@ -30,7 +30,7 @@ if (isset($_GET["errors"]))
 		</div>
 		<div class="message-body">
 			<p>Si sono verificati dei problemi durante il processo dei dati!</p>
-			<pre><?= sanitize_html($errori) ?></pre>
+			<pre style="overflow-x: auto"><?= sanitize_html($errori) ?></pre>
 		</div>
 		<script>
 			$ ("#errore_db_delete<?= $id ?>").on ("click", function ()

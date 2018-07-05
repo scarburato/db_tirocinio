@@ -14,6 +14,7 @@ else if(isset($_GET["session_mode"]))
 {
     session_start();
     $errore = $_SESSION["last_error"];
+	unset($_SESSION["last_error"]);
 }
 else
     $errore = array(

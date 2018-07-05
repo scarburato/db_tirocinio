@@ -23,7 +23,7 @@ INSERT INTO Privilegio(nome, descrizione) VALUES
   ('user.factory.resetpasswd', 'Consente di cambiare la parola d\'ordine delle aziende'),
   ('train.add', 'Consente di creare tirocini'),
   ('train.import', 'Consente di importare tirocini dal CSV esoterico'),
-  ('train.pubblish', 'Consente di pubblicare tirocini'),
+  ('train.pubblish', 'Consente di pubblicare i resoconti degli studenti al pubblico, al momento non usato'),
   ('train.readall', 'Consente di leggere i tirocini non propri'),
   ('train.comments.delete', 'Consente di elimare i commenti'),
   ('control.forgive', 'Consente di perdonare gli indirizzi che hanno tentato troppi accessi'),
@@ -31,6 +31,7 @@ INSERT INTO Privilegio(nome, descrizione) VALUES
   ('factory.intouch', 'Consente di entrare in contatto con le aziende'),
   ('factory.contacts.create', 'Consente di creare contatti aziendali'),
   ('user.groups', 'Consente di assegnare gruppi agli utenti'),
+  ('control.throw', 'Abilita a lanciare un eccezzione'),
   ('root', 'Accesso totale a tutto, nessuna domanda');
 
 INSERT INTO Gruppo(nome, descrizione) VALUES ('root', 'Accesso totale e globale al programma');

@@ -15,7 +15,7 @@ $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 $permission = new \auth\PermissionManager($server, $user);
 
 // Variabili pagina
@@ -60,7 +60,7 @@ $page = "Cassetta degli strumenti";
                 </article>
                 <?php
             }
-            if($permission->check('user.factory.add'))
+            if($permission->check('user.factory.add') || $permission->check("factory.contacts.create"))
             {
                 $print = true;
                 ?>
@@ -148,6 +148,27 @@ $page = "Cassetta degli strumenti";
                 </article>
                 <?php
             }
+
+            if($permission->check('control.throw'))
+			{
+				?>
+				<article class="media box">
+					<figure class="media-left">
+                        <span class="icon is-large">
+                            <i class="fa fa-bug fa-2x" aria-hidden="true"></i>
+                        </span>
+					</figure>
+					<div class="media-content">
+						<div class="content">
+							<h1>Simula un errore negli script</h1>
+							<a class="button is-link is-pulled-right" href="./lancia.php">
+								Lancia un ecceziùne!
+							</a>
+						</div>
+					</div>
+				</article>
+				<?php
+			}
 
             if(!$print)
             {

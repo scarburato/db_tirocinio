@@ -15,7 +15,7 @@ $user->is_authorized(\auth\LEVEL_GOOGLE_BOTH, \auth\User::UNAUTHORIZED_REDIRECT)
 
 $user_info = ($user->get_info(new RetriveStudenteFromDatabase($server)));
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 
 if(isset($_GET["tipo"]))
 {

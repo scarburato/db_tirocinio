@@ -35,7 +35,7 @@ $contatti = new class($server,
     GROUP BY C.id"
 ) extends \helper\Pagination
 {
-    public function compute_rows()
+    public function compute_rows(): int
     {
         $row_tot = 0;
         $conta = $this->link->prepare(
@@ -88,6 +88,7 @@ $nav->set_pagination_builder(new \helper\IndexJS());
             <th>Nome Cognome</th>
             <th>Qualifica</th>
             <th style="width: 20%">Contatti in corso</th>
+            <th style="width: 1.6em"></th>
             <?php if($puo_entrare_in_contatto) {
                ?>
                 <th style="width: 1.6em"></th>
@@ -104,6 +105,16 @@ $nav->set_pagination_builder(new \helper\IndexJS());
                 <td><?= sanitize_html("{$nome} {$cognome}") ?></td>
                 <td><?= sanitize_html($qualifica) ?></td>
                 <td><?= $contatti_attuali ?></td>
+                <td>
+                    <a class="button is-small is-link"
+                       aria-label="Ulteriori informazioni"
+                       title="Ulteriori informazioni"
+                       href="contatto/?id=<?= $c_id ?>">
+                        <span class="icon">
+                            <i class="fa fa-info" aria-hidden="true"></i>
+                        </span>
+                    </a>
+                </td>
                 <?php
                 if($puo_entrare_in_contatto)
                 {
@@ -111,7 +122,8 @@ $nav->set_pagination_builder(new \helper\IndexJS());
                     <td>
                         <a class="button is-link is-small"
                            aria-label="Segnati in contatto"
-                           href="<?= BASE_DIR ?>pages/docente/aziende/contatti/create.php?contact=<?=$id?>">
+                           title="Segnati in contatto"
+                           href="<?= BASE_DIR ?>pages/docente/aziende/contatti/create.php?contact=<?=$c_id?>">
                             <span class="icon">
                                 <i class="fa fa-handshake-o" aria-hidden="true"></i>
                             </span>

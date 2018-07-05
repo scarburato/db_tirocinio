@@ -107,7 +107,7 @@ $user->is_authorized(\auth\LEVEL_FACTORY | \auth\LEVEL_GOOGLE_TEACHER, \auth\Use
 	</div>
 	<div class="field-body">
 		<div class="field">
-			<textarea name="ruolo" class="textarea"
+			<textarea name="ruolo" class="textarea" required
 					  placeholder="Descrivere brevemente il proprio ruolo aziendale" maxlength="65535"></textarea>
 		</div>
 	</div>
@@ -117,3 +117,4 @@ $user->is_authorized(\auth\LEVEL_FACTORY | \auth\LEVEL_GOOGLE_TEACHER, \auth\Use
 		Registra
 	</button>
 </div>
+<script src="/pages/common/js/validate_contact.js"></script>

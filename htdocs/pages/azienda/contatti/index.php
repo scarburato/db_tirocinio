@@ -20,6 +20,7 @@ $page = "Contatti"
 <html lang="it">
 <head>
     <?php include ($_SERVER["DOCUMENT_ROOT"]) ."/utils/pages/head.phtml"; ?>
+	<script src="<?= BASE_DIR ?>js/DynamicPagination.js"></script>
 </head>
 <body>
 <?php include "../../common/google_navbar.php"; ?>
@@ -33,19 +34,37 @@ $page = "Contatti"
             ?>
         </aside>
         <div class="column">
-            <p>
-                <a class="button is-primary is-pulled-right is-large" href="./crea.php">
+            <div class="field">
+				<p class="control has-text-right">
+					<a class="button is-primary is-large" href="./crea.php">
+						<span class="icon">
+							<i class="fa fa-plus" aria-hidden="true"></i>
+						</span>
+						<span>
+							Aggiungi
+						</span>
+					</a>
+				</p>
+            </div>
+
+			<div id="dynamic_contacts_loading" class="has-text-centered">
+				<p>
                     <span class="icon">
-                        <i class="fa fa-plus" aria-hidden="true"></i>
+                        <i class="fa fa-circle-o-notch fa-spin fa-fw"></i>
                     </span>
-                    <span>
-                        Aggiungi
+					<span>
+                        Interrogazione in corso...
                     </span>
-                </a>
-            </p>
+				</p>
+			</div>
+			<div id="dynamic_contacts">
+
+			</div>
         </div>
     </div>
 </section>
 <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
+
+<script src="js/contact_list.js"></script>
 </body>
 </html>

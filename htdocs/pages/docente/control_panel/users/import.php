@@ -15,7 +15,7 @@ $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 
 // Variabili pagina
 $page = "Importa utente da Google";
@@ -45,7 +45,7 @@ $page = "Importa utente da Google";
             </div>
             <div class="field has-addons">
                 <div class="control is-expanded">
-                    <input id="query" class="input" type="email" placeholder="Indirizzo di posta elettronica">
+                    <input id="query" autocomplete="off" class="input" type="email" placeholder="Indirizzo di posta elettronica">
                 </div>
                 <div class="control">
                     <button id="search" class="button is-link">

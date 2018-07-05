@@ -29,7 +29,8 @@ if (empty($_GET["inizio"]))
 if (empty($_GET["fine"]))
 	$_GET["fine"] = null;
 
-$sovrappone = $server->prepare("SELECT sovrapponeEvento(?, ?, ?, ?)");
+$sovrappone = $server->prepare(/** @lang MySQL */
+	"SELECT sovrapponeEvento(?, ?, ?, ?)");
 $sovrappone->bind_param(
 	"iiss",
 	$user->get_database_id(),

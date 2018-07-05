@@ -1,5 +1,5 @@
 $.urlParam = {
-	params: new URLSearchParams(new URL(window.location).search),
+	params: window.URLSearchParams !== undefined ? new URLSearchParams(new URL(window.location).search) : undefined,
 
 	/**
 	 * Ottenere un paramatro della querystring
@@ -9,6 +9,9 @@ $.urlParam = {
 	 */
 	get: function (name)
 	{
+		if(this.params === undefined)
+			return;
+
 		let parm = this.params.get(name);
 		return parm === null ? undefined : parm;
 	},
@@ -20,6 +23,9 @@ $.urlParam = {
 	 */
 	set: function (name, value)
 	{
+		if(this.params === undefined)
+			return;
+
 		this.params.set(name, value);
 
 		if (!history.replaceState)

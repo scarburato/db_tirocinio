@@ -27,7 +27,7 @@ class TableSelection
 	}
 
 	/**
-	 * Ritorna la riga selezionata <tr>
+	 * Ritorna la riga selezionata elemento HTML tr
 	 * @returns {null, jQuery}
 	 */
 	getSelectedRow()

@@ -14,7 +14,7 @@ $server = new \mysqli_wrapper\mysqli();
 $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 
 $permissions = new \auth\PermissionManager($server, $user);
 

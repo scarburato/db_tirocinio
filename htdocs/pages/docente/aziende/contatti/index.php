@@ -15,7 +15,7 @@ $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 
 $azienda = $server->prepare("SELECT nominativo FROM Azienda WHERE id = ?");
 $azienda->bind_param(
@@ -55,6 +55,7 @@ $page = "In contatto con " . sanitize_html($nome);
             <table class="table is-fullwidth">
                 <thead>
                 <tr>
+					<th style="width: 1.59rem"></th>
                     <th>Inzio</th>
                     <th>Fine</th>
                     <th>Contatto Aziendale</th>
@@ -64,7 +65,7 @@ $page = "In contatto con " . sanitize_html($nome);
                 <tbody>
                     <?php
                     $contatti = $server->prepare("
-                      SELECT E.inizio, E.fine, C.id, C.nome, C.cognome, D.nome, D.cognome
+                      SELECT E.inizio, E.fine, C.id, C.nome, C.cognome, D.nome, D.cognome, E.fine <= CURRENT_DATE(), E.inizio >= CURRENT_DATE()
                         FROM EntratoInContatto E
                         INNER JOIN Contatto C on E.contatto = C.id
                         INNER JOIN UtenteGoogle D on E.docente = D.id
@@ -77,12 +78,26 @@ $page = "In contatto con " . sanitize_html($nome);
                     );
 
                     $contatti->execute();
-                    $contatti->bind_result($inzio, $fine, $az_id, $az_nome, $az_cogn, $doc_nome, $doc_cognome);
+                    $contatti->bind_result($inzio, $fine, $az_id, $az_nome, $az_cogn, $doc_nome, $doc_cognome, $finito, $futuro);
 
                     while($contatti->fetch())
                     {
                         ?>
                         <tr>
+							<td><span class="icon"><?php
+									if($finito)
+									{
+										?><i class="fa fa-stop" aria-hidden="true"></i><?php
+									}
+									elseif ($futuro)
+									{
+										?><i class="fa fa-fast-forward" aria-hidden="true"></i><?php
+									}
+									else
+									{
+										?><i class="fa fa-play" aria-hidden="true"></i><?php
+									}
+									?></span></td>
                             <td><?= $inzio ?></td>
                             <td><?= $fine === null ? "In corso" : $fine ?></td>
                             <td>

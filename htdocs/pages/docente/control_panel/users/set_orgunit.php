@@ -15,7 +15,7 @@ $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 
 // Variabili pagina
 $page = "Imposta Unità Organizzative";
@@ -74,7 +74,7 @@ $page = "Imposta Unità Organizzative";
                             "SELECT unita_organizzativa FROM UnitaOrganizzativa WHERE tipo = 'studente'"
                     );
 
-                    $unita_studente->execute(true);
+                    $unita_studente->execute();
                     $unita_studente->bind_result($path);
                     while($unita_studente->fetch())
                     {
@@ -107,7 +107,7 @@ $page = "Imposta Unità Organizzative";
                             "SELECT unita_organizzativa FROM UnitaOrganizzativa WHERE tipo = 'docente'"
                     );
 
-                    $unita_docente->execute(true);
+                    $unita_docente->execute();
                     $unita_docente->bind_result($path);
                     while($unita_docente->fetch())
                     {
@@ -140,7 +140,7 @@ $page = "Imposta Unità Organizzative";
                         "SELECT unita_organizzativa FROM UnitaOrganizzativa WHERE tipo = 'ambedue'"
                     );
 
-                    $unita_ambigue->execute(true);
+                    $unita_ambigue->execute();
                     $unita_ambigue->bind_result($path);
                     while($unita_ambigue->fetch())
                     {

@@ -13,7 +13,7 @@ $server = new \mysqli_wrapper\mysqli();
 
 $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
-$user_info = ($user->get_info(new RetriveStudenteFromDatabase($server)));
+$user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
 $permission_manager = new \auth\PermissionManager($server, $user);
 
@@ -27,7 +27,7 @@ $can_see_all = $permission_manager->check("train.readall");
 $tirocinio_azienda = $server->prepare(
 	'SELECT A.nominativo, A.IVA, A.codiceFiscale,
 	S.nome, S.cognome, S.indirizzo_posta, S.fotografia,
-	C.nome, C.cognome, C.email, C.telefono, C.FAX,
+	C.id, C.nome, C.cognome, C.email, C.telefono, C.FAX,
 	D.id, D.nome, D.cognome, D.indirizzo_posta, D.fotografia,
 	T.dataInizio, T.dataTermine, T.giudizio, T.descrizione, T.visibilita, T.ultima_modifica
 	FROM Tirocinio T 
@@ -48,7 +48,7 @@ $tirocinio_azienda->execute();
 
 $tirocinio_azienda->bind_result($a_nom, $a_iva, $a_cf,
 	$studente_nome, $studente_cognome, $studente_posta, $studente_fotografia,
-	$c_nome, $c_cognome, $c_posta, $c_tel, $c_fax,
+	$c_id, $c_nome, $c_cognome, $c_posta, $c_tel, $c_fax,
 	$doc_tir_id, $doc_nome, $doc_cog, $doc_posta, $doc_fotografia,
 	$t_ini, $t_end, $t_giud, $t_desc, $t_vis, $t_last_edit);
 
@@ -266,7 +266,14 @@ $num_tir = $_GET['tirocinio'];
 							</figure>
 							<div class="media-content">
 								<h4 class="title is-4">Tutore aziendale</h4>
-								<p><?= sanitize_html($c_nome . " " . $c_cognome) ?></p>
+								<p>
+									<span><?= sanitize_html($c_nome . " " . $c_cognome) ?></span>
+									<span class="icon">
+										<a href="./../../azienda/contatto/?id=<?= $c_id ?>" target="_blank" title="Scheda contatto in nuova scheda">
+											<i class="fa fa-external-link" aria-hidden="true"></i>
+										</a>
+									</span>
+								</p>
 								<p>
 									<a href="mailto:<?= sanitize_html($c_posta) ?>"><?= sanitize_html($c_posta) ?></a>
 								</p>

@@ -12,8 +12,3 @@ Deny from all
 Order allow,deny
 Deny from all
 </FilesMatch>
-
-AuthType Basic
-AuthName "Me ne frego!"
-AuthUserFile /home/deployment/db_tirocinio/htdocs/fakeService/.htpasswd
-require valid-user

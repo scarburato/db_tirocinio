@@ -17,10 +17,7 @@ $server = new \mysqli_wrapper\mysqli();
 $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_THROW);
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
-
 $return = array();
-$server = new \mysqli_wrapper\mysqli();
 
 //$codice_fiscale = $server->prepare("SELECT COUNT(*) FROM Azienda WHERE codiceFiscale = ?");
 $codice_fiscale = $server->prepare( "SELECT EXISTS(
@@ -36,5 +33,7 @@ $codice_fiscale->execute();
 $codice_fiscale->bind_result($count);
 $codice_fiscale->fetch();
 
-$return["esiste"] = ($count == 1);
+$return["esiste"] = ($count >= 1);
+$return["cf"] = $_POST["cf"];
+
 echo json_encode($return);

@@ -28,20 +28,25 @@ $skip_filter = !isset($_GET["query"]);
 $filter = isset($_GET["query"]) ? "%{$_GET["query"]}%" : "%";
 
 $skip_factory = !isset($_GET["azienda"]);
-$factory = isset($_GET["azienda"]) ? "%{$_GET["query"]}%" : 0;
+$factory = isset($_GET["azienda"]) ? $_GET["azienda"] : 0;
 
-if(!is_integer($factory))
-    throw new RuntimeException("azienda MUST the internal ID!");
+$return["dbg"] = $factory;
+$return["dbgbis"] = $skip_factory;
+
+
+//if(!is_integer($factory))
+//    throw new RuntimeException("azienda MUST the internal ID!");
 
 $contacts = new class(
     $server,
-    "SELECT C.id AS 'id', C.nome, C.cognome, C.email, C.telefono, C.FAX, C.qualifica, C.ruoloAziendale, A.id AS 'Azienda', A.nominativo AS 'AziendaNome'
+    "SELECT C.id AS 'id', C.nome, C.cognome, C.email, C.telefono, C.FAX, C.qualifica, C.ruoloAziendale, A.id AS 'Azienda', A.nominativo AS 'AziendaNome',
+        EXISTS(SELECT contatto FROM EntratoInContatto WHERE contatto = C.id AND inizio <= CURRENT_DATE() AND (fine IS NULL OR fine > CURRENT_DATE())) AS 'occupato'
       FROM Contatto C
       INNER JOIN Azienda A on C.azienda = A.id
     WHERE ? OR A.id = ?"
 ) extends \helper\Pagination
 {
-    public function compute_rows()
+    public function compute_rows(): int
     {
         return PHP_INT_MAX;
     }

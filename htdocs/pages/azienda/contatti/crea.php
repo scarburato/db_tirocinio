@@ -32,15 +32,14 @@ $page = "Creazione Contatto"
             ?>
         </aside>
         <div class="column">
-            <form action="aggiungi_db.php" method="post" id="main_form">
+			<?php include ($_SERVER["DOCUMENT_ROOT"]) . "/pages/common/mysql_error.php"; ?>
+			<form action="aggiungi_db.php" class="valida_iso" method="post" id="main_form">
                 <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/pages/common/create_contact.php"; ?>
             </form>
         </div>
     </div>
 </section>
 <?php include ($_SERVER["DOCUMENT_ROOT"]) . "/utils/pages/footer.phtml"; ?>
-
-<script src="js/validate_contact.js"></script>
 </body>
 </html>
 

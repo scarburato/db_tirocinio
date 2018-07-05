@@ -66,7 +66,7 @@
             </li>
         </ul>
     </li>
-    <li>
+    <!--<li>
         <a class="<?= ($index_menu !== 5 ?: "is-active")?>">
             <span class="icon">
             <i class="fa fa-file-text" aria-hidden="true"></i>
@@ -75,14 +75,14 @@
             Resoconti
             </span>
         </a>
-    </li>
+    </li>-->
 </ul>
 <p class="menu-label">
     Aziende
 </p>
 <ul class="menu-list">
     <li>
-        <a class="<?= ($index_menu !== 6 ?: "is-active")?>">
+        <a href="<?= BASE_DIR ?>pages/docente/aziende/" class="<?= ($index_menu !== 6 ?: "is-active")?>">
             <span class="icon">
             <i class="fa fa-building" aria-hidden="true"></i>
             </span>

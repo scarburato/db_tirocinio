@@ -15,7 +15,7 @@ $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 // Variabili pagina
 $page = "Utenze Google";
 
@@ -26,7 +26,7 @@ $utenze = new class($server, "SELECT id, nome, cognome, indirizzo_posta, D.utent
   WHERE nome LIKE ? OR cognome LIKE ? OR indirizzo_posta LIKE ?
   ") extends \helper\Pagination
 {
-    public function compute_rows()
+    public function compute_rows(): int
     {
         $row_tot = 0;
         $filtro = (isset($_GET["filtro"])) ? "%{$_GET["filtro"]}%" : "%";
@@ -40,7 +40,7 @@ $utenze = new class($server, "SELECT id, nome, cognome, indirizzo_posta, D.utent
                 $filtro,
                 $filtro
         );
-        $conta->execute(true);
+        $conta->execute();
         $conta->bind_result($row_tot);
         $conta->fetch();
         $conta->close();
@@ -59,7 +59,7 @@ $utenze->bind_param(
         $filtro
 );
 
-$utenze->execute(true);
+$utenze->execute();
 
 $utenze->bind_result($id_interno, $nome, $cognome, $posta, $docente, $studente);
 
@@ -123,8 +123,8 @@ $nav = new \helper\PaginationIndexBuilder($utenze);
             <table class="table is-fullwidth">
                 <thead>
                 <tr>
-                    <th title="I nomi sono stati inseriti all'icontrario dalla scuola">Nome</th>
-                    <th title="I nomi sono stati inseriti all'icontrario dalla scuola">Cognome</th>
+                    <th title="I nomi sono stati inseriti all'incontrario dalla scuola">Nome</th>
+                    <th title="I nomi sono stati inseriti all'incontrario dalla scuola">Cognome</th>
                     <th>Posta Elettronica</th>
                     <th>Studente</th>
                     <th>Docente</th>

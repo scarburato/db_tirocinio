@@ -14,21 +14,22 @@ $server = new \mysqli_wrapper\mysqli();
 $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
+$permissions= new \auth\PermissionManager($server, $user);
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 // Variabili pagina
 $page = "Gestione Aziende";
 
 $aziende = new class($server, "SELECT nominativo, codiceFiscale, IVA, id FROM Azienda") extends \helper\Pagination
 {
-    public function compute_rows()
+    public function compute_rows(): int
     {
         $rows = 0;
         $conta = $this->link->prepare(
             "SELECT COUNT(id) AS 'c' FROM Azienda");
 
 
-        $conta->execute(true);
+        $conta->execute();
         $conta->bind_result($row_tot);
         $conta->fetch();
         $conta->close();
@@ -39,6 +40,7 @@ $aziende = new class($server, "SELECT nominativo, codiceFiscale, IVA, id FROM Az
 
 $aziende->execute();
 $aziende->bind_result($nome, $cf, $iva, $id);
+$aziende->store_result();
 ?>
 <html lang="it">
 <head>
@@ -57,16 +59,23 @@ $aziende->bind_result($nome, $cf, $iva, $id);
         </aside>
         <div class="column">
             <div>
-                <p>
-                    <a class="button is-primary is-pulled-right is-large" href="./aggiungi.php">
+				<?php
+				if($permissions->check("user.factory.add"))
+				{
+					?>
+					<p>
+						<a class="button is-primary is-pulled-right is-large" href="./aggiungi.php">
                         <span class="icon">
                             <i class="fa fa-plus" aria-hidden="true"></i>
                         </span>
-                        <span>
+							<span>
                             Aggiungi
                         </span>
-                    </a>
-                </p>
+						</a>
+					</p>
+					<?php
+				}
+				?>
                 <table class="table is-fullwidth" style="overflow-x: auto">
                     <thead>
                     <tr>

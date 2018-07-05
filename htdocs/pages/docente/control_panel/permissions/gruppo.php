@@ -18,7 +18,7 @@ $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 
 // Variabili pagina
 $page = "Gestione del gruppo `{$_GET['group']}`";
@@ -31,7 +31,7 @@ $gruppo->bind_param(
         $_GET["group"]
 );
 
-$gruppo->execute(true);
+$gruppo->execute();
 $gruppo->bind_result($current_nome, $current_descrizione);
 if(!$gruppo->fetch())
     redirect("../");
@@ -91,7 +91,7 @@ $gruppo->close();
                                 $current_nome
                             );
 
-                            $permessi_attuali->execute(true);
+                            $permessi_attuali->execute();
                             $permessi_attuali->bind_result($nome, $descrizione);
                             while($permessi_attuali->fetch())
                             {
@@ -148,7 +148,7 @@ $gruppo->close();
                                     $current_nome
                             );
 
-                            $permessi_disponibili->execute(true);
+                            $permessi_disponibili->execute();
                             $permessi_disponibili->bind_result($nome, $descrizione);
                             while($permessi_disponibili->fetch())
                             {

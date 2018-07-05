@@ -40,7 +40,7 @@ $commenti = new class($server,
   FROM Commento CM INNER JOIN UtenteGoogle U ON CM.autore = U.id
   WHERE CM.tirocinio = ? ORDER BY quando DESC, CM.id") extends \helper\Pagination
 {
-    public function compute_rows()
+    public function compute_rows(): int
     {
         $row_tot = 0;
         $conta = $this->link->prepare(

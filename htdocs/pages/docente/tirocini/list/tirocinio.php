@@ -118,6 +118,7 @@ if (!$train->fetch())
 				<a href="mailto:<?= sanitize_html($docente_posta) ?>" target="_blank">
 					<?= sanitize_html($docente_posta) ?>
 				</a>
+				<br>
 				<?php if($contact_id !== null)
 				{
 					?>
@@ -129,7 +130,6 @@ if (!$train->fetch())
 					<?php
 				}
 				?>
-				<br>
 				<?php if ($data_termine === null)
 				{
 					?>

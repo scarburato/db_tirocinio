@@ -14,8 +14,11 @@ $server = new \mysqli_wrapper\mysqli();
 $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
+$permissions = new \auth\PermissionManager($server, $user);
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$permissions->check("factory.contacts.create", \auth\PermissionManager::UNAUTHORIZED_REDIRECT);
+
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 
 $info = $server->prepare("SELECT IVA, codiceFiscale, nominativo, C.descrizione, C2.cod2007, dimensione, gestione, no_accessi 
                                   FROM Azienda 
@@ -27,13 +30,15 @@ $info->bind_param("i", $_GET["id"]);
 $info->execute();
 $info->bind_result($iva, $cf, $nome, $classificazione, $ateco_c,$dimensione, $gestione, $no_accesso);
 $info->store_result();
-$info->fetch();
+if($info->fetch() !== true)
+	throw new RuntimeException("Azienda non esistente!", -1);
 
 // Variabili pagina
-$page = "{$_GET["id"]}";
+$page = sanitize_html($nome);
 
 function edit_button()
 {
+	return;
     ?>
     <a class="button is-small is-fullwidth">
         <span class="icon">
@@ -68,6 +73,16 @@ function edit_button()
             ?>
         </aside>
         <div class="column">
+			<p class="control">
+				<a class="button is-primary is-pulled-right is-large" href="./aggiungi_contatto.php?id=<?= $_GET["id"] ?>">
+					<span class="icon">
+						<i class="fa fa-user-plus" aria-hidden="true"></i>
+					</span>
+					<span>
+                        Crea contatto
+					</span>
+				</a>
+			</p>
             <div class="">
                 <table class="table is-fullwidth">
                     <tr>
@@ -181,5 +196,7 @@ function edit_button()
 
 
 <script src="js/edit.js"></script>
+<?php include ($_SERVER["DOCUMENT_ROOT"]) .  "/utils/pages/footer.phtml"; ?>
+
 </body>
 </html>

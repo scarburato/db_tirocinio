@@ -28,15 +28,17 @@ function get_id(\mysqli_wrapper\mysqli $server, array $parm_array = null): int
 
     $id_stm = $server->prepare("SELECT id FROM UtenteGoogle INNER JOIN Docente D ON UtenteGoogle.id = D.utente
                                   WHERE indirizzo_posta = ?");
+
     $id_stm->bind_param(
-        "i",
+        "s",
         $parm_array["email"]
     );
 
     $id_stm->execute();
+
     $id_stm->bind_result($id);
 
-    $trovato = $id_stm->fetch() !== null && !$id_stm;
+    $trovato = $id_stm->fetch() === true;
 
     $id_stm->close();
 

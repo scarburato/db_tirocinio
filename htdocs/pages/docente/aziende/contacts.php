@@ -15,7 +15,7 @@ $user = new \auth\User();
 $user->is_authorized(\auth\LEVEL_GOOGLE_TEACHER, \auth\User::UNAUTHORIZED_REDIRECT);
 $user_info = ($user->get_info(new RetriveDocenteFromDatabase($server)));
 
-$oauth2 = \auth\connect_token_google($google_client, $user->get_token());
+$google_user = new \auth\GoogleConnection($user); $oauth2 = $google_user->getUserProps();
 
 $permissions = new \auth\PermissionManager($server, $user);
 
@@ -26,13 +26,14 @@ $page = "Contatti";
 
 $contatti = new class($server,
     "SELECT A.id, A.nominativo, COUNT(*)
-      FROM EntratoInContatto
-      INNER JOIN Contatto C on EntratoInContatto.contatto = C.id
+      FROM EntratoInContatto E
+      INNER JOIN Contatto C on E.contatto = C.id
       INNER JOIN Azienda A on C.azienda = A.id
+      WHERE E.inizio >= CURRENT_DATE() OR E.fine >= CURRENT_DATE()
     GROUP BY A.id
   ") extends \helper\Pagination
 {
-    public function compute_rows()
+    public function compute_rows(): int
     {
         $row_tot = 0;
 
@@ -41,9 +42,10 @@ $contatti = new class($server,
                     FROM Azienda A
                    WHERE EXISTS(
                       SELECT contatto
-                        FROM EntratoInContatto
-                        INNER JOIN Contatto C on EntratoInContatto.contatto = C.id
-                      WHERE C.azienda = A.id)");
+                        FROM EntratoInContatto E
+                        INNER JOIN Contatto C on E.contatto = C.id
+                      WHERE C.azienda = A.id AND 
+                      (E.inizio >= CURRENT_DATE() OR E.fine >= CURRENT_DATE()))");
 
         $conta->execute();
         $conta->bind_result($row_tot);
@@ -94,7 +96,7 @@ $contatti->bind_result($id,$nome, $numero_contatti);
                     <h3 class="title is-3"><?= sanitize_html($nome) ?></h3>
                     <p>
                         <span class="icon"><i class="fa fa-handshake-o" aria-hidden="true"></i></span>
-                        <span><?= $numero_contatti ?> docenti in contatto con altrettanti referenti aziendali</span>
+                        <span><?= $numero_contatti ?> docenti attualmente in contatto con altrettanti referenti aziendali</span>
                     </p>
                     <div class="field">
                         <p class="control has-text-right">

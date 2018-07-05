@@ -1,6 +1,6 @@
 const PHONE_ADDRESS_ISO20022 = new RegExp("\\+[0-9]{1,3}-[0-9()+\\-]{1,30}");
 
-$("#main_form").submit(function ()
+$(".valida_iso").submit(function ()
 {
 	let valido = true;
 	let nome = $(this).find("input[name='nome']");
