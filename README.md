@@ -30,8 +30,6 @@ Questo dovrebbe aver creato la struttura base della base di dati, ora inseriamo 
 Ora modificare le impostazioni di Google ed in `const.hphp` inserendo il nuovo URL di login.
 
 # Domande frequenti che potrebbero porgere i futuri ~~schiavi~~ studenti di alternanza
-Perché i nomi dei file sono metà in italiano e metà in albionico? 
-> Non so dare una spiegazione razionale
 
 Perché i nomi delle funzioni sono metaInCamelCase e meta nello_altro_modo?
 > Le funzioni native di PHP sanno fare molto peggio
@@ -40,7 +38,7 @@ Che framewok CSS è stato usato?
 > bulma.io
 
 Perché mancano commenti e documentazione?
-> Perché dovete paty
+> b0h
 
 È presente un miner di criptmonete offuscato nel JavaScript?
 > Assolutamente no®. 
